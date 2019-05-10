@@ -6,6 +6,7 @@ root.title("ATFL - Metro Vancouver")
 
 left = Frame(root, borderwidth=2, relief="solid")
 right = Frame(root, borderwidth=2, relief="solid")
+bottom = Frame(root, borderwidth=2, relief = "solid")
 box1 = Frame(left, borderwidth=2, relief="solid")
 box2 = Frame(left, borderwidth=2, relief="solid")
 box3 = Frame(left, borderwidth=2, relief = "solid")
@@ -35,7 +36,8 @@ e6 = Entry(box6)
 
 
 left.pack(side="left", expand=True, fill="both")
-right.pack(side="right", expand=True, fill="both")
+right.pack(side="left", expand=True, fill="both")
+bottom.pack(side = "bottom", expand = True, fill = "both", anchor = S)
 box1.pack(expand=True, fill="both", padx=10, pady=10)
 box2.pack(expand=True, fill="both", padx=10, pady=10)
 box3.pack(expand=True, fill = "both", padx = 10, pady = 10) 
@@ -71,8 +73,9 @@ def callback():
     print ("Sixth Value: ")
     print (e6.get()) 
 
-Button1 = Button(root, text = "Submit", command = callback) 
-Button1.pack(expand = True, fill = "both", padx = 10, pady = 10, side = BOTTOM)
+Button1 = Button(bottom, text = "Submit", command = callback) 
+Button1.pack(expand = True, fill = "x", padx = 10, pady = 10, side = BOTTOM)
+
 
 
 

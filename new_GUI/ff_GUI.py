@@ -1,37 +1,31 @@
-import tkinter as Tk
-from tkinter import *
-from tkinter import ttk
-
-""" Step 1. One window with four frames """
-
-"""create the window, size, color, and packing"""
+import tkinter
+import sys
 
 
-w, h = 640,480  #Window Size
-window = Tk()
-window.title("ATFL - Metro Vancouver") #Include the name of the window
+class StdRedirector(object):
+    def __init__(self, text_widget):
+        self.text_space = text_widget
 
+    def write(self, string):
+        self.text_space.config(state=tkinter.NORMAL)
+        self.text_space.insert("end", string)
+        self.text_space.see("end")
+        self.text_space.config(state=tkinter.DISABLED)
+        
+class CoreGUI(object):
+    def __init__(self, parent):
+        text_box = tkinter.Text(parent, state=tkinter.DISABLED)
+        sys.stdout = StdRedirector(text_box)
+        sys.stderr = StdRedirector(text_box)
+        text_box.pack()
 
-"""create the tabs, the windows and the names"""
+        output_button = tkinter.Button(parent, text="Output", command=self.main)
+        output_button.pack()
 
+    def main(self):
+        print ("Std Output")
+        raise ValueError("Std Error")
 
-upperLeft = Frame(width=50, height=50, bg="red", colormap="new")
-upperLeft.pack(anchor = NW, side = LEFT )
-
-
-upperRight = Frame(width = 50, height = 50, bg = "blue", colormap= "new")
-upperRight.pack(anchor = NE, side = RIGHT)
-
-
-lowerLeft = Frame(width = 50, height = 50, bg = "green", colormap = "new")
-lowerLeft.pack(anchor = SW, side = LEFT)
-
-lowerRight = Frame(width = 50, height = 50, bg = "orange", colormap = "new")
-lowerRight.pack(anchor = SE, side = RIGHT) 
-
-""" Step 2. One window with four tabs"""
-
-
-""" Step 3. One window with four tabs live stream"""
-
-window.mainloop()
+root = tkinter.Tk()
+CoreGUI(root)
+root.mainloop()
