@@ -45,24 +45,23 @@ class SimpleCounter(Widget):
 
 
 class SettingScrollBar(Widget):
-    _variableName = ' '
 
-    def __init__(self, master):
+    def __init__(self, master, name, low, high):
         super().__init__(master)
         self.var = IntVar()
         self.var.set(0)
-        self.name = StringVar()
-        self.name.set('')
+        self.range = [0,100]
+        self.range = [int(low),int(high)]
 
         # display = Label(self.frame, anchor='center', textvariable= self.var, bg='light blue')
         # display.place(relx=0.8, rely=0, relheight=0.6, relwidth=0.2)
         entry = Entry(self.frame, textvariable=self.var, bg='light blue')
         entry.place(relx=0.8, rely=0, relheight=0.6, relwidth=0.2)
 
-        settingName = Label(self.frame, anchor='center', textvariable= self.name, bg='sky blue')
+        settingName = Label(self.frame, anchor='center', text= name, bg='sky blue')
         settingName.place(relx=0, rely=0, relheight=0.6, relwidth=0.8)
 
-        scale = Scale(self.frame,orient='horizontal', showvalue=0, width=30, variable= self.var,  bg='light grey')
+        scale = Scale(self.frame,orient='horizontal', showvalue=0, width=30, from_=self.range[0], to=self.range[1], variable= self.var,  bg='light grey')
         scale.place(relx=0.1, rely=0.6, relheight=0.4, relwidth=0.8)
 
         Lbutton = Button(self.frame, text='<', command= lambda: self.LPress(),  bg='grey')
@@ -71,24 +70,18 @@ class SettingScrollBar(Widget):
         Rbutton.place(relx=0.9, rely=0.6, relheight=0.4, relwidth=0.1)
 
     def LPress(self):
-
-        if self.var.get() > 0:
+        if self.var.get() > self.range[0]:
             self.var.set(self.var.get() - 1)
 
-
     def RPress(self):
-
-        if self.var.get() < 100:
+        if self.var.get() < self.range[1]:
             self.var.set(self.var.get() + 1)
 
     def get(self):
-        return self.var
+        return self.var.get()
 
     def set(self, num):
         self.var.set(num)
-
-    def variable1(self, name):
-        self.name.set(name)
 
 class LiveGraph(Widget):
     def __init__(self, master):
