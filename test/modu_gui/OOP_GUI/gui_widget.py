@@ -36,18 +36,29 @@ class SimpleCounter(Widget):
         self._value = 0
         self.Var.set(self._value)
 
+    def get(self):
+        return self._value
+
+    def set(self, number):
+        self._value = number
+        self.Var.set(self._value)
+
+
 class SettingScrollBar(Widget):
     _value = 0
+    _variableName = ' '
 
     def __init__(self, master):
         super().__init__(master)
         self.var = IntVar()
         self.var.set(self._value)
+        self.name = StringVar()
+        self.name.set(self._variableName)
 
         display = Label(self.frame, anchor='center', textvariable= self.var, bg='light blue')
         display.place(relx=0.8, rely=0, relheight=0.6, relwidth=0.2)
 
-        settingName = Label(self.frame, anchor='center', text= 'Temperature (C)', bg='sky blue')
+        settingName = Label(self.frame, anchor='center', textvariable= self.name, bg='sky blue')
         settingName.place(relx=0, rely=0, relheight=0.6, relwidth=0.8)
 
         scale = Scale(self.frame,orient='horizontal', showvalue=0, width=30, variable= self.var,  bg='light grey')
@@ -69,6 +80,17 @@ class SettingScrollBar(Widget):
         if self._value < 100:
             self._value = self._value + 1
         self.var.set(self._value)
+
+    def get(self):
+        return self._value
+
+    def set(self, num):
+        self._value = num
+        self.var.set(self._value)
+
+    def variable1(self, name):
+        self._variableName = str(name)
+        self.name.set(self._variableName)
 
 class LiveGraph(Widget):
     def __init__(self, master):

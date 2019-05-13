@@ -15,14 +15,14 @@ def main():
     root.geometry(HEIGHT + 'x' + WIDTH)
     root.resizable(0,0)
 
-    # simpleCounter = SimpleCounter(root)
-    # simpleCounter.widgetPos(0.1,0.1,0.8,0.8)
+    simpleCounter = SimpleCounter(root)
+    simpleCounter.placeWidget(0.1,0.1,0.4,0.4)
 
-    # setting_1 = SettingScrollBar(root)
-    # setting_1.widgetPos(0.1,0.1,0.8,0.2)
+    setting_1 = SettingScrollBar(root)
+    setting_1.variable1('Temperature')
+    setting_1.placeWidget(0.1,0.5,0.4,0.1)
 
-    graph = LiveGraph(root)
-    graph.plotGraph()
+
 
 
 
