@@ -45,18 +45,19 @@ class SimpleCounter(Widget):
 
 
 class SettingScrollBar(Widget):
-    _value = 0
     _variableName = ' '
 
     def __init__(self, master):
         super().__init__(master)
         self.var = IntVar()
-        self.var.set(self._value)
+        self.var.set(0)
         self.name = StringVar()
-        self.name.set(self._variableName)
+        self.name.set('')
 
-        display = Label(self.frame, anchor='center', textvariable= self.var, bg='light blue')
-        display.place(relx=0.8, rely=0, relheight=0.6, relwidth=0.2)
+        # display = Label(self.frame, anchor='center', textvariable= self.var, bg='light blue')
+        # display.place(relx=0.8, rely=0, relheight=0.6, relwidth=0.2)
+        entry = Entry(self.frame, textvariable=self.var, bg='light blue')
+        entry.place(relx=0.8, rely=0, relheight=0.6, relwidth=0.2)
 
         settingName = Label(self.frame, anchor='center', textvariable= self.name, bg='sky blue')
         settingName.place(relx=0, rely=0, relheight=0.6, relwidth=0.8)
@@ -70,27 +71,24 @@ class SettingScrollBar(Widget):
         Rbutton.place(relx=0.9, rely=0.6, relheight=0.4, relwidth=0.1)
 
     def LPress(self):
-        self._value = self.var.get()
-        if self._value > 0:
-            self._value = self._value - 1
-        self.var.set(self._value)
+
+        if self.var.get() > 0:
+            self.var.set(self.var.get() - 1)
+
 
     def RPress(self):
-        self._value = self.var.get()
-        if self._value < 100:
-            self._value = self._value + 1
-        self.var.set(self._value)
+
+        if self.var.get() < 100:
+            self.var.set(self.var.get() + 1)
 
     def get(self):
-        return self._value
+        return self.var
 
     def set(self, num):
-        self._value = num
-        self.var.set(self._value)
+        self.var.set(num)
 
     def variable1(self, name):
-        self._variableName = str(name)
-        self.name.set(self._variableName)
+        self.name.set(name)
 
 class LiveGraph(Widget):
     def __init__(self, master):
