@@ -16,7 +16,7 @@ class StdRedirector(object):
 
 class CoreGUI(object):
     def __init__(self, parent):
-        text_box = tkinter.Text(parent, state=tkinter.DISABLED)
+        text_box = tkinter.Text(parent, state=tkinter.DISABLED, yscrollcommand = scrollbar.set)
         sys.stdout = StdRedirector(text_box)
         sys.stderr = StdRedirector(text_box)
         text_box.pack(expand = True, fill = "both")
