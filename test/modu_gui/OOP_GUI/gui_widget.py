@@ -4,7 +4,7 @@ from tkinter import ttk
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-class Widget:
+class Widget(Frame):
     def __init__(self, master):
         self.frame = Frame(master)
 
