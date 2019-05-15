@@ -10,14 +10,15 @@ master.title("ATFL GUI")
 w,h = 500,500
 canvas = Canvas(master, width=w, height=h)
 canvas.pack()
-tabControl = ttk.Notebook(master)
+# tabControl = ttk.Notebook(master)
 
-tab1 = ttk.Frame(tabControl) #making a frame
-tabControl.add(tab1, text='Main Screen') #properties of the fram
-tab2 = ttk.Frame(tabControl)
-tabControl.add(tab2, text='Advanced')
-
-tabControl.pack(expand=1, fill='both')
+tab1 = ttk.Frame(master) #making a frame
+# tabControl.add(tab1, text='Main Screen') #properties of the fram
+tab2 = ttk.Frame(master)
+# tabControl.add(tab2, text='Advanced')
+tab1.pack(side=TOP)
+tab2.pack(side = TOP)
+# tabControl.pack(expand=1, fill='both')
 
 run_count = 0
 def push_button ():
@@ -26,12 +27,12 @@ def push_button ():
     run_count += 1
     print("done run " + str(run_count)) #make sure the value is in string format
 
-
+tk.input("")
 b = Button(tab1, text="Run Motor", command=push_button)
-b.pack()
+b.pack(side=TOP)
 
 c = Button(tab2, text="Run Valve", command =push_button)
-c.pack()
+c.pack(side=TOP)
 
 canvas.configure(background='black')
 master.mainloop()
