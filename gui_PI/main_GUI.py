@@ -1,24 +1,25 @@
-from tkinter import *
+#! /usr/bin/python3
 import datetime
 import os
 import tkinter
 from tkinter import ttk
 from gui_widget import *
-import matplotlib 
+import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
-import matplotlib.animation as animation 
-from matplotlib import style 
+import matplotlib.animation as animation
+from matplotlib import style
 import random
 style.use('ggplot')
 
 
 w, h = 640, 480 #Window Size
 window = Tk()
-window.title("ATFL - Metro Vancouver") #Include the name of the window
+window.title("ATFL - Metro Vancouver") #Include the nameof the window
+window.geometry("500x350")
 canvas = Canvas(window)
-canvas.pack(expand = True, fill ='both')
+canvas.pack(expand = False, fill ='both')
 
 """create the tabs, the windows and the names"""
 
@@ -29,38 +30,27 @@ tab1 = ttk.Frame(tabControl) #making a frame
 tabControl.add(tab1, text='Screen 1') #properties of the Frame
 
 
+
 left = Frame(tab1, borderwidth=2, relief="solid")
 right = Frame(tab1, borderwidth=2, relief="solid")
 box1 = Frame(left, borderwidth=2, relief="solid")
 
-"""Tab 1 Graph"""
 newGraph = Figure()
-newGraph.set_size_inches(2, 2, forward=True)
+newGraph.set_size_inches(2,2,forward=True)
 newPlot = newGraph.add_subplot(111)
 
-
-xList =  [1,2,3,4,5,6,7,8]
-
+xList = [1,2,3,4,5,6,7,8]
 yList = [5,6,1,3,8,9,3,5]
-
 
 newPlot.plot(xList, yList)
 newCanvas = FigureCanvasTkAgg(newGraph, box1)
 newCanvas.draw()
-newCanvas.get_tk_widget().pack(side=BOTTOM, fill=BOTH, expand=True)
-newToolbar = NavigationToolbar2Tk(newCanvas, box1)
+newCanvas.get_tk_widget().pack(side = BOTTOM, fill = BOTH, expand = True)
+newToolbar = NavigationToolbar2Tk(newCanvas,box1)
 newToolbar.update()
-newCanvas._tkcanvas.pack(side=TOP, fill=BOTH, expand=True)
+newCanvas._tkcanvas.pack(side=TOP, fill = BOTH, expand = True)
 
 
-
-# Step 1. Generate two lists(?) full of random data 
-# Step 2. Append a single new data point (or set) to each list 
-# Step 3. Remove the first thing in each list and shift all elements left 
-# Step 4. Re-display graph 
-
-    
-    
 
 def purge1Callback():
     print ("This will be replaced with the required purge 1 actions")
@@ -74,10 +64,10 @@ def runCallback():
 def stopCallback():
     print("This will be replaced with the required stop actions")
     
-box2 = Button(right, text = "Purge 1", command = purge1Callback)
-box3 = Button(right, text = "Purge 2", command = purge2Callback)
-box4 = Button(right, text = "Run", command = runCallback)
-box5 = Button(right, text = "Stop", command = stopCallback)
+box2 = Button(right, text = "Purge 1", font= ("Verdana", 7), command = purge1Callback)
+box3 = Button(right, text = "Purge 2", font = ("Verdana",7), command = purge2Callback)
+box4 = Button(right, text = "Run", font = ("Verdana", 7), command = runCallback)
+box5 = Button(right, text = "Stop", font= ("Verdana", 7), command = stopCallback)
 
 label1 = Canvas(box1)
 
@@ -109,41 +99,44 @@ t2box6 = Frame(right2, borderwidth=2, relief = "solid")
 
 
 t2Label1 = Label(t2box1, text="First Value")
-
+t2Label1.config(font = ("Verdana", 7))
 
 t2Label2 = Label(t2box2, text="Second Value")
+t2Label2.config(font = ("Verdana",7))
 
 t2Label3 = Label(t2box3, text="Third Value")
- 
+t2Label3.config(font = ("Verdana", 7))
+
 
 t2Label4 = Label(t2box4, text="Fourth Value")
+t2Label4.config(font=("Verdana", 7))
 
 
 t2Label5 = Label(t2box5, text="Fifth Value")
-
+t2Label5.config(font = ("Verdana", 7))
 
 t2Label6= Label(t2box6, text="Sixth Value")
-
+t2Label6.config(font = ("Verdana", 7))
 
 
 setting_1 = SettingScrollBar(t2box1, 'Temperature', 0, 100)
-setting_1.placeWidget(0.1, 0.3, 0.8, 0.4)
+setting_1.placeWidget(0.1, 0.4, 0.8, 0.5)
 
 setting_2 = SettingScrollBar(t2box2, 'Pressure', 0, 30)
-setting_2.placeWidget(0.1, 0.3, 0.8, 0.4) 
+setting_2.placeWidget(0.1, 0.4, 0.8, 0.5) 
 
 setting_3 = SettingScrollBar(t2box3, 'Temperature', 0, 50) 
 
-setting_3.placeWidget(0.1, 0.3, 0.8, 0.4)
+setting_3.placeWidget(0.1, 0.4, 0.8, 0.5)
 
 setting_4 = SettingScrollBar(t2box4, 'Temperature', 0, 50)
-setting_4.placeWidget(0.1, 0.2, 0.8, 0.4) 
+setting_4.placeWidget(0.1, 0.4, 0.8, 0.5) 
 
 setting_5 = SettingScrollBar(t2box5, 'Temperature', 0, 50)
-setting_5.placeWidget(0.1, 0.2, 0.8, 0.4) 
+setting_5.placeWidget(0.1, 0.4, 0.8, 0.5) 
 
 setting_6 = SettingScrollBar(t2box6, 'Temperature', 0, 27)
-setting_6.placeWidget(0.1, 0.2, 0.8, 0.4) 
+setting_6.placeWidget(0.1, 0.4, 0.8, 0.5) 
 
 
 
@@ -222,7 +215,7 @@ val7 = StringVar()
 val8 = StringVar()
 
 def clock():
-    time = datetime.datetime.now().strftime("Time: %H:%M:%S")
+    time = datetime.datetime.now().strftime("%H:%M:%S")
     #lab['text'] = time
     val1.set(time)
     val2.set(time)
@@ -232,21 +225,15 @@ def clock():
     val6.set(time)
     val7.set(time)
     val8.set(time)
-
-    # run itself again after 200 ms
-    #xList, yList = animate(xList, yList)
+    
     xList.pop(0)
-    xList.append(random.randint(0, 100))
+    xList.append(random.randint(0,100))
     yList.pop(0)
-    yList.append(random.randint(0, 50))
+    yList.append(random.randint(0,50))
     newPlot.clear()
-    newPlot.plot(xList, yList)
+    newPlot.plot(xList,yList)
     newCanvas.draw()
-    #newCanvas.update()
-    #newCanvas.plot(xList,yList)
-    tab3.after(200, clock) 
-    
-    
+    tab3.after(200, clock) # run itself again after 1000 ms
     
 
 
@@ -269,38 +256,38 @@ t3box10 = Frame(t3box2, borderwidth=2, relief="solid")
 t3box11 = Frame(t3box2, borderwidth=2, relief="solid")
 
 
-t3label4 = Label(t3box4, text="First Value")
-t3label4.config(font = ("Verdana", 11))
+t3label4 = Label(t3box4, text=" Value 1")
+t3label4.config(font = ("Verdana", 7))
 t3label4_1 = Label(t3box4, textvariable = val1)
-t3label4_1.config(font = ("Verdana", 11))
-t3label5 = Label(t3box5, text="Second Value")
-t3label5.config(font = ("Verdana", 11))
+t3label4_1.config(font = ("Verdana", 7))
+t3label5 = Label(t3box5, text="Value 2")
+t3label5.config(font = ("Verdana", 7))
 t3label5_1 = Label(t3box5, textvariable = val2)
-t3label5_1.config(font = ("Verdana", 11))
-t3label6 = Label(t3box6, text="Third Value")
-t3label6.config(font = ("Verdana", 11))
+t3label5_1.config(font = ("Verdana", 7))
+t3label6 = Label(t3box6, text="Value 3")
+t3label6.config(font = ("Verdana", 7))
 t3label6_1 = Label(t3box6, textvariable = val3)
-t3label6_1.config(font = ("Verdana", 11))
-t3label7 = Label(t3box7, text="Fourth Value")
-t3label7.config(font = ("Verdana", 11))
+t3label6_1.config(font = ("Verdana", 7))
+t3label7 = Label(t3box7, text="Value 4")
+t3label7.config(font = ("Verdana", 7))
 t3label7_1 = Label(t3box7, textvariable = val4)
-t3label7_1.config(font = ("Verdana", 11))
-t3label8 = Label(t3box8, text="Fifth Value")
-t3label8.config(font = ("Verdana", 11))
+t3label7_1.config(font = ("Verdana", 7))
+t3label8 = Label(t3box8, text="Value 5")
+t3label8.config(font = ("Verdana", 7))
 t3label8_1 = Label(t3box8, textvariable = val5)
-t3label8_1.config(font = ("Verdana", 11))
-t3label9 = Label(t3box9, text="Sixth Value")
-t3label9.config(font = ("Verdana", 11))
+t3label8_1.config(font = ("Verdana", 7))
+t3label9 = Label(t3box9, text="Value 6")
+t3label9.config(font = ("Verdana", 7))
 t3label9_1 = Label(t3box9, textvariable = val6)
-t3label9_1.config(font = ("Verdana", 11))
-t3label10 = Label(t3box10, text="Seventh Value")
-t3label10.config(font = ("Verdana", 11))
+t3label9_1.config(font = ("Verdana", 7))
+t3label10 = Label(t3box10, text="Value 7")
+t3label10.config(font = ("Verdana", 7))
 t3label10_1 = Label(t3box10, textvariable = val7)
-t3label10_1.config(font = ("Verdana", 11))
-t3label11 = Label(t3box11, text="Eigth Value")
-t3label11.config(font = ("Verdana", 11))
+t3label10_1.config(font = ("Verdana", 7))
+t3label11 = Label(t3box11, text="Value 8")
+t3label11.config(font = ("Verdana", 7))
 t3label11_1 = Label(t3box11, textvariable = val8)
-t3label11_1.config(font = ("Verdana", 11))
+t3label11_1.config(font = ("Verdana", 7))
         
 left3.pack(side="left", expand=True, fill="both")
 right3.pack(side="right", expand=True, fill="both")
@@ -345,14 +332,5 @@ print("Updating Values...")
 
 
 clock()
-
-
-
-
-
-
-
-
-
 
 window.mainloop()
