@@ -30,40 +30,40 @@ import Adafruit_ADS1x15
 import serial
 from pathlib import Path
 #################### Object Declaration ####################
-GPIO.setmode(GPIO.BCM)
+GPIO.setmode(GPIO.BOARD)
 # Linear Actuator
-pinLA = 4
-linearActuator = LinearActuator(pinLA)
-
+pinLA = 12
+pinEnable = 18
+linearActuator = LinearActuator(pinLA, pinEnable)
 # Analog-Digital Converter
 adc = Adafruit_ADS1x15.ADS1115(0x48)
-
 # MOS Sensor
 MOS_adc_channel = 0
 mos = MOS(adc, MOS_adc_channel)
-
+# Temperature sensor
+Temp_adc_channel = 1
+temperatureSensor = TemperatureSensor(adc, Temp_adc_channel)
 # Valves
-pinInValve = 17
+pinInValve = 8
 inValve = Valve('Inlet Valve', pinInValve)
-pinOutValve = 27
+pinOutValve = 10
 outValve = Valve('Outlet Valve', pinOutValve)
-
 # Pump
-pinPump = 26
+pinPump = 16
 pump = Pump(pinPump)
 #################### System Variables ####################
 # Purging Variables
 clean_chamber_purge_time = 30 # normally 30s
 sensing_chamber_purge_time = 60 # normally 60s
 # Filling Variables
-chamber_fill_time = 50 # normally 50s, fill the sensing chamber with the outlet valve open.
-chamber_force_fill_time = 10 # normally 10s, fill the sensing chamber without an outlet.
+chamber_fill_time = 45 # normally 45, fill the sensing chamber with the outlet valve open.
+chamber_force_fill_time = 0.5 # normally .5, fill the sensing chamber without an outlet.
 
 # Testing Variables
 sampling_time = 0.1 # time between samples taken, determines sampling frequency
 sensing_delay_time = 10 # normall 10, time delay after beginning data acquisition till when the sensor is exposed to sample
-sensing_retract_time = 110 # normally 110, time allowed before sensor is retracted, no longer exposed to sample
-duration_of_signal = 200 # normally 200, time allowed for data acquisition per test run
+sensing_retract_time = 60 # normally 60, time allowed before sensor is retracted, no longer exposed to sample
+duration_of_signal = 150 # normally 150, time allowed for data acquisition per test run
 #################### Data Array ####################
 # DO NOT TOUCH #
 dataVector = []
@@ -132,7 +132,7 @@ class HomePage(tk.Frame):
         title = tk.Label(self, text=projectName, font=14, relief='solid')
         title.place(relx=0.2,rely=0.3,relwidth=0.6,relheight=0.15)
 
-        intro = '''Hetek stuff to be determined.
+        intro = '''Microfluidic-based natural gas detector. Developed by ATF Lab
         [F11: Toggle Fullscreen]
         [Esc: Exit Fullscreen]'''
 
@@ -162,11 +162,15 @@ class DataPage(tk.Frame):
         self.run_and_stop.grid_rowconfigure(0, weight=1) #DO NOT ADJUST. Forces buttons to overlap.
         self.run_and_stop.grid_columnconfigure(0, weight=1) #DO NOT ADJUST.
 
-        self.stopBtn = tk.Button(self.run_and_stop, text='STOP', bg=stopBtn_color, command=lambda:end_testing())
+        self.stopBtn = tk.Button(self.run_and_stop, text='STOP', bg=stopBtn_color, activebackground=stopBtn_color, command=lambda:end_testing())
         self.stopBtn.grid(row=0, column=0, sticky="nsew")
 
-        self.runBtn = tk.Button(self.run_and_stop, text='RUN', bg=runBtn_color, command=lambda:start_purge_thread())
+        self.contFill = tk.Button(self.run_and_stop, text='CONTINUE', bg=runBtn_color, activebackground=runBtn_color, command=lambda:start_fill_thread())
+        self.contFill.grid(row=0, column=0, sticky="nsew")
+
+        self.runBtn = tk.Button(self.run_and_stop, text='RUN', bg=runBtn_color, activebackground=runBtn_color, command=lambda:start_purge_thread())
         self.runBtn.grid(row=0, column=0, sticky="nsew")
+
 
         statusFrame = tk.LabelFrame(self, text ='Status')
         statusFrame.place(relx=0.8,rely=0.3,relheight=0.6,relwidth=0.2)
@@ -195,48 +199,69 @@ class ManualControlPage(tk.Frame):
         #Create a termial within a parent frame.
         terminal = tk.Frame(self)
         CoreGUI(terminal)
-        terminal.place(relx=0.6,rely=0,relheight=1,relwidth=0.4)
+        terminal.place(relx=0.7,rely=0,relheight=1,relwidth=0.3)
 
         controlFrame = tk.LabelFrame(self, text='System')
-        controlFrame.place(relx=0,rely=0,relheight=1,relwidth=0.6)
+        controlFrame.place(relx=0,rely=0,relheight=1,relwidth=0.7)
         leftControlFrame = tk.Frame(controlFrame)
         leftControlFrame.place(relx=0,rely=0,relheight=1,relwidth=0.5)
         rightControlFrame = tk.Frame(controlFrame)
         rightControlFrame.place(relx=0.5,rely=0,relheight=1,relwidth=0.5)
 
-        buttonWidth = 0.45 #Relative width of buttons within the frame
+        buttonWidth = 0.4 #Relative width of buttons within the frame
         self.btn_1 = tk.Button(controlFrame, text='Extend Linear Actuator', command=lambda:linearActuator.extend())
         self.btn_1.place(relx=0,rely=0,relheight=0.1,relwidth=buttonWidth)
         self.btn_2 = tk.Button(controlFrame, text='Retract Linear Actuator', command=lambda:linearActuator.retract())
         self.btn_2.place(relx=0,rely=0.1,relheight=0.1,relwidth=buttonWidth)
-        self.btn_3 = tk.Button(controlFrame, text='Read MOS', command=lambda:mos.print())
+        self.btn_3 = tk.Button(controlFrame, text='Default Linear Actuator', command=lambda:linearActuator.default())
         self.btn_3.place(relx=0,rely=0.2,relheight=0.1,relwidth=buttonWidth)
-        self.btn_4 = tk.Button(rightControlFrame, text='4', command=lambda:'none')
+        self.btn_4 = tk.Button(controlFrame, text='Read MOS', command=lambda:mos.print())
         self.btn_4.place(relx=0,rely=0.3,relheight=0.1,relwidth=buttonWidth)
+        self.btn_5 = tk.Button(controlFrame, text='Read Temperature Sensor', command=lambda:temperatureSensor.print())
+        self.btn_5.place(relx=0,rely=0.4,relheight=0.1,relwidth=buttonWidth)
+        self.btn_6 = tk.Button(controlFrame, text='Switch Inlet Valve', command=lambda:inValve.switch())
+        self.btn_6.place(relx=0,rely=0.5,relheight=0.1,relwidth=buttonWidth)
+        self.btn_7 = tk.Button(controlFrame, text='Switch Outlet Valve', command=lambda:outValve.switch())
+        self.btn_7.place(relx=0,rely=0.6,relheight=0.1,relwidth=buttonWidth)
+        self.btn_8 = tk.Button(controlFrame, text='Switch Pump', command=lambda:pump.switch())
+        self.btn_8.place(relx=0,rely=0.7,relheight=0.1,relwidth=buttonWidth)
 
-        lbl_1 = tk.Label(controlFrame, text='1', anchor='w')
+        lbl_1 = tk.Label(controlFrame, text='  Extend the linear actuator to the sensing chamber.', anchor='w')
         lbl_1.place(relx=buttonWidth,rely=0,relheight=0.1,relwidth=(1-buttonWidth))
-        lbl_2 = tk.Label(controlFrame, text='2', anchor='w')
+        lbl_2 = tk.Label(controlFrame, text='  Retract the linear actuator to the clean chamber.', anchor='w')
         lbl_2.place(relx=buttonWidth,rely=0.1,relheight=0.1,relwidth=(1-buttonWidth))
-        lbl_3 = tk.Label(controlFrame, text='3', anchor='w')
+        lbl_3 = tk.Label(controlFrame, text='  Reset the linear to the default (center) position.', anchor='w')
         lbl_3.place(relx=buttonWidth,rely=0.2,relheight=0.1,relwidth=(1-buttonWidth))
-        lbl_4 = tk.Label(controlFrame, text='4', anchor='w')
+        lbl_4 = tk.Label(controlFrame, text='  Read the current value of the MOS (gas) sensor.', anchor='w')
         lbl_4.place(relx=buttonWidth,rely=0.3,relheight=0.1,relwidth=(1-buttonWidth))
+        lbl_5 = tk.Label(controlFrame, text='  Read the current internal temperature of the device.', anchor='w')
+        lbl_5.place(relx=buttonWidth,rely=0.4,relheight=0.1,relwidth=(1-buttonWidth))
+        lbl_6 = tk.Label(controlFrame, text='   Toggle the inlet valve.', anchor='w')
+        lbl_6.place(relx=buttonWidth,rely=0.5,relheight=0.1,relwidth=(1-buttonWidth))
+        lbl_7 = tk.Label(controlFrame, text='   Toggle the outlet valve.', anchor='w')
+        lbl_7.place(relx=buttonWidth,rely=0.6,relheight=0.1,relwidth=(1-buttonWidth))
+        lbl_8 = tk.Label(controlFrame, text='  Toggle the pump.', anchor='w')
+        lbl_8.place(relx=buttonWidth,rely=0.7,relheight=0.1,relwidth=(1-buttonWidth))
+
 def suppress_buttons():
     app.frames[ManualControlPage].btn_1.config(state='disabled')
     app.frames[ManualControlPage].btn_2.config(state='disabled')
     app.frames[ManualControlPage].btn_3.config(state='disabled')
     app.frames[ManualControlPage].btn_4.config(state='disabled')
-    app.frames[DataPage].runBtn.config(state='disabled')
-    app.frames[DataPage].stopBtn.tkraise()
+    app.frames[ManualControlPage].btn_5.config(state='disabled')
+    app.frames[ManualControlPage].btn_6.config(state='disabled')
+    app.frames[ManualControlPage].btn_7.config(state='disabled')
+    app.frames[ManualControlPage].btn_8.config(state='disabled')
 
 def release_buttons():
     app.frames[ManualControlPage].btn_1.config(state='normal')
     app.frames[ManualControlPage].btn_2.config(state='normal')
     app.frames[ManualControlPage].btn_3.config(state='normal')
     app.frames[ManualControlPage].btn_4.config(state='normal')
-    app.frames[DataPage].runBtn.config(state='normal')
-    app.frames[DataPage].runBtn.tkraise()
+    app.frames[ManualControlPage].btn_5.config(state='normal')
+    app.frames[ManualControlPage].btn_6.config(state='normal')
+    app.frames[ManualControlPage].btn_7.config(state='normal')
+    app.frames[ManualControlPage].btn_8.config(state='normal')
 
 def createFolders(year, month, day):
     ##  Get the path for the folders by year, month and day
@@ -372,7 +397,7 @@ def collect_data(xVector,yVector):
     createFolders(year, month, day)
     hour = current_time.hour
     minute = current_time.minute
-    fileName = str(year) + '-' + str(month) + '-' + str(day) + '_' + str(hour) + ':' + str(minute) + 'Mo_Neg_nolid.csv'
+    fileName = str(year) + '-' + str(month) + '-' + str(day) + '_' + str(hour) + ':' + str(minute) + 'Hetek_HH.csv'
     #fileName = str(year) + '-' + str(month) + '-' + str(day) + '_' + str(hour) + ':' + str(minute) + '_bl.csv'
     np.savetxt(r'/home/pi/Documents/Tests/' + str(year) + '/' + str(month) + '/' + str(day) + '/' + str(fileName),
                combinedVector, fmt='%.10f', delimiter=',')
@@ -380,6 +405,7 @@ def collect_data(xVector,yVector):
 
 def start_purge_thread():
     suppress_buttons()
+    app.frames[DataPage].stopBtn.tkraise()
     app.frames[DataPage].naturalGasLabel.config(bg=app.frames[DataPage].orig_color)
     global purge_thread
     global continueTest
@@ -396,10 +422,12 @@ def check_purge_thread():
         app.after(20, check_purge_thread)
     else:
         app.frames[DataPage].progressbar.stop()
-        if continueTest == True:
-            start_fill_thread()
+        if continueTest ==True:
+            app.frames[DataPage].contFill.tkraise()
 
 def start_fill_thread():
+    suppress_buttons()
+    app.frames[DataPage].stopBtn.tkraise()
     global fill_thread
     global continueTest
     continueTest = True
@@ -419,6 +447,7 @@ def check_fill_thread():
             start_data_thread()
 
 def start_data_thread():
+    suppress_buttons()
     global data_thread
     global continueTest
     continueTest = True
@@ -437,14 +466,16 @@ def check_data_thread():
         app.frames[DataPage].graph.update(timeVector,dataVector)
         app.frames[DataPage].naturalGasLabel.config(bg=warning_color)
         release_buttons()
+        app.frames[DataPage].runBtn.tkraise()
         app.frames[DataPage].status.set('  System ready.')
 
 def end_testing():
     if purge_thread.is_alive() or fill_thread.is_alive() or data_thread.is_alive():
         global continueTest
         continueTest = False #Set the test flag to false, stops testing.
-        app.frames[DataPage].status.set('  System ready.')
         release_buttons()
+        app.frames[DataPage].runBtn.tkraise()
+        app.frames[DataPage].status.set('  System ready.')
 try:
     app = HetekGUI()
     app.mainloop()
