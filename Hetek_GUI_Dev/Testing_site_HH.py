@@ -406,7 +406,7 @@ def collect_data(xVector,yVector):
                 linearActuator.retract()
     print('Data Capture Complete')
     combinedVector = np.column_stack((timeVector, dataVector))
-    for i in range(0:length(timeVector)):
+    for i in range(0,length(timeVector)):
         print(timeVector[i], ",", dataVector[i])
 
     # This section of code is used for generating the output file name. The file name will contain date/time of test, as well as concentration values present during test
