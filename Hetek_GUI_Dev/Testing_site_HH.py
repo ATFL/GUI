@@ -488,7 +488,7 @@ def check_purge_thread():
             app.frames[DataPage].contFill.tkraise()
 
 def start_fill_thread():
-    suppress_buttons()
+    #suppress_buttons()
     app.frames[DataPage].stopBtn.tkraise()
     global fill_thread
     global continueTest
@@ -509,7 +509,7 @@ def check_fill_thread():
             start_data_thread()
 
 def start_data_thread():
-    suppress_buttons()
+    #suppress_buttons()
     global data_thread
     global continueTest
     continueTest = True
