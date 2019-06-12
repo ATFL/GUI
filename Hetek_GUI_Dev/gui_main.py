@@ -58,7 +58,7 @@ clean_chamber_purge_time = 30 # normally 30s
 sensing_chamber_purge_time = 60 # normally 60s
 # Filling Variables
 chamber_fill_time = 45 # normally 45, fill the sensing chamber with the outlet valve open.
-chamber_force_fill_time = 0.5 # normally .5, fill the sensing chamber without an outlet.
+chamber_force_fill_time = 1 # normally .5, fill the sensing chamber without an outlet.
 
 # Testing Variables
 sampling_time = 0.1 # time between samples taken, determines sampling frequency

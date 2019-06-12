@@ -61,12 +61,12 @@ pump = Pump(pinPump)
 clean_chamber_purge_time = 30 # normally 30s
 sensing_chamber_purge_time = 60 # normally 60s
 # Filling Variables
-chamber_fill_time = 45 # normally 45, fill the sensing chamber with the outlet valve open.
+chamber_fill_time = 30 # normally 45, fill the sensing chamber with the outlet valve open.
 chamber_force_fill_time = 1 # normally .5, fill the sensing chamber without an outlet.
 
 # Testing Variables
 sampling_time = 0.1 # time between samples taken, determines sampling frequency
-sensing_delay_time = 2 # normall 10, time delay after beginning data acquisition till when the sensor is exposed to sample
+sensing_delay_time = 10 # normall 10, time delay after beginning data acquisition till when the sensor is exposed to sample
 sensing_retract_time = 60 # normally 60, time allowed before sensor is retracted, no longer exposed to sample
 duration_of_signal = 150 # normally 150, time allowed for data acquisition per test run
 #################### Data Array ####################
@@ -406,7 +406,7 @@ def collect_data(xVector,yVector):
                 linearActuator.retract()
     print('Data Capture Complete')
     combinedVector = np.column_stack((timeVector, dataVector))
-    for i in range(0,length(timeVector)):
+    for i in range(0,timeVector.length()):
         print(timeVector[i], ",", dataVector[i])
 
     # This section of code is used for generating the output file name. The file name will contain date/time of test, as well as concentration values present during test
