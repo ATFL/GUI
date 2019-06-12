@@ -305,6 +305,7 @@ def createFolders(year, month, day):
                         complete = True
                     finally:
                         #os.umask(original_mask)
+                        pass
             else:
                 os.makedirs(month_path)
         else:
