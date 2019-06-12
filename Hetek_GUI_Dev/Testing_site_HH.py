@@ -257,29 +257,29 @@ class ManualControlPage(tk.Frame):
         lbl_8 = tk.Label(controlFrame, text='  Toggle the pump.', anchor='w')
         lbl_8.place(relx=buttonWidth,rely=0.7,relheight=0.1,relwidth=(1-buttonWidth))
 
-def suppress_buttons():
-    app.frames[ManualControlPage].btn_1.config(state='disabled')
-    app.frames[ManualControlPage].btn_2.config(state='disabled')
-    app.frames[ManualControlPage].btn_3.config(state='disabled')
-    app.frames[ManualControlPage].btn_4.config(state='disabled')
-    app.frames[ManualControlPage].btn_5.config(state='disabled')
-    app.frames[ManualControlPage].btn_6.config(state='disabled')
-    app.frames[ManualControlPage].btn_7.config(state='disabled')
-    app.frames[ManualControlPage].btn_8.config(state='disabled')
-    app.frames[HomePage].exitBtn.config(state='disabled')
-    app.frames[HomePage].shutdownBtn.config(state='disabled')
+# def suppress_buttons():
+#     app.frames[ManualControlPage].btn_1.config(state='disabled')
+#     app.frames[ManualControlPage].btn_2.config(state='disabled')
+#     app.frames[ManualControlPage].btn_3.config(state='disabled')
+#     app.frames[ManualControlPage].btn_4.config(state='disabled')
+#     app.frames[ManualControlPage].btn_5.config(state='disabled')
+#     app.frames[ManualControlPage].btn_6.config(state='disabled')
+#     app.frames[ManualControlPage].btn_7.config(state='disabled')
+#     app.frames[ManualControlPage].btn_8.config(state='disabled')
+#     app.frames[HomePage].exitBtn.config(state='disabled')
+#     app.frames[HomePage].shutdownBtn.config(state='disabled')
 
-def release_buttons():
-    app.frames[ManualControlPage].btn_1.config(state='normal')
-    app.frames[ManualControlPage].btn_2.config(state='normal')
-    app.frames[ManualControlPage].btn_3.config(state='normal')
-    app.frames[ManualControlPage].btn_4.config(state='normal')
-    app.frames[ManualControlPage].btn_5.config(state='normal')
-    app.frames[ManualControlPage].btn_6.config(state='normal')
-    app.frames[ManualControlPage].btn_7.config(state='normal')
-    app.frames[ManualControlPage].btn_8.config(state='normal')
-    app.frames[HomePage].exitBtn.config(state='normal')
-    app.frames[HomePage].shutdownBtn.config(state='normal')
+# def release_buttons():
+#     app.frames[ManualControlPage].btn_1.config(state='normal')
+#     app.frames[ManualControlPage].btn_2.config(state='normal')
+#     app.frames[ManualControlPage].btn_3.config(state='normal')
+#     app.frames[ManualControlPage].btn_4.config(state='normal')
+#     app.frames[ManualControlPage].btn_5.config(state='normal')
+#     app.frames[ManualControlPage].btn_6.config(state='normal')
+#     app.frames[ManualControlPage].btn_7.config(state='normal')
+#     app.frames[ManualControlPage].btn_8.config(state='normal')
+#     app.frames[HomePage].exitBtn.config(state='normal')
+#     app.frames[HomePage].shutdownBtn.config(state='normal')
 
 def createFolders(year, month, day):
     ##  Get the path for the folders by year, month and day
@@ -466,7 +466,7 @@ def collect_data(xVector,yVector):
     pass
 
 def start_purge_thread():
-    suppress_buttons()
+    #suppress_buttons()
     app.frames[DataPage].stopBtn.tkraise()
     app.frames[DataPage].naturalGasLabel.config(bg=app.frames[DataPage].orig_color)
     global purge_thread
@@ -527,7 +527,7 @@ def check_data_thread():
         app.frames[DataPage].progressbar.stop()
         app.frames[DataPage].graph.update(timeVector,dataVector)
         app.frames[DataPage].naturalGasLabel.config(bg=warning_color)
-        release_buttons()
+        #release_buttons()
         app.frames[DataPage].runBtn.tkraise()
         app.frames[DataPage].status.set('  System ready.')
 
@@ -535,7 +535,7 @@ def end_testing():
     if purge_thread.is_alive() or fill_thread.is_alive() or data_thread.is_alive():
         global continueTest
         continueTest = False #Set the test flag to false, stops testing.
-        release_buttons()
+        #release_buttons()
         app.frames[DataPage].runBtn.tkraise()
         app.frames[DataPage].status.set('  System ready.')
 try:
