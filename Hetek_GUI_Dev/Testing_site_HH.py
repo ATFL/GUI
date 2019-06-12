@@ -58,10 +58,10 @@ pinPump = 16
 pump = Pump(pinPump)
 #################### System Variables ####################
 # Purging Variables
-clean_chamber_purge_time = 10 # normally 30s
-sensing_chamber_purge_time = 10 # normally 60s
+clean_chamber_purge_time = 30 # normally 30s
+sensing_chamber_purge_time = 60 # normally 60s
 # Filling Variables
-chamber_fill_time = 10 # normally 45, fill the sensing chamber with the outlet valve open.
+chamber_fill_time = 45 # normally 45, fill the sensing chamber with the outlet valve open.
 chamber_force_fill_time = 0.5 # normally .5, fill the sensing chamber without an outlet.
 
 # Testing Variables
@@ -179,10 +179,10 @@ class DataPage(tk.Frame):
         self.stopBtn = tk.Button(self.run_and_stop, text='STOP', bg=stopBtn_color, activebackground=stopBtn_color, command=lambda:end_testing())
         self.stopBtn.grid(row=0, column=0, sticky="nsew")
 
-        self.contFill = tk.Button(self.run_and_stop, text='CONTINUE', bg=runBtn_color, activebackground=runBtn_color, command=start_fill_thread())
+        self.contFill = tk.Button(self.run_and_stop, text='CONTINUE', bg=runBtn_color, activebackground=runBtn_color, command=lambda:start_fill_thread())
         self.contFill.grid(row=0, column=0, sticky="nsew")
 
-        self.runBtn = tk.Button(self.run_and_stop, text='RUN', bg=runBtn_color, activebackground=runBtn_color, command=start_purge_thread())
+        self.runBtn = tk.Button(self.run_and_stop, text='RUN', bg=runBtn_color, activebackground=runBtn_color, command=lambda:start_purge_thread())
         self.runBtn.grid(row=0, column=0, sticky="nsew")
 
 
