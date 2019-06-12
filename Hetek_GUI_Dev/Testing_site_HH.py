@@ -297,10 +297,10 @@ def createFolders(year, month, day, combinedVector):
                 if day_folder.is_dir():
                         np.savetxt(r'/home/pi/Documents/Tests/' + str(year) + '/' + str(month) + '/' + str(day) + '/' + str(fileName),
                                    combinedVector, fmt='%.10f', delimiter=',')
-                                   #complete = True
+                        complete = True
                 else:
                     pass
-                     try:
+                    try:
                          print(day_path)
                          original_mask = os.umask(0x0000)
                          desired_permission = os.umask(0x0777)
