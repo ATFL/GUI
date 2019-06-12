@@ -444,11 +444,11 @@ def collect_data(xVector,yVector):
 
 
     predicted_class = loaded_model.predict(pred_data)
-    if predicted_class == 1:
-        app.frames[DataPage].naturalGasLabel.config(bg=warning_color)
-
-    else:
-        pass
+    # if predicted_class == 1:
+    #     app.frames[DataPage].naturalGasLabel.config(bg=warning_color)
+    #
+    # else:
+    #     pass
     #if 1 natural gas is present, else no
 
     # This section of code is used for generating the output file name. The file name will contain date/time of test, as well as concentration values present during test
@@ -535,7 +535,7 @@ def end_testing():
     if purge_thread.is_alive() or fill_thread.is_alive() or data_thread.is_alive():
         global continueTest
         continueTest = False #Set the test flag to false, stops testing.
-        release_buttons()
+        #release_buttons()
         app.frames[DataPage].runBtn.tkraise()
         app.frames[DataPage].status.set('  System ready.')
 try:
