@@ -30,8 +30,9 @@ from pathlib import Path
 #################### Object Declaration ####################
 GPIO.setmode(GPIO.BCM)
 # Linear Actuator
-pinLA = 4
-linearActuator = LinearActuator(pinLA)
+pinLA = 12
+pinEnable = 18
+linearActuator = LinearActuator(pinLA,pinEnable)
 
 # Analog-Digital Converter
 adc = Adafruit_ADS1x15.ADS1115(0x48)
@@ -41,13 +42,13 @@ MOS_adc_channel = 0
 mos = MOS(adc, MOS_adc_channel)
 
 # Valves
-pinInValve = 17
+pinInValve = 8
 inValve = Valve('Inlet Valve', pinInValve)
-pinOutValve = 27
+pinOutValve =10
 outValve = Valve('Outlet Valve', pinOutValve)
 
 # Pump
-pinPump = 26
+pinPump = 16
 pump = Pump(pinPump)
 #################### System Variables ####################
 # Purging Variables
