@@ -530,7 +530,7 @@ def check_data_thread():
     else:
         app.frames[DataPage].progressbar.stop()
         app.frames[DataPage].graph.update(timeVector,dataVector)
-        app.frames[DataPage].naturalGasLabel.config(bg=warning_color)
+        #app.frames[DataPage].naturalGasLabel.config(bg=warning_color)
         release_buttons()
         app.frames[DataPage].runBtn.tkraise()
         app.frames[DataPage].status.set('  System ready.')
