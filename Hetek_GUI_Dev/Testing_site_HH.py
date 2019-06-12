@@ -33,7 +33,7 @@ from pathlib import Path
 #----> Machine learning Imports <----
 import pickle
 import sklearn
-import pywt
+
 #################### Object Declaration ####################
 GPIO.setmode(GPIO.BOARD)
 # Linear Actuator
@@ -406,10 +406,44 @@ def collect_data(xVector,yVector):
                 linearActuator.retract()
     print('Data Capture Complete')
     combinedVector = np.column_stack((timeVector, dataVector))
+    #-----> MACHINE LEARNING <--------
     # pass datavector through the machine learning code to classify the data
-    HH_class = 'C_HH.sav'
+    def Data_Manip(data):
+        samples = 5
+        smoothedData = np.zeros((data.shape[0], data.shape[1]))
+
+        for j in range(samples, data.shape[0] - samples):
+            sum = 0
+            for k in range(-1 * samples,samples + 1):
+                sum = sum + data[j + k][0] #delete [0]
+
+            smoothedData[j] = sum / (2 * samples + 1)
+
+        for j in range(smoothedData.shape[0]):
+            if smoothedData[j][0] == 0:
+                smoothedData[j][0] = data[j]
+
+        # Downsample - takes the values at time samples of multiples of 1 sec only, so one point from each 10
+        downsampledData = np.zeros((1, 1))
+        for j in range(smoothedData.shape[0]):
+            if (j % 10 == 0):
+                if (j == 0):
+                    downsampledData[0][0] = np.array(
+                        [[smoothedData[j, 0]]])
+                else:
+                    downsampledData = np.vstack((downsampledData, np.array(
+                        [[smoothedData[j, 0]]])))
+
+        return downsampledData
+
+
+    prep_data = dataManip(dataVector)
+
+    HH_class = 'C_HH.sav' #this is the file against which we compare
     loaded_model = pickle.load(open(HH_class,'rb'))
-    predicted_class = loaded_model.predict(dataVector)
+
+
+    predicted_class = loaded_model.predict(pred_data)
     if predicted_class == 1:
         app.frames[DataPage].naturalGasLabel.config(bg=warning_color)
 
