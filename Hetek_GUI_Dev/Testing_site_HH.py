@@ -297,7 +297,7 @@ def createFolders(year, month, day, combinedVector):
                 if day_folder.is_dir():
                         np.savetxt(r'/home/pi/Documents/Tests/' + str(year) + '/' + str(month) + '/' + str(day) + '/' + str(fileName),
                                    combinedVector, fmt='%.10f', delimiter=',')
-                                   complete = True
+                                   #complete = True
                 else:
                     pass
                      try:
