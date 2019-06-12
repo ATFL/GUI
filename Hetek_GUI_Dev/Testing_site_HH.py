@@ -406,6 +406,21 @@ def collect_data(xVector,yVector):
                 linearActuator.retract()
     print('Data Capture Complete')
     combinedVector = np.column_stack((timeVector, dataVector))
+
+    # This section of code is used for generating the output file name. The file name will contain date/time of test, as well as concentration values present during test
+    current_time = datetime.datetime.now()
+    year = current_time.year
+    month = current_time.month
+    day = current_time.day
+    createFolders(year, month, day)
+    hour = current_time.hour
+    minute = current_time.minute
+    fileName = str(year) + '-' + str(month) + '-' + str(day) + '_' + str(hour) + ':' + str(minute) + 'Hetek_HH.csv'
+    #fileName = str(year) + '-' + str(month) + '-' + str(day) + '_' + str(hour) + ':' + str(minute) + '_bl.csv'
+    np.savetxt(r'/home/pi/Documents/Tests/' + str(year) + '/' + str(month) + '/' + str(day) + '/' + str(fileName),
+               combinedVector, fmt='%.10f', delimiter=',')
+
+
     #-----> MACHINE LEARNING <--------
     # pass datavector through the machine learning code to classify the data
     def Data_Manip(data):
@@ -451,18 +466,7 @@ def collect_data(xVector,yVector):
     #     pass
     #if 1 natural gas is present, else no
 
-    # This section of code is used for generating the output file name. The file name will contain date/time of test, as well as concentration values present during test
-    current_time = datetime.datetime.now()
-    year = current_time.year
-    month = current_time.month
-    day = current_time.day
-    createFolders(year, month, day)
-    hour = current_time.hour
-    minute = current_time.minute
-    fileName = str(year) + '-' + str(month) + '-' + str(day) + '_' + str(hour) + ':' + str(minute) + 'Hetek_HH.csv'
-    #fileName = str(year) + '-' + str(month) + '-' + str(day) + '_' + str(hour) + ':' + str(minute) + '_bl.csv'
-    np.savetxt(r'/home/pi/Documents/Tests/' + str(year) + '/' + str(month) + '/' + str(day) + '/' + str(fileName),
-               combinedVector, fmt='%.10f', delimiter=',')
+
     pass
 
 def start_purge_thread():
