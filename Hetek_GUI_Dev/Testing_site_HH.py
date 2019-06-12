@@ -420,7 +420,7 @@ def collect_data(xVector,yVector):
     np.savetxt(r'/home/pi/Documents/Tests/' + str(year) + '/' + str(month) + '/' + str(day) + '/' + str(fileName),
                combinedVector, fmt='%.10f', delimiter=',')
 
-
+    print("Data Saved")
     #-----> MACHINE LEARNING <--------
     # pass datavector through the machine learning code to classify the data
     def Data_Manip(data):
