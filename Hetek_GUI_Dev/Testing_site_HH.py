@@ -297,8 +297,7 @@ def createFolders(year, month, day, combinedVector):
                 if day_folder.is_dir():
                         np.savetxt(r'/home/pi/Documents/Tests/' + str(year) + '/' + str(month) + '/' + str(day) + '/' + str(fileName),
                                    combinedVector, fmt='%.10f', delimiter=',')
-
-                    complete = True
+                                   complete = True
                 else:
                     pass
                      try:
@@ -413,7 +412,7 @@ def collect_data(xVector,yVector):
     combinedVector = np.column_stack((timeVector, dataVector))
     for i in range(0:length(timeVector)):
         print(timeVector[i], ",", dataVector[i])
-    
+
     # This section of code is used for generating the output file name. The file name will contain date/time of test, as well as concentration values present during test
     current_time = datetime.datetime.now()
     year = current_time.year
@@ -466,11 +465,11 @@ def collect_data(xVector,yVector):
 
 
     predicted_class = loaded_model.predict(pred_data)
-    # if predicted_class == 1:
-    #     app.frames[DataPage].naturalGasLabel.config(bg=warning_color)
-    #
-    # else:
-    #     pass
+    if predicted_class == 1:
+        app.frames[DataPage].naturalGasLabel.config(bg=warning_color)
+
+    else:
+        pass
     #if 1 natural gas is present, else no
 
 
