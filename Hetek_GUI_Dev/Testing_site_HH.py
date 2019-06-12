@@ -281,7 +281,7 @@ def release_buttons():
     app.frames[HomePage].exitBtn.config(state='normal')
     app.frames[HomePage].shutdownBtn.config(state='normal')
 
-def createFolders(year, month, day):
+def createFolders(year, month, day, combinedVector):
     ##  Get the path for the folders by year, month and day
     year_path = '/home/pi/Documents/Tests/' + str(year)
     year_folder = Path(year_path)
@@ -295,18 +295,21 @@ def createFolders(year, month, day):
         if year_folder.is_dir():
             if month_folder.is_dir():
                 if day_folder.is_dir():
+                        np.savetxt(r'/home/pi/Documents/Tests/' + str(year) + '/' + str(month) + '/' + str(day) + '/' + str(fileName),
+                                   combinedVector, fmt='%.10f', delimiter=',')
+
                     complete = True
                 else:
                     pass
-                    # try:
-                    #     print(day_path)
-                    #     original_mask = os.umask(0x0000)
-                    #     desired_permission = os.umask(0x0777)
-                    #     os.makedirs(day_path, mode = 0x0777)
-                    #     complete = True
-                    # finally:
-                    #     os.umask(desired_permission)
-                    #     pass
+                     try:
+                         print(day_path)
+                         original_mask = os.umask(0x0000)
+                         desired_permission = os.umask(0x0777)
+                         os.makedirs(day_path, mode = 0x0777)
+                         complete = True
+                     finally:
+                         os.umask(desired_permission)
+                         pass
             else:
                 os.makedirs(month_path)
         else:
@@ -408,13 +411,15 @@ def collect_data(xVector,yVector):
                 linearActuator.retract()
     print('Data Capture Complete')
     combinedVector = np.column_stack((timeVector, dataVector))
-
+    for i in range(0:length(timeVector)):
+        print(timeVector[i], ",", dataVector[i])
+    
     # This section of code is used for generating the output file name. The file name will contain date/time of test, as well as concentration values present during test
     current_time = datetime.datetime.now()
     year = current_time.year
     month = current_time.month
     day = current_time.day
-    createFolders(year, month, day)
+    createFolders(year, month, day, combinedVector)
     hour = current_time.hour
     minute = current_time.minute
     fileName = str(year) + '-' + str(month) + '-' + str(day) + '_' + str(hour) + ':' + str(minute) + 'Hetek_HH.csv'
