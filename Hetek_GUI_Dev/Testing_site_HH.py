@@ -297,15 +297,16 @@ def createFolders(year, month, day):
                 if day_folder.is_dir():
                     complete = True
                 else:
-                    try:
-                        print(day_path)
-                        original_mask = os.umask(0x0000)
-                        desired_permission = os.umask(0x0777)
-                        os.makedirs(day_path, mode = 0x0777)
-                        complete = True
-                    finally:
-                        os.umask(desired_permission)
-                        pass
+                    pass
+                    # try:
+                    #     print(day_path)
+                    #     original_mask = os.umask(0x0000)
+                    #     desired_permission = os.umask(0x0777)
+                    #     os.makedirs(day_path, mode = 0x0777)
+                    #     complete = True
+                    # finally:
+                    #     os.umask(desired_permission)
+                    #     pass
             else:
                 os.makedirs(month_path)
         else:
