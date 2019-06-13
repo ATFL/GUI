@@ -441,7 +441,7 @@ def collect_data(xVector,yVector):
             if smoothedData[j] == 0:
                 smoothedData[j] = data[j]
 
-        # Downsample - takes the values at time samples of multiples of 1 sec only, so one point from each 10
+        ## Downsample - takes the values at time samples of multiples of 1 sec only, so one point from each 10
         downsampledData = np.zeros((1, 1))
         for j in range(len(smoothedData)):
             if (j % 10 == 0):
