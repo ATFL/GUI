@@ -428,16 +428,16 @@ def collect_data(xVector,yVector):
     # pass datavector through the machine learning code to classify the data
     def Data_Manip(data):
         samples = 5
-        smoothedData = np.zeros((1500, 1))
+        smoothedData = np.zeros((len(data), 1))
 #
-        for j in range(samples, (1500 - samples)):
+        for j in range(samples, (len(data) - samples)):
             sum = 0
             for k in range(-1 * samples,samples + 1):
                 sum = sum + data[j + k] #delete [0]
 
             smoothedData[j] = sum / (2 * samples + 1)
 
-        for j in range(1500):
+        for j in range(len(data)):
             if smoothedData[j] == 0:
                 smoothedData[j] = data[j]
 
