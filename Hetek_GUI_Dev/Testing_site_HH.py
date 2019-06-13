@@ -419,8 +419,8 @@ def collect_data(xVector,yVector):
     minute = current_time.minute
     fileName = str(year) + '-' + str(month) + '-' + str(day) + '_' + str(hour) + ':' + str(minute) + 'Hetek_HH.csv'
     #fileName = str(year) + '-' + str(month) + '-' + str(day) + '_' + str(hour) + ':' + str(minute) + '_bl.csv'
-    np.savetxt(r'/home/pi/Documents/Tests/' + str(year) + '/' + str(month) + '/' + str(day) + '/' + str(fileName),
-               combinedVector, fmt='%.10f', delimiter=',')
+    #np.savetxt(r'/home/pi/Documents/Tests/' + str(year) + '/' + str(month) + '/' + str(day) + '/' + str(fileName),
+        #       combinedVector, fmt='%.10f', delimiter=',')
 
     print("Data Saved")
     #-----> MACHINE LEARNING <--------
