@@ -69,7 +69,6 @@ chamber_force_fill_time = 1 # normally 1, fill the sensing chamber without an ou
 # Testing Variables
 sampling_time = 0.1 # time between samples taken, determines sampling frequency
 sensing_delay_time = 10 # normall 10, time delay after beginning data acquisition till when the sensor is exposed to sample
-sensing_retract_time = 50 # normally 60, time allowed before sensor is retracted, no longer exposed to sample
 duration_of_signal = 200 # normally 150, time allowed for data acquisition per test run
 #################### Data Array ####################
 # DO NOT TOUCH #
@@ -454,7 +453,7 @@ def collect_data(xVector,yVector):
         app.frames[DataPage].naturalGasLabel.config(bg=warning_color)
         print("METHANE + ETHANE")
         loaded_modelPC2 = pickle.load(open(P_class2,'rb'))
-        predicted_class2 = loaded_modelPC2.predict(pred_data)
+        predicted_class2 = loaded_modelPC2.predict(prep_data)
         if predicted_class2 == 1:
             loaded_modelPR1 = pickle.load(open(P_reg1,'rb'))
             predicted_class_val = loaded_modelPR1.predict(prep_data)
