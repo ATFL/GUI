@@ -3,7 +3,7 @@
 # -----> System Imports <-----
 import os
 import sys
-import time
+from time import *
 import datetime
 import shutil
 import threading
