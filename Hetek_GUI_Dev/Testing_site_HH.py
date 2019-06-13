@@ -454,19 +454,19 @@ def collect_data(xVector,yVector):
       return downsampledData
 
 
-prep_data = Data_Manip(dataVector)
+    prep_data = Data_Manip(dataVector)
 
-HH_class = 'HH_Clf.sav' #this is the file against which we compare
-loaded_model = pickle.load(open(HH_class,'rb'))
-prep_data = np.transpose(prep_data)
-print(prep_data.shape, type(prep_data))
-predicted_class = loaded_model.predict(prep_data)
-if predicted_class == 1:
-      #app.frames[DataPage].naturalGasLabel.config(bg=warning_color)
-  print("METHANE + ETHANE")
-else:
-    print("METHANE")
-    pass
+    HH_class = 'HH_Clf.sav' #this is the file against which we compare
+    loaded_model = pickle.load(open(HH_class,'rb'))
+    prep_data = np.transpose(prep_data)
+    print(prep_data.shape, type(prep_data))
+    predicted_class = loaded_model.predict(prep_data)
+    if predicted_class == 1:
+          #app.frames[DataPage].naturalGasLabel.config(bg=warning_color)
+      print("METHANE + ETHANE")
+    else:
+        print("METHANE")
+        pass
   #if 1 natural gas is present, else no
 
 
