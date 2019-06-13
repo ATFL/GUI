@@ -429,7 +429,7 @@ def collect_data(xVector,yVector):
 
           return downsampledData
 
-    prep_data = Data_Manip(data)
+    prep_data = Data_Manip(dataVector)
 
 
     P_class1 = 'Port_Clf1.sav' #this is the file against which we compare
