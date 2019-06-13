@@ -300,15 +300,16 @@ def createFolders(year, month, day, combinedVector):
                     try:
                         print(day_path)
                         original_mask = os.umask(0x0000)
-##                        desired_permission = 0777
+                        desired_permission = = os.umask(0x0777)
                         os.makedirs(day_path, mode=0x0777)
                         complete = True
                     finally:
-                        os.umask(original_mask)
+                        os.umask(desired_permission)
             else:
                 os.makedirs(month_path)
         else:
             os.makedirs(year_path)
+    os.umask(original_mask)
     pass
 
 def purge_system():
