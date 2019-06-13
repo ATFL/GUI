@@ -58,11 +58,11 @@ pinPump = 16
 pump = Pump(pinPump)
 #################### System Variables ####################
 # Purging Variables
-clean_chamber_purge_time = 30 # normally 30s
-sensing_chamber_purge_time = 60 # normally 60s
+clean_chamber_purge_time = 1 # normally 30s
+sensing_chamber_purge_time = 1 # normally 60s
 # Filling Variables
-chamber_fill_time = 30 # normally 45, fill the sensing chamber with the outlet valve open.
-chamber_force_fill_time = 1 # normally .5, fill the sensing chamber without an outlet.
+chamber_fill_time = 1 # normally 45, fill the sensing chamber with the outlet valve open.
+chamber_force_fill_time = 1 # normally 1, fill the sensing chamber without an outlet.
 
 # Testing Variables
 sampling_time = 0.1 # time between samples taken, determines sampling frequency
@@ -463,8 +463,10 @@ def collect_data(xVector,yVector):
     predicted_class = loaded_model.predict(pred_data)
     if predicted_class == 1:
         app.frames[DataPage].naturalGasLabel.config(bg=warning_color)
+        print("METHANE + ETHANE")
 
     else:
+        print("METHANE")
         pass
     #if 1 natural gas is present, else no
 

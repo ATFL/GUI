@@ -45,10 +45,10 @@ mos = MOS(adc, MOS_adc_channel)
 Temp_adc_channel = 1
 temperatureSensor = TemperatureSensor(adc, Temp_adc_channel)
 # Valves
-pinInValve = 12
+pinInValve = 10
 inValve = Valve('Inlet Valve', pinInValve)
-pinOutValve = 10
-outValve = Valve('Outlet Valve', pinOutValve)
+# pinOutValve = 10
+# outValve = Valve('Outlet Valve', pinOutValve)
 # Pump
 pinPump = 16
 pump = Pump(pinPump)
@@ -413,8 +413,43 @@ def collect_data(xVector,yVector):
     minute = current_time.minute
     fileName = str(year) + '-' + str(month) + '-' + str(day) + '_' + str(hour) + ':' + str(minute) + 'Hetek_HH.csv'
     #fileName = str(year) + '-' + str(month) + '-' + str(day) + '_' + str(hour) + ':' + str(minute) + '_bl.csv'
-    np.savetxt(r'/home/pi/Documents/Tests/' + str(year) + '/' + str(month) + '/' + str(day) + '/' + str(fileName),
-               combinedVector, fmt='%.10f', delimiter=',')
+    #np.savetxt(r'/home/pi/Documents/Tests/' + str(year) + '/' + str(month) + '/' + str(day) + '/' + str(fileName),
+               #combinedVector, fmt='%.10f', delimiter=',')
+
+    def machine_learning(data):
+        #-----> Downsampling + moving average 
+    samples = 5
+    smoothedData = np.zeros((data.shape[0], data.shape[1]))
+
+    for j in range(samples, data.shape[0] - samples):
+        sum = 0
+        for k in range(-1 * samples,samples + 1):
+            sum = sum + data[j + k][0] #delete [0]
+
+        smoothedData[j] = sum / (2 * samples + 1)
+
+    for j in range(smoothedData.shape[0]):
+        if smoothedData[j][0] == 0:
+            smoothedData[j][0] = data[j]
+
+    # Downsample - takes the values at time samples of multiples of 1 sec only, so one point from each 10
+    downsampledData = np.zeros((1, 1))
+    for j in range(smoothedData.shape[0]):
+        if (j % 10 == 0):
+            if (j == 0):
+                downsampledData[0][0] = np.array(
+                    [[smoothedData[j, 0]]])
+            else:
+                downsampledData = np.vstack((downsampledData, np.array(
+                    [[smoothedData[j, 0]]])))
+
+        return downsampledData
+
+    data2 = machine_learning(data)
+
+
+
+
     pass
 
 def start_purge_thread():
