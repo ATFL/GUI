@@ -45,7 +45,7 @@ mos = MOS(adc, MOS_adc_channel)
 Temp_adc_channel = 1
 temperatureSensor = TemperatureSensor(adc, Temp_adc_channel)
 # Valves
-pinInValve = 3
+pinInValve = 12
 inValve = Valve('Inlet Valve', pinInValve)
 pinOutValve = 10
 outValve = Valve('Outlet Valve', pinOutValve)
