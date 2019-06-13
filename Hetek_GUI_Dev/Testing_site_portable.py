@@ -231,7 +231,7 @@ class ManualControlPage(tk.Frame):
         self.btn_5.place(relx=0,rely=0.4,relheight=0.1,relwidth=buttonWidth)
         self.btn_6 = tk.Button(controlFrame, text='Switch Inlet Valve', command=lambda:inValve.switch())
         self.btn_6.place(relx=0,rely=0.5,relheight=0.1,relwidth=buttonWidth)
-        self.btn_7 = tk.Button(controlFrame, text='Switch Outlet Valve', command=lambda:outValve.switch())
+        self.btn_7 = tk.Button(controlFrame, text='Switch Outlet Valve', command=lambda:inValve.switch())
         self.btn_7.place(relx=0,rely=0.6,relheight=0.1,relwidth=buttonWidth)
         self.btn_8 = tk.Button(controlFrame, text='Switch Pump', command=lambda:pump.switch())
         self.btn_8.place(relx=0,rely=0.7,relheight=0.1,relwidth=buttonWidth)
@@ -317,8 +317,8 @@ def purge_system():
             linearActuator.extend()
         if pump.state != True:
             pump.enable()
-        if outValve.state != True:
-            outValve.enable()
+        if inValve.state != True:
+            inValve.enable()
 
     # Purge the clean chamber.
     start_time = time.time() #Reset the time at which purging starts.
@@ -327,8 +327,8 @@ def purge_system():
             linearActuator.retract()
         if pump.state != True:
             pump.enable()
-        if outValve.state != False:
-            outValve.disable()
+        if inValve.state != False:
+            inValve.disable()
 
     pump.disable() # Turn off the pump after purging.
     pass
@@ -342,16 +342,16 @@ def fill_chamber():
     while time.time() < (start_time + chamber_fill_time) and continueTest == True:
         if pump.state != True:
             pump.enable()
-        if outValve.state != True:
-            outValve.enable()
+        if inValve.state != True:
+            inValve.enable()
 
     # Focfully fill the sensing chamber.
     start_time = time.time()
     while time.time() < (start_time + chamber_force_fill_time) and continueTest == True:
         if pump.state != True:
             pump.enable()
-        if outValve.state != False:
-            outValve.disable()
+        if inValve.state != False:
+            inValve.disable()
 
     pump.disable()
     pass
@@ -367,8 +367,8 @@ def collect_data(xVector,yVector):
     # Initial state checks
     if linearActuator.state != 'extended':
         linearActuator.extend()
-    if outValve.state != False:
-        outValve.disable()
+    if inValve.state != False:
+        inValve.disable()
 
     print('Starting data capture.')
     while (time.time() < (start_time + duration_of_signal)) and (continueTest == True):  # While time is less than duration of logged file
@@ -463,7 +463,7 @@ def collect_data(xVector,yVector):
             app.frames[DataPage].ppmVar.config(predicted_class_val)
     else:
         print("METHANE")
-        %onetime regression
+        #onetime regression
         loaded_modelPR0 = pickle.load(open(P_reg0,'rb'))
         #print(prep_data.shape, type(prep_data))
         predicted_class_val = loaded_modelPR0.predict(prep_data)
