@@ -66,9 +66,9 @@ chamber_force_fill_time = 1 # normally 1, fill the sensing chamber without an ou
 
 # Testing Variables
 sampling_time = 0.1 # time between samples taken, determines sampling frequency
-sensing_delay_time = 10 # normall 10, time delay after beginning data acquisition till when the sensor is exposed to sample
-sensing_retract_time = 60 # normally 60, time allowed before sensor is retracted, no longer exposed to sample
-duration_of_signal = 150 # normally 150, time allowed for data acquisition per test run
+sensing_delay_time = 1 # normall 10, time delay after beginning data acquisition till when the sensor is exposed to sample
+sensing_retract_time = 1 # normally 60, time allowed before sensor is retracted, no longer exposed to sample
+duration_of_signal = 1 # normally 150, time allowed for data acquisition per test run
 #################### Data Array ####################
 # DO NOT TOUCH #
 dataVector = []
@@ -423,47 +423,47 @@ def collect_data(xVector,yVector):
     print("Data Saved")
     #-----> MACHINE LEARNING <--------
     # pass datavector through the machine learning code to classify the data
-    def Data_Manip(data):
-      samples = 5
-      smoothedData = np.zeros((len(data), 1))
+    # def Data_Manip(data):
+    #   samples = 5
+    #   smoothedData = np.zeros((len(data), 1))
+    # #
+    #   for j in range(samples, (len(data) - samples)):
+    #       sum = 0
+    #       for k in range(-1 * samples,samples + 1):
+    #           sum = sum + data[j + k] #delete [0]
     #
-      for j in range(samples, (len(data) - samples)):
-          sum = 0
-          for k in range(-1 * samples,samples + 1):
-              sum = sum + data[j + k] #delete [0]
-
-          smoothedData[j] = sum / (2 * samples + 1)
-
-      for j in range(len(data)):
-          if smoothedData[j] == 0:
-              smoothedData[j] = data[j]
-
-      ## Downsample - takes the values at time samples of multiples of 1 sec only, so one point from each 10
-      downsampledData = np.zeros((1, 1))
-      for j in range(len(smoothedData)):
-          if (j % 10 == 0):
-              if (j == 0):
-                  downsampledData[0] = np.array(
-                      [[smoothedData[j, 0]]])
-              else:
-                  downsampledData = np.vstack((downsampledData, np.array(
-                      [[smoothedData[j, 0]]])))
-      return downsampledData
-
-
-    prep_data = Data_Manip(dataVector)
-
-    HH_class = 'HH_Clf.sav' #this is the file against which we compare
-    loaded_model = pickle.load(open(HH_class,'rb'))
-    prep_data = np.transpose(prep_data)
-    print(prep_data.shape, type(prep_data))
-    predicted_class = loaded_model.predict(prep_data)
-    if predicted_class == 1:
-          app.frames[DataPage].naturalGasLabel.config(bg=warning_color)
-      print("METHANE + ETHANE")
-    else:
-        print("METHANE")
-        pass
+    #       smoothedData[j] = sum / (2 * samples + 1)
+    #
+    #   for j in range(len(data)):
+    #       if smoothedData[j] == 0:
+    #           smoothedData[j] = data[j]
+    #
+    #   ## Downsample - takes the values at time samples of multiples of 1 sec only, so one point from each 10
+    #   downsampledData = np.zeros((1, 1))
+    #   for j in range(len(smoothedData)):
+    #       if (j % 10 == 0):
+    #           if (j == 0):
+    #               downsampledData[0] = np.array(
+    #                   [[smoothedData[j, 0]]])
+    #           else:
+    #               downsampledData = np.vstack((downsampledData, np.array(
+    #                   [[smoothedData[j, 0]]])))
+    #   return downsampledData
+    #
+    #
+    # prep_data = Data_Manip(dataVector)
+    #
+    # HH_class = 'HH_Clf.sav' #this is the file against which we compare
+    # loaded_model = pickle.load(open(HH_class,'rb'))
+    # prep_data = np.transpose(prep_data)
+    # print(prep_data.shape, type(prep_data))
+    # predicted_class = loaded_model.predict(prep_data)
+    # if predicted_class == 1:
+    #       app.frames[DataPage].naturalGasLabel.config(bg=warning_color)
+    #   print("METHANE + ETHANE")
+    # else:
+    #     print("METHANE")
+    #     pass
   #if 1 natural gas is present, else no
 
 
