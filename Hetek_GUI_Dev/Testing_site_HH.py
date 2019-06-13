@@ -433,20 +433,20 @@ def collect_data(xVector,yVector):
         for j in range(samples, (1500 - samples)):
             sum = 0
             for k in range(-1 * samples,samples + 1):
-                sum = sum + data[j + k][0] #delete [0]
+                sum = sum + data[j + k] #delete [0]
 
             smoothedData[j] = sum / (2 * samples + 1)
 
         for j in range(1500):
-            if smoothedData[j][0] == 0:
-                smoothedData[j][0] = data[j]
+            if smoothedData[j] == 0:
+                smoothedData[j] = data[j]
 
         # Downsample - takes the values at time samples of multiples of 1 sec only, so one point from each 10
         downsampledData = np.zeros((1, 1))
         for j in range(len(smoothedData)):
             if (j % 10 == 0):
                 if (j == 0):
-                    downsampledData[0][0] = np.array(
+                    downsampledData[0] = np.array(
                         [[smoothedData[j, 0]]])
                 else:
                     downsampledData = np.vstack((downsampledData, np.array(
