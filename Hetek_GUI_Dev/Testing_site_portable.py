@@ -308,26 +308,25 @@ def createFolders(year, month, day):
     pass
 
 def purge_system():
-    if linearActuator.state != 'default':
-        linearActuator.default()
+
 
     # Purge the sensing chamber.
     start_time = time.time() # Time at which the purging starts.
     while time.time() < (start_time + sensing_chamber_purge_time) and continueTest == True:
+        if linearActuator.state != 'extended':
+            linearActuator.extend()
         if pump.state != True:
             pump.enable()
-        if inValve.state != True:
-            inValve.enable()
         if outValve.state != True:
             outValve.enable()
 
     # Purge the clean chamber.
     start_time = time.time() #Reset the time at which purging starts.
     while time.time() < (start_time + clean_chamber_purge_time) and continueTest == True:
+        if linearActuator.state != 'retracted':
+            linearActuator.retract()
         if pump.state != True:
             pump.enable()
-        if inValve.state != False:
-            inValve.disable()
         if outValve.state != False:
             outValve.disable()
 
@@ -335,16 +334,14 @@ def purge_system():
     pass
 
 def fill_chamber():
-    if linearActuator.state != 'retracted':
-        linearActuator.retract()
+    if linearActuator.state != 'extended':
+        linearActuator.extend()
 
     # Fill the sensing chamber normally.
     start_time = time.time()
     while time.time() < (start_time + chamber_fill_time) and continueTest == True:
         if pump.state != True:
             pump.enable()
-        if inValve.state != True:
-            inValve.enable()
         if outValve.state != True:
             outValve.enable()
 
@@ -353,8 +350,6 @@ def fill_chamber():
     while time.time() < (start_time + chamber_force_fill_time) and continueTest == True:
         if pump.state != True:
             pump.enable()
-        if inValve.state != True:
-            inValve.enable()
         if outValve.state != False:
             outValve.disable()
 
@@ -370,10 +365,8 @@ def collect_data(xVector,yVector):
     sampling_time_index = 1
 
     # Initial state checks
-    if linearActuator.state != 'retracted':
-        linearActuator.retract()
-    if inValve.state != True:
-        inValve.enable()
+    if linearActuator.state != 'extended':
+        linearActuator.extend()
     if outValve.state != False:
         outValve.disable()
 
@@ -387,19 +380,19 @@ def collect_data(xVector,yVector):
         # If time is between 10-50 seconds and the Linear Actuator position sensor signal from the ADC indicates a retracted state, extend the sensor
         elif (time.time() >= (start_time + sensing_delay_time) and time.time() <= (
                 sensing_retract_time + start_time) and (continueTest == True)):
-            if linearActuator.state != 'extended':
-                linearActuator.extend()
+            if linearActuator.state != 'retracted':
+                linearActuator.retract()
 
         # If time is less than 10 seconds or greater than 50 seconds and linear actuator position sensor signal from the ADC indicates an extended state, retract the sensor
         elif (((time.time() < (sensing_delay_time + start_time)) or (
                 time.time() > (sensing_retract_time + start_time)))) and (continueTest == True):
-            if linearActuator.state != 'retracted':
-                linearActuator.retract()
+            if linearActuator.state != 'extended':
+                linearActuator.extended()
 
         # Otherwise, keep outputs off
         else:
-            if linearActuator.state != 'retracted':
-                linearActuator.retract()
+            if linearActuator.state != 'extended':
+                linearActuator.extend()
 
     combinedVector = np.column_stack((timeVector, dataVector))
 
@@ -408,7 +401,7 @@ def collect_data(xVector,yVector):
     year = current_time.year
     month = current_time.month
     day = current_time.day
-    createFolders(year, month, day)
+    #createFolders(year, month, day)
     hour = current_time.hour
     minute = current_time.minute
     fileName = str(year) + '-' + str(month) + '-' + str(day) + '_' + str(hour) + ':' + str(minute) + 'Hetek_HH.csv'
@@ -417,7 +410,7 @@ def collect_data(xVector,yVector):
                #combinedVector, fmt='%.10f', delimiter=',')
 
     def machine_learning(data):
-        #-----> Downsampling + moving average 
+        #-----> Downsampling + moving average
     samples = 5
     smoothedData = np.zeros((data.shape[0], data.shape[1]))
 
