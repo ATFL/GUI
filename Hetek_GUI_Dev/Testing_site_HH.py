@@ -300,7 +300,7 @@ def createFolders(year, month, day, combinedVector):
                     try:
                         print(day_path)
                         original_mask = os.umask(0x0000)
-                        desired_permission = = os.umask(0x0777)
+                        desired_permission = os.umask(0x0777)
                         os.makedirs(day_path, mode=0x0777)
                         complete = True
                     finally:
