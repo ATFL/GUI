@@ -63,7 +63,7 @@ pump = Pump(pinPump)
 clean_chamber_purge_time = 30 # normally 30s
 sensing_chamber_purge_time = 30 # normally 30s
 # Filling Variables
-chamber_fill_time = 1 # normally 40, fill the sensing chamber with the outlet valve open.
+chamber_fill_time = 40 # normally 40, fill the sensing chamber with the outlet valve open.
 chamber_force_fill_time = 1 # normally 1, fill the sensing chamber without an outlet.
 
 # Testing Variables
