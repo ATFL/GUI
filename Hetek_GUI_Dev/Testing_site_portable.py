@@ -387,7 +387,7 @@ def collect_data(xVector,yVector):
         elif (((time.time() < (sensing_delay_time + start_time)) or (
                 time.time() > (sensing_retract_time + start_time)))) and (continueTest == True):
             if linearActuator.state != 'extended':
-                linearActuator.extended()
+                linearActuator.extend()
 
         # Otherwise, keep outputs off
         else:

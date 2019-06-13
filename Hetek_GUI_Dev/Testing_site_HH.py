@@ -460,7 +460,7 @@ def collect_data(xVector,yVector):
     predicted_class = loaded_model.predict(prep_data)
     if predicted_class == 1:
           app.frames[DataPage].naturalGasLabel.config(bg=warning_color)
-      print("METHANE + ETHANE")
+          print("METHANE + ETHANE")
     else:
         print("METHANE")
         pass
