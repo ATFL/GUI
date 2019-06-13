@@ -432,6 +432,43 @@ def collect_data(xVector,yVector):
     prep_data = Data_Manip(data)
 
 
+    P_class1 = 'Port_Clf1.sav' #this is the file against which we compare
+    P_class2 = 'Port_Clf2.sav'
+    P_reg0 = 'Reg_0%_Port.sav'
+    P_reg1 = 'Reg_1%_Port.sav'
+    P_reg2 = 'Reg_2%_Port.sav'
+    P_reg3 = 'Reg_3%_Port.sav'
+
+    loaded_modelPC1 = pickle.load(open(P_class1,'rb'))
+    prep_data = np.transpose(prep_data)
+    print(prep_data.shape, type(prep_data))
+    prep_data_bl = prep_data - prep_data[0]
+    predicted_class1 = loaded_modelPC1.predict(prep_data_bl)
+    if predicted_class1 == 1:
+        app.frames[DataPage].naturalGasLabel.config(bg=warning_color)
+        print("METHANE + ETHANE")
+        loaded_modelPC2 = pickle.load(open(P_class2,'rb'))
+        predicted_class2 = loaded_modelPC2.predict(pred_data)
+        if predicted_class2 == 1:
+            loaded_modelPR1 = pickle.load(open(P_reg1,'rb'))
+            predicted_class_val = loaded_modelPR1.predict(prep_data)
+            app.frames[DataPage].ppmVar.config(predicted_class_val)
+        elif predicted_class2 == 2:
+            loaded_modelPR2 = pickle.load(open(P_reg2,'rb'))
+            predicted_class_val = loaded_modelPR2.predict(prep_data)
+            app.frames[DataPage].ppmVar.config(predicted_class_val)
+        else:
+            loaded_modelPR3 = pickle.load(open(P_reg3,'rb'))
+            predicted_class_val = loaded_modelPR3.predict(prep_data)
+            app.frames[DataPage].ppmVar.config(predicted_class_val)
+    else:
+        print("METHANE")
+        %onetime regression
+        loaded_modelPR0 = pickle.load(open(P_reg0,'rb'))
+        #print(prep_data.shape, type(prep_data))
+        predicted_class_val = loaded_modelPR0.predict(prep_data)
+        app.frames[DataPage].ppmVar.config(predicted_class_val)
+
 
 
     pass
