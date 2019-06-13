@@ -409,36 +409,35 @@ def collect_data(xVector,yVector):
     #np.savetxt(r'/home/pi/Documents/Tests/' + str(year) + '/' + str(month) + '/' + str(day) + '/' + str(fileName),
                #combinedVector, fmt='%.10f', delimiter=',')
 
-    def machine_learning(data):
-        #-----> Downsampling + moving average
-    samples = 5
-    smoothedData = np.zeros((data.shape[0], data.shape[1]))
+    def Data_Manip(data):
+          samples = 5
+          smoothedData = np.zeros((len(data), 1))
+    #
+          for j in range(samples, (len(data) - samples)):
+              sum = 0
+              for k in range(-1 * samples,samples + 1):
+                  sum = sum + data[j + k] #delete [0]
 
-    for j in range(samples, data.shape[0] - samples):
-        sum = 0
-        for k in range(-1 * samples,samples + 1):
-            sum = sum + data[j + k][0] #delete [0]
+              smoothedData[j] = sum / (2 * samples + 1)
 
-        smoothedData[j] = sum / (2 * samples + 1)
+          for j in range(len(data)):
+              if smoothedData[j] == 0:
+                  smoothedData[j] = data[j]
 
-    for j in range(smoothedData.shape[0]):
-        if smoothedData[j][0] == 0:
-            smoothedData[j][0] = data[j]
+          ## Downsample - takes the values at time samples of multiples of 1 sec only, so one point from each 10
+          downsampledData = np.zeros((1, 1))
+          for j in range(len(smoothedData)):
+              if (j % 10 == 0):
+                  if (j == 0):
+                      downsampledData[0] = np.array(
+                          [[smoothedData[j, 0]]])
+                  else:
+                      downsampledData = np.vstack((downsampledData, np.array(
+                          [[smoothedData[j, 0]]])))
 
-    # Downsample - takes the values at time samples of multiples of 1 sec only, so one point from each 10
-    downsampledData = np.zeros((1, 1))
-    for j in range(smoothedData.shape[0]):
-        if (j % 10 == 0):
-            if (j == 0):
-                downsampledData[0][0] = np.array(
-                    [[smoothedData[j, 0]]])
-            else:
-                downsampledData = np.vstack((downsampledData, np.array(
-                    [[smoothedData[j, 0]]])))
+          return downsampledData
 
-        return downsampledData
-
-    data2 = machine_learning(data)
+    prep_data = Data_Manip(data)
 
 
 
