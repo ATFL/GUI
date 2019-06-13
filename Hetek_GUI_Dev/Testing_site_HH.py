@@ -416,7 +416,7 @@ def collect_data(xVector,yVector):
     #fileName = str(year) + '-' + str(month) + '-' + str(day) + '_' + str(hour) + ':' + str(minute) + '_bl.csv'
     #np.savetxt(r'/home/pi/Documents/Tests/' + str(year) + '/' + str(month) + '/' + str(day) + '/' + str(fileName),
         #       combinedVector, fmt='%.10f', delimiter=',')
-    filename = strftime("/tests/%a %d %b %Y %H%M%S.csv",gmtime())
+    filename = strftime("tests/%a %d %b %Y %H%M%S.csv",gmtime())
     np.savetxt(filename,combinedVector, fmt='%.10f', delimiter=',')
 
 
