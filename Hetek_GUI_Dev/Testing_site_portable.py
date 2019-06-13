@@ -60,10 +60,10 @@ pinPump = 16
 pump = Pump(pinPump)
 #################### System Variables ####################
 # Purging Variables
-clean_chamber_purge_time = 30 # normally 30s
-sensing_chamber_purge_time = 30 # normally 30s
+clean_chamber_purge_time = 1 # normally 30s
+sensing_chamber_purge_time = 1 # normally 30s
 # Filling Variables
-chamber_fill_time = 40 # normally 40, fill the sensing chamber with the outlet valve open.
+chamber_fill_time = 1 # normally 40, fill the sensing chamber with the outlet valve open.
 chamber_force_fill_time = 1 # normally 1, fill the sensing chamber without an outlet.
 
 # Testing Variables
@@ -459,14 +459,20 @@ def collect_data(xVector,yVector):
             loaded_modelPR1 = pickle.load(open(P_reg1,'rb'))
             predicted_class_val = loaded_modelPR1.predict(prep_data)
             app.frames[DataPage].ppmVar.config(predicted_class_val)
+            print("1% Mix")
+            print(predicted_class_val)
         elif predicted_class2 == 2:
             loaded_modelPR2 = pickle.load(open(P_reg2,'rb'))
             predicted_class_val = loaded_modelPR2.predict(prep_data)
             app.frames[DataPage].ppmVar.config(predicted_class_val)
+            print("2% Mix")
+            print(predicted_class_val)
         else:
             loaded_modelPR3 = pickle.load(open(P_reg3,'rb'))
             predicted_class_val = loaded_modelPR3.predict(prep_data)
             app.frames[DataPage].ppmVar.config(predicted_class_val)
+            print("3% Mix")
+            print(predicted_class_val)
     else:
         print("METHANE")
         #onetime regression
@@ -474,6 +480,7 @@ def collect_data(xVector,yVector):
         #print(prep_data.shape, type(prep_data))
         predicted_class_val = loaded_modelPR0.predict(prep_data)
         app.frames[DataPage].ppmVar.config(predicted_class_val)
+        print(predicted_class_val)
 
 
 
