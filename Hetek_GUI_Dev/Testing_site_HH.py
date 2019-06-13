@@ -451,8 +451,7 @@ def collect_data(xVector,yVector):
               else:
                   downsampledData = np.vstack((downsampledData, np.array(
                       [[smoothedData[j, 0]]])))
-
-        return downsampledData
+      return downsampledData
 
 
 prep_data = Data_Manip(dataVector)
