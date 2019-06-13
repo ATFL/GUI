@@ -30,6 +30,12 @@ import os
 import Adafruit_ADS1x15
 import serial
 from pathlib import Path
+
+#---->
+import numpy as np
+import sklearn
+import pickle
+
 #################### Object Declaration ####################
 GPIO.setmode(GPIO.BOARD)
 # Linear Actuator
