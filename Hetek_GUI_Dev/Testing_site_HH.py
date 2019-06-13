@@ -3,7 +3,7 @@
 # -----> System Imports <-----
 import os
 import sys
-import time
+from time import *
 import datetime
 import shutil
 import threading
@@ -411,17 +411,14 @@ def collect_data(xVector,yVector):
     #     print(timeVector[i], ",", dataVector[i])
 
     # This section of code is used for generating the output file name. The file name will contain date/time of test, as well as concentration values present during test
-    current_time = datetime.datetime.now()
-    year = current_time.year
-    month = current_time.month
-    day = current_time.day
-    #createFolders(year, month, day, combinedVector)
-    hour = current_time.hour
-    minute = current_time.minute
-    fileName = str(year) + '-' + str(month) + '-' + str(day) + '_' + str(hour) + ':' + str(minute) + 'Hetek_HH.csv'
+
+    #fileName = str(year) + '-' + str(month) + '-' + str(day) + '_' + str(hour) + ':' + str(minute) + 'Hetek_HH.csv'
     #fileName = str(year) + '-' + str(month) + '-' + str(day) + '_' + str(hour) + ':' + str(minute) + '_bl.csv'
     #np.savetxt(r'/home/pi/Documents/Tests/' + str(year) + '/' + str(month) + '/' + str(day) + '/' + str(fileName),
         #       combinedVector, fmt='%.10f', delimiter=',')
+    filename = strftime("/tests/%a %d %b %Y %H%M%S.csv",gmtime())
+    np.savetxt(filename,combinedVector, fmt='%.10f', delimiter=',')
+
 
     print("Data Saved")
     #-----> MACHINE LEARNING <--------
@@ -462,7 +459,7 @@ def collect_data(xVector,yVector):
     print(prep_data.shape, type(prep_data))
     predicted_class = loaded_model.predict(prep_data)
     if predicted_class == 1:
-          #app.frames[DataPage].naturalGasLabel.config(bg=warning_color)
+          app.frames[DataPage].naturalGasLabel.config(bg=warning_color)
       print("METHANE + ETHANE")
     else:
         print("METHANE")
