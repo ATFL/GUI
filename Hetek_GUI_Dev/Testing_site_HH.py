@@ -457,7 +457,7 @@ def collect_data(xVector,yVector):
 
     prep_data = Data_Manip(dataVector)
 
-    HH_class = 'C_HH.sav' #this is the file against which we compare
+    HH_class = '/home/pi/Desktop/gui/Hetek_GUI_Dev/C_HH.sav' #this is the file against which we compare
     loaded_model = pickle.load(open(HH_class,'rb'))
 
 
