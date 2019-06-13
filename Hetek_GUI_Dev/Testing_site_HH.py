@@ -426,10 +426,10 @@ def collect_data(xVector,yVector):
     print("Data Saved")
     #-----> MACHINE LEARNING <--------
     # pass datavector through the machine learning code to classify the data
-def Data_Manip(data):
+    def Data_Manip(data):
       samples = 5
       smoothedData = np.zeros((len(data), 1))
-#
+    #
       for j in range(samples, (len(data) - samples)):
           sum = 0
           for k in range(-1 * samples,samples + 1):
@@ -452,7 +452,7 @@ def Data_Manip(data):
                   downsampledData = np.vstack((downsampledData, np.array(
                       [[smoothedData[j, 0]]])))
 
-      return downsampledData
+        return downsampledData
 
 
 prep_data = Data_Manip(dataVector)
