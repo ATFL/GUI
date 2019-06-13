@@ -429,7 +429,7 @@ def collect_data(xVector,yVector):
     def Data_Manip(data):
         samples = 5
         smoothedData = np.zeros((1500, 1))
-
+#
         for j in range(samples, (1500 - samples)):
             sum = 0
             for k in range(-1 * samples,samples + 1):
