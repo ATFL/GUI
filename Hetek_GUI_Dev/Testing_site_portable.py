@@ -22,7 +22,7 @@ import matplotlib.animation as animation
 from matplotlib import style
 # -----> Auxiliary Imports <------
 from gui_widgets import *
-from hetek_components import *
+from hetekP_components import *
 # -----> RPi Imports <------
 import RPi.GPIO as GPIO
 import time
@@ -397,7 +397,7 @@ def collect_data(xVector,yVector):
     combinedVector = np.column_stack((timeVector, dataVector))
 
     # This section of code is used for generating the output file name. The file name will contain date/time of test, as well as concentration values present during test
-    filename = strftime("/tests/%a %d %b %Y %H%M%S.csv",gmtime())
+    filename = strftime("tests/%a %d %b %Y %H%M%S.csv",gmtime())
     np.savetxt(filename,combinedVector, fmt='%.10f', delimiter=',')
 
 
