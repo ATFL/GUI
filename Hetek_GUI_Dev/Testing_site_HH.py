@@ -415,7 +415,7 @@ def collect_data(xVector,yVector):
     year = current_time.year
     month = current_time.month
     day = current_time.day
-    createFolders(year, month, day, combinedVector)
+    #createFolders(year, month, day, combinedVector)
     hour = current_time.hour
     minute = current_time.minute
     fileName = str(year) + '-' + str(month) + '-' + str(day) + '_' + str(hour) + ':' + str(minute) + 'Hetek_HH.csv'
