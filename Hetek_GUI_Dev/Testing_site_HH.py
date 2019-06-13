@@ -455,7 +455,7 @@ def collect_data(xVector,yVector):
         return downsampledData
 
 
-    prep_data = dataManip(dataVector)
+    prep_data = data_Manip(dataVector)
 
     HH_class = 'C_HH.sav' #this is the file against which we compare
     loaded_model = pickle.load(open(HH_class,'rb'))
