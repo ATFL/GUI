@@ -4,12 +4,12 @@ import os
 import tkinter
 from tkinter import ttk
 from gui_widget import *
-import matplotlib 
+import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
-import matplotlib.animation as animation 
-from matplotlib import style 
+import matplotlib.animation as animation
+from matplotlib import style
 import random
 style.use('ggplot')
 
@@ -54,26 +54,26 @@ newCanvas._tkcanvas.pack(side=TOP, fill=BOTH, expand=True)
 
 
 
-# Step 1. Generate two lists(?) full of random data 
-# Step 2. Append a single new data point (or set) to each list 
-# Step 3. Remove the first thing in each list and shift all elements left 
-# Step 4. Re-display graph 
+# Step 1. Generate two lists(?) full of random data
+# Step 2. Append a single new data point (or set) to each list
+# Step 3. Remove the first thing in each list and shift all elements left
+# Step 4. Re-display graph
 
-    
-    
+
+
 
 def purge1Callback():
     print ("This will be replaced with the required purge 1 actions")
-    
+
 def purge2Callback():
     print("This will be replaced with the required purge 2 actions")
 
 def runCallback():
     print("This will be replaced with the required run actions")
-    
+
 def stopCallback():
     print("This will be replaced with the required stop actions")
-    
+
 box2 = Button(right, text = "Purge 1", command = purge1Callback)
 box3 = Button(right, text = "Purge 2", command = purge2Callback)
 box4 = Button(right, text = "Run", command = runCallback)
@@ -114,7 +114,7 @@ t2Label1 = Label(t2box1, text="First Value")
 t2Label2 = Label(t2box2, text="Second Value")
 
 t2Label3 = Label(t2box3, text="Third Value")
- 
+
 
 t2Label4 = Label(t2box4, text="Fourth Value")
 
@@ -130,33 +130,33 @@ setting_1 = SettingScrollBar(t2box1, 'Temperature', 0, 100)
 setting_1.placeWidget(0.1, 0.3, 0.8, 0.4)
 
 setting_2 = SettingScrollBar(t2box2, 'Pressure', 0, 30)
-setting_2.placeWidget(0.1, 0.3, 0.8, 0.4) 
+setting_2.placeWidget(0.1, 0.3, 0.8, 0.4)
 
-setting_3 = SettingScrollBar(t2box3, 'Temperature', 0, 50) 
+setting_3 = SettingScrollBar(t2box3, 'Temperature', 0, 50)
 
 setting_3.placeWidget(0.1, 0.3, 0.8, 0.4)
 
 setting_4 = SettingScrollBar(t2box4, 'Temperature', 0, 50)
-setting_4.placeWidget(0.1, 0.2, 0.8, 0.4) 
+setting_4.placeWidget(0.1, 0.2, 0.8, 0.4)
 
 setting_5 = SettingScrollBar(t2box5, 'Temperature', 0, 50)
-setting_5.placeWidget(0.1, 0.2, 0.8, 0.4) 
+setting_5.placeWidget(0.1, 0.2, 0.8, 0.4)
 
 setting_6 = SettingScrollBar(t2box6, 'Temperature', 0, 27)
-setting_6.placeWidget(0.1, 0.2, 0.8, 0.4) 
+setting_6.placeWidget(0.1, 0.2, 0.8, 0.4)
 
 
 
 
-    
+
 left2.pack(side="left", expand=True, fill="both")
 right2.pack(side="left", expand=True, fill="both")
 bottom2.pack(side = "bottom", expand = True, fill = "both", anchor = S)
 t2box1.pack(expand=True, fill="both", padx=10, pady=10)
 t2box2.pack(expand=True, fill="both", padx=10, pady=10)
-t2box3.pack(expand=True, fill = "both", padx = 10, pady = 10) 
+t2box3.pack(expand=True, fill = "both", padx = 10, pady = 10)
 t2box4.pack(expand = True, fill = "both", padx = 10, pady = 10)
-t2box5.pack(expand = True, fill = "both", padx = 10, pady = 10) 
+t2box5.pack(expand = True, fill = "both", padx = 10, pady = 10)
 t2box6.pack(expand = True, fill = "both", padx = 10, pady = 10)
 
 t2Label1.pack()
@@ -176,13 +176,13 @@ def callback():
     print ("Third Value: ")
     print (setting_3.get())
     print ("Fourth Value: ")
-    print (setting_4.get()) 
-    print ("Fifth Value: ") 
-    print (setting_5.get()) 
+    print (setting_4.get())
+    print ("Fifth Value: ")
+    print (setting_5.get())
     print ("Sixth Value: ")
-    print (setting_6.get()) 
+    print (setting_6.get())
 
-Button1 = Button(bottom2, text = "Submit", command = callback) 
+Button1 = Button(bottom2, text = "Submit", command = callback)
 Button1.pack(expand = True, fill = "x", padx = 10, pady = 10, side = BOTTOM)
 
 
@@ -197,19 +197,19 @@ class StdRedirector(object):
         self.text_space.insert("end", string)
         self.text_space.see("end")
         self.text_space.config(state=tkinter.DISABLED)
-        
+
 class CoreGUI(object):
     def __init__(self, parent):
         text_box = tkinter.Text(parent, state=tkinter.DISABLED, yscrollcommand = scrollbar.set)
         sys.stdout = StdRedirector(text_box)
         sys.stderr = StdRedirector(text_box)
         text_box.pack(expand = True, fill = "both")
-       
-     
+
+
 
     def main(self):
         print ("Std Output")
-        raise ValueError("Std Error")       
+        raise ValueError("Std Error")
 
 
 val1 = StringVar()
@@ -235,19 +235,19 @@ def clock():
 
     # run itself again after 200 ms
     #xList, yList = animate(xList, yList)
-    xList.pop(0)
+
     xList.append(random.randint(0, 100))
-    yList.pop(0)
+    
     yList.append(random.randint(0, 50))
     newPlot.clear()
     newPlot.plot(xList, yList)
     newCanvas.draw()
     #newCanvas.update()
     #newCanvas.plot(xList,yList)
-    tab3.after(200, clock) 
-    
-    
-    
+    tab3.after(200, clock)
+
+
+
 
 
 left3 = Frame(tab3, borderwidth=2, relief="solid")
@@ -301,12 +301,12 @@ t3label11 = Label(t3box11, text="Eigth Value")
 t3label11.config(font = ("Verdana", 11))
 t3label11_1 = Label(t3box11, textvariable = val8)
 t3label11_1.config(font = ("Verdana", 11))
-        
+
 left3.pack(side="left", expand=True, fill="both")
 right3.pack(side="right", expand=True, fill="both")
 t3box1.pack(expand=True, fill="both", padx=10, pady=10)
 t3box2.pack(expand=True, fill="both", padx=10, pady=10)
-#box3.pack(expand=True, fill = "both", padx = 5, pady = 10) 
+#box3.pack(expand=True, fill = "both", padx = 5, pady = 10)
 
 t3box4.pack(side="left", expand=True, fill ="both", padx=5, pady=5)
 t3box5.pack(side="left", expand=True, fill ="both", padx=5, pady=5)
