@@ -9,7 +9,7 @@ from motor_print import run_motor
 """create the window, size, color, and packing"""
 
 
-w, h = 800, 455 #Window Size
+w, h = 0,0 #Window Size
 window = Tk()
 window.title("ATFL - Metro Vancouver") #Include the name of the window
 canvas = Canvas(window)
