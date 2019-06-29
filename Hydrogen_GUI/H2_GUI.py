@@ -301,6 +301,8 @@ class ManualControlPage(tk.Frame):
         lbl_8 = tk.Label(controlFrame, text='  Toggle the pump.', anchor='w')
         lbl_8.place(relx=buttonWidth,rely=0.7,relheight=0.1,relwidth=(1-buttonWidth))
 
+        # # TODO: add more buttons1
+
 def suppress_buttons():
     app.frames[ManualControlPage].btn_1.config(state='disabled')
     app.frames[ManualControlPage].btn_2.config(state='disabled')
