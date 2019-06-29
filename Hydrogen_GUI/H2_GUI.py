@@ -47,30 +47,72 @@ adc = Adafruit_ADS1x15.ADS1115(0x48)
 # MOS Sensor
 MOS_adc_channel = 0
 mos = MOS(adc, MOS_adc_channel)
-# Temperature sensor
-Temp_adc_channel = 1
-temperatureSensor = TemperatureSensor(adc, Temp_adc_channel)
+# Pressure sensor
+press_adc_channel = 1
+pressSensor = PressureSensor(adc,press_adc_channel)
+
 # Valves
-pinInValve = 10
-inValve = Valve('Inlet Valve', pinInValve)
-# pinOutValve = 10
-# outValve = Valve('Outlet Valve', pinOutValve)
-# Pump
-pinPump = 16
-pump = Pump(pinPump)
+
+pinvalve1 = 10
+pinvalve2 = 11
+pinvalve3 = 12
+pinvalve4 = 13
+pinvalve5 = 14
+pinvalve6 = 15
+
+valve1 = Valve('Valve1',pinvalve1) #lets clean air into chamber
+valve2 = Valve('Valve2',pinvalve2) #lets Methane into chamber
+valve3 = Valve('Valve3',pinvalve3) #lets Hydrogen into chamber
+valve4 = Valve('Valve4',pinvalve4) #venting valve to clean methane fill line
+valve5 = Valve('Valve5',pinvalve5) #venting valve to clean hydrogen fill line
+valve6 = Valve('Valve6',pinvalve6) #output vent valve
+
+################## EXPERIMENTAL STEPS ################
+
+
+#STEP 1: PURGE BOX::: V1:Y V2:N V3:N V4:N V5:N V6:Y
+#STEP 2: CLENSE FILL LINE::: V1:N V2:N V3:N V4:Y V5:Y V6:N
+#STEP 3: FILL CHAMBER::: V1:N V2:Y V3:Y V4:N V5:N V6:Y
+#STEP 4: TEST::: V1:N V2:N V3:N V4:N V5:N V6:N
+
 #################### System Variables ####################
-# Purging Variables
-clean_chamber_purge_time = 30 # normally 30s
-sensing_chamber_purge_time = 30 # normally 30s
+
+#PURGING VARIABLES
+chamber_purge_time = 120 #Time to purge chamber: experiment with it
+
+
+#########FILLING CHAMBER WITH TARGET GAS #############
 # Filling Variables
-chamber_fill_time = 40 # normally 40, fill the sensing chamber with the outlet valve open.
-chamber_force_fill_time = 1 # normally 1, fill the sensing chamber without an outlet.
+fill_line_clense_time = 20
+
+
+######## SAMPLE INJECTION CONCENTRATIONS ##########
+methane_injection_conc = 1000 #Whatever vales you need
+hydrogen_injection_conc = 1000 #whatever values you need
+##############################################33333
+
+fill_methane_time = 0
+methane_correction_factor = #found it on MKS website
+methane_flow_rate = #what the value on the MFC is set to
+methane_injection_amount = methane_injection_conc / 500 # mL
+fill_methane_time = ( 60 * ( 1 / methane_correction_factor ) * metane_injection_amount ) / methane_flow_rate  # Time in seconds
+
+fill_hydrogen_time =  0
+hydrogen_correction_factor = #found it on MKS website
+hydrogen_flow_rate = #what the value on the MFC is set to
+hydrogen_injection_amount = hydrogen_injection_conc / 500 # mL
+fill_hydrogen_time = ( 60 * ( 1 / hydrogen_correction_factor ) * hydrogen_injection_amount ) / methane_flow_rate  # Time in seconds
+
+#########################################################\
 
 # Testing Variables
 sampling_time = 0.1 # tim50e between samples taken, determines sampling frequency
-sensing_delay_time = 10 # normall 10, time delay after beginning data acquisition till when the sensor is exposed to sample
+sensing_delay_time = 5 # normall 5, time delay after beginning data acquisition till when the sensor is exposed to sample
 sensing_retract_time = 50 # normally 50, time allowed before sensor is retracted, no longer exposed to sample
 duration_of_signal = 200 # normally 150, time allowed for data acquisition per test run
+
+total_time = chamber_purge_time + fill_line_clense_time + max(fill_methane_time,fill_hydrogen_time) + duration_of_signal
+
 #################### Data Array ####################
 # DO NOT TOUCH #
 dataVector = []
@@ -283,83 +325,86 @@ def release_buttons():
     app.frames[HomePage].exitBtn.config(state='normal')
     app.frames[HomePage].shutdownBtn.config(state='normal')
 
-def createFolders(year, month, day):
-    ##  Get the path for the folders by year, month and day
-    year_path = '/home/pi/Documents/Tests/' + str(year)
-    year_folder = Path(year_path)
-    month_path = '/home/pi/Documents/Tests/' + str(year) + '/' + str(month)
-    month_folder = Path(month_path)
-    day_path = '/home/pi/Documents/Tests/' + str(year) + '/' + str(month) + '/' + str(day)
-    day_folder = Path(day_path)
-    ##  Start creating the folders, when the var complete == True, all the folders have been created
-    complete = False
-    while complete == False:
-        if year_folder.is_dir():
-            if month_folder.is_dir():
-                if day_folder.is_dir():
-                    complete = True
-                else:
-                    try:
-                        print(day_path)
-                        original_mask = os.umask(0x0000)
-##                        desired_permission = 0777
-                        os.makedirs(day_path, mode=0x0777)
-                        complete = True
-                    finally:
-                        os.umask(original_mask)
-            else:
-                os.makedirs(month_path)
-        else:
-            os.makedirs(year_path)
-    pass
-
 def purge_system():
-
-
-    # Purge the sensing chamber.
-    start_time = time.time() # Time at which the purging starts.
-    while time.time() < (start_time + sensing_chamber_purge_time) and continueTest == True:
+    print("Test will take %d seconds",total_time)
+    start_time = time.time()
+    while time.time() < (start_time + chamber_purge_time) and continueTest == True:
         if linearActuator.state != 'extended':
             linearActuator.extend()
-        if pump.state != True:
-            pump.enable()
-        if inValve.state != True:
-            inValve.enable()
+        if valve1.state != True:
+            valve1.enable()
+        if valve2.state != False:
+            valve2.disable()
+        if valve3.state != False:
+            valve3.disable()
+        if valve4.state != False:
+            valve4.disable()
+        if valve5.state != False:
+            valve5.disable()
+        if valve6.state != True:
+            valve6.enable()
 
-    # Purge the clean chamber.
-    start_time = time.time() #Reset the time at which purging starts.
-    while time.time() < (start_time + clean_chamber_purge_time) and continueTest == True:
-        if linearActuator.state != 'retracted':
-            linearActuator.retract()
-        if pump.state != True:
-            pump.enable()
-        if inValve.state != False:
-            inValve.disable()
-
-    pump.disable() # Turn off the pump after purging.
+    linearActuator.retract()
     pass
 
 def fill_chamber():
-    if linearActuator.state != 'extended':
-        linearActuator.extend()
-
-    # Fill the sensing chamber normally.
+    if linearActuator.state != 'retracted':
+        linearActuator.retract()
+    #Cleansing Fill Lines
     start_time = time.time()
-    while time.time() < (start_time + chamber_fill_time) and continueTest == True:
-        if pump.state != True:
-            pump.enable()
-        if inValve.state != True:
-            inValve.enable()
+    while time.time() < (start_time + fill_line_clense_time) and continueTest == True:
+        if valve1.state != False:
+            valve1.disable()
+        if valve2.state != False:
+            valve2.disable()
+        if valve3.state != False:
+            valve3.disable()
+        if valve4.state != True:
+            valve4.enable()
+        if valve5.state != True:
+            valve5.enable()
+        if valve6.state != False:
+            valve6.disable()
 
-    # Focfully fill the sensing chamber.
+    # Filling the chamber
     start_time = time.time()
-    while time.time() < (start_time + chamber_force_fill_time) and continueTest == True:
-        if pump.state != True:
-            pump.enable()
-        if inValve.state != False:
-            inValve.disable()
 
-    pump.disable()
+    if fill_methane_time > fill_hydrogen_time:
+        while time.time() < (start_time + fill_hydrogen_time) and continueTest == True:
+            if valve1.state != False:
+                valve1.disable()
+            if valve2.state != True:
+                valve2.enable()
+            if valve3.state != True:
+                valve3.enable()
+            if valve4.state != False:
+                valve4.disable()
+            if valve5.state != False:
+                valve5.disable()
+            if valve6.state != True:
+                valve6.enable()
+        while time.time() > (start_time + fill_hydrogen_time) and time.time() < (start_time + fill_methane_time) and continueTest == True:
+            valve3.disable()
+        pass
+
+    elif fill_hydrogen_time > fill_methane_time:
+        while time.time() < (start_time + fill_methane_time) and continueTest == True:
+            if valve1.state != False:
+                valve1.disable()
+            if valve2.state != True:
+                valve2.enable()
+            if valve3.state != True:
+                valve3.enable()
+            if valve4.state != False:
+                valve4.disable()
+            if valve5.state != False:
+                valve5.disable()
+            if valve6.state != True:
+                valve6.enable()
+        while time.time() > (start_time + fill_methane_time) and time.time() < (start_time + fill_hydrogen_time) and continueTest == True:
+            valve2.disable()
+        pass
+
     pass
 
 def collect_data(xVector,yVector):
@@ -371,10 +416,20 @@ def collect_data(xVector,yVector):
     sampling_time_index = 1
 
     # Initial state checks
-    if linearActuator.state != 'extended':
-        linearActuator.extend()
-    if inValve.state != False:
-        inValve.disable()
+    if linearActuator.state != 'retracted':
+        linearActuator.retract()
+    if valve1.state != False:
+        valve1.disable()
+    if valve2.state != False:
+        valve2.disable()
+    if valve3.state != False:
+        valve3.disable()
+    if valve4.state != False:
+        valve4.disable()
+    if valve5.state != False:
+        valve5.disable()
+    if valve6.state != False:
+        valve6.disable()
 
     print('Starting data capture.')
     while (time.time() < (start_time + duration_of_signal)) and (continueTest == True):  # While time is less than duration of logged file
@@ -403,88 +458,18 @@ def collect_data(xVector,yVector):
     combinedVector = np.column_stack((timeVector, dataVector))
 
     # This section of code is used for generating the output file name. The file name will contain date/time of test, as well as concentration values present during test
-    filename = strftime("testsP/%a %d %b %Y %H%M%S.csv",gmtime())
+    filename = strftime("testsP/%a %d %b %Y %H%M%S.csv",localtime())
     np.savetxt(filename,combinedVector, fmt='%.10f', delimiter=',')
-
-
-    def Data_Manip(data):
-          samples = 5
-          smoothedData = np.zeros((len(data), 1))
-    #
-          for j in range(samples, (len(data) - samples)):
-              sum = 0
-              for k in range(-1 * samples,samples + 1):
-                  sum = sum + data[j + k] #delete [0]
-
-              smoothedData[j] = sum / (2 * samples + 1)
-
-          for j in range(len(data)):
-              if smoothedData[j] == 0:
-                  smoothedData[j] = data[j]
-
-          ## Downsample - takes the values at time samples of multiples of 1 sec only, so one point from each 10
-          downsampledData = np.zeros((1, 1))
-          for j in range(len(smoothedData)):
-              if (j % 10 == 0):
-                  if (j == 0):
-                      downsampledData[0] = np.array(
-                          [[smoothedData[j, 0]]])
-                  else:
-                      downsampledData = np.vstack((downsampledData, np.array(
-                          [[smoothedData[j, 0]]])))
-
-          return downsampledData
-
-    prep_data = Data_Manip(dataVector)
-
-
-    P_class1 = 'Port_Clf1.sav' #this is the file against which we compare
-    P_class2 = 'Port_Clf2.sav'
-    P_reg0 = 'Reg_0%_Port.sav'
-    P_reg1 = 'Reg_1%_Port.sav'
-    P_reg2 = 'Reg_2%_Port.sav'
-    P_reg3 = 'Reg_3%_Port.sav'
-
-    loaded_modelPC1 = pickle.load(open(P_class1,'rb'))
-    prep_data = np.transpose(prep_data)
-    print(prep_data.shape, type(prep_data))
-    prep_data_bl = prep_data - prep_data[0]
-    predicted_class1 = loaded_modelPC1.predict(prep_data_bl)
-    if predicted_class1 == 1:
-        app.frames[DataPage].naturalGasLabel.config(bg=warning_color)
-        print("METHANE + ETHANE")
-        loaded_modelPC2 = pickle.load(open(P_class2,'rb'))
-        predicted_class2 = loaded_modelPC2.predict(prep_data)
-        if predicted_class2 == 1:
-            loaded_modelPR1 = pickle.load(open(P_reg1,'rb'))
-            predicted_class_val = loaded_modelPR1.predict(prep_data)
-            #app.frames[DataPage].ppmVar.config(predicted_class_val)
-            print("1% Mix")
-            print(predicted_class_val)
-        elif predicted_class2 == 2:
-            loaded_modelPR2 = pickle.load(open(P_reg2,'rb'))
-            predicted_class_val = loaded_modelPR2.predict(prep_data)
-            #app.frames[DataPage].ppmVar.config(predicted_class_val)
-            print("2% Mix")
-            print(predicted_class_val)
-        else:
-            loaded_modelPR3 = pickle.load(open(P_reg3,'rb'))
-            predicted_class_val = loaded_modelPR3.predict(prep_data)
-            #app.frames[DataPage].ppmVar.config(predicted_class_val)
-            print("3% Mix")
-            print(predicted_class_val)
-    else:
-        print("METHANE")
-        #onetime regression
-        loaded_modelPR0 = pickle.load(open(P_reg0,'rb'))
-        #print(prep_data.shape, type(prep_data))
-        predicted_class_val = loaded_modelPR0.predict(prep_data)
-        #app.frames[DataPage].ppmVar.config(predicted_class_val)
-        print(predicted_class_val)
 
 
 
     pass
+
+# def multi_test_run():
+#
+# def pressue_check_thread():
+#     if pressSensor.read() > press_threshold:
+
 
 def start_purge_thread():
     suppress_buttons()
@@ -496,7 +481,7 @@ def start_purge_thread():
     purge_thread = threading.Thread(target=purge_system)
     purge_thread.daemon = True
     app.frames[DataPage].status.set('  Purging chambers...')
-    app.frames[DataPage].progressbar.start((clean_chamber_purge_time+sensing_chamber_purge_time)*10)
+    app.frames[DataPage].progressbar.start((chamber_purge_time)*10)
     purge_thread.start()
     app.after(20, check_purge_thread)
 
@@ -517,7 +502,7 @@ def start_fill_thread():
     fill_thread = threading.Thread(target=fill_chamber)
     fill_thread.daemon = True
     app.frames[DataPage].status.set('  Filling sample chamber...')
-    app.frames[DataPage].progressbar.start((chamber_fill_time+chamber_force_fill_time)*10)
+    app.frames[DataPage].progressbar.start(max(fill_methane_time,fill_hydrogen_time)*10)
     fill_thread.start()
     app.after(20, check_fill_thread)
 
@@ -547,7 +532,6 @@ def check_data_thread():
     else:
         app.frames[DataPage].progressbar.stop()
         app.frames[DataPage].graph.update(timeVector,dataVector)
-        #app.frames[DataPage].naturalGasLabel.config(bg=warning_color)
         release_buttons()
         app.frames[DataPage].runBtn.tkraise()
         app.frames[DataPage].status.set('  System ready.')
