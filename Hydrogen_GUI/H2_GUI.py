@@ -57,7 +57,7 @@ pinvalve1 = 10
 pinvalve2 = 11
 pinvalve3 = 12
 pinvalve4 = 13
-pinvalve5 = 14
+pinvalve5 = 18
 pinvalve6 = 15
 
 valve1 = Valve('Valve1',pinvalve1) #lets clean air into chamber
