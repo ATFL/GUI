@@ -113,7 +113,7 @@ sensing_delay_time = 5 # normall 5, time delay after beginning data acquisition 
 sensing_retract_time = 50 # normally 50, time allowed before sensor is retracted, no longer exposed to sample
 duration_of_signal = 200 # normally 150, time allowed for data acquisition per test run
 
-total_time = chamber_purge_time + fill_line_clense_time + max(fill_methane_time,fill_hydrogen_time) + duration_of_signal
+#total_time = chamber_purge_time + fill_line_clense_time + max(fill_methane_time,fill_hydrogen_time) + duration_of_signal
 
 ######### TESTING ARRAY #########################
 
