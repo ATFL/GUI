@@ -93,17 +93,17 @@ test_counter = 1
 
 ##############################################33333
  ###### Deprecated ##########
-# fill_methane_time = 0
-# methane_correction_factor = 0#found it on MKS website
-# methane_flow_rate = 0#what the value on the MFC is set to
-# methane_injection_amount = methane_injection_conc / 500 # mL
-# fill_methane_time = ( 60 * ( 1 / methane_correction_factor ) * metane_injection_amount ) / methane_flow_rate  # Time in seconds
-#
-# fill_hydrogen_time =  0
-# hydrogen_correction_factor = 0#found it on MKS website
-# hydrogen_flow_rate = 0#what the value on the MFC is set to
-# hydrogen_injection_amount = hydrogen_injection_conc / 500 # mL
-# fill_hydrogen_time = ( 60 * ( 1 / hydrogen_correction_factor ) * hydrogen_injection_amount ) / methane_flow_rate  # Time in seconds
+fill_methane_time = 0
+methane_correction_factor = 0#found it on MKS website
+methane_flow_rate = 0#what the value on the MFC is set to
+methane_injection_amount = methane_injection_conc / 500 # mL
+fill_methane_time = ( 60 * ( 1 / methane_correction_factor ) * metane_injection_amount ) / methane_flow_rate  # Time in seconds
+
+fill_hydrogen_time =  0
+hydrogen_correction_factor = 0#found it on MKS website
+hydrogen_flow_rate = 0#what the value on the MFC is set to
+hydrogen_injection_amount = hydrogen_injection_conc / 500 # mL
+fill_hydrogen_time = ( 60 * ( 1 / hydrogen_correction_factor ) * hydrogen_injection_amount ) / methane_flow_rate  # Time in seconds
 
 #########################################################\
 
@@ -284,37 +284,65 @@ class ManualControlPage(tk.Frame):
         buttonWidth = 0.4 #Relative width of buttons within the frame
         self.btn_1 = tk.Button(controlFrame, text='Extend Linear Actuator', command=lambda:linearActuator.extend())
         self.btn_1.place(relx=0,rely=0,relheight=0.1,relwidth=buttonWidth)
-        self.btn_2 = tk.Button(controlFrame, text='Retract Linear Actuator', command=lambda:linearActuator.retract())
+        self.btn_2 = tk.Button(controlFrame, text='Retract Linear Actuator', command=lambda:linearActuator.extend())
         self.btn_2.place(relx=0,rely=0.1,relheight=0.1,relwidth=buttonWidth)
-        self.btn_3 = tk.Button(controlFrame, text='Default Linear Actuator', command=lambda:linearActuator.default())
+        self.btn_3 = tk.Button(controlFrame, text='Read MOS', command=lambda:linearActuator.extend())
         self.btn_3.place(relx=0,rely=0.2,relheight=0.1,relwidth=buttonWidth)
-        self.btn_4 = tk.Button(controlFrame, text='Read MOS', command=lambda:mos.print())
+        self.btn_4 = tk.Button(controlFrame, text='Read Pressure', command=lambda:linearActuator.extend())
         self.btn_4.place(relx=0,rely=0.3,relheight=0.1,relwidth=buttonWidth)
-        self.btn_5 = tk.Button(controlFrame, text='Read Temperature Sensor', command=lambda:temperatureSensor.print())
-        self.btn_5.place(relx=0,rely=0.4,relheight=0.1,relwidth=buttonWidth)
-        self.btn_6 = tk.Button(controlFrame, text='Switch Inlet Valve', command=lambda:inValve.switch())
-        self.btn_6.place(relx=0,rely=0.5,relheight=0.1,relwidth=buttonWidth)
-        self.btn_7 = tk.Button(controlFrame, text='Switch Outlet Valve', command=lambda:inValve.switch())
-        self.btn_7.place(relx=0,rely=0.6,relheight=0.1,relwidth=buttonWidth)
-        self.btn_8 = tk.Button(controlFrame, text='Switch Pump', command=lambda:pump.switch())
-        self.btn_8.place(relx=0,rely=0.7,relheight=0.1,relwidth=buttonWidth)
+        self.btn_5 = tk.Button(controlFrame, text='Switch Valve 1', command=lambda:linearActuator.extend())
+        self.btn_5.place(relx=buttonWidth,rely=0,relheight=0.1,relwidth=buttonWidth)
+        self.btn_6 = tk.Button(controlFrame, text='Switch Valve 2', command=lambda:linearActuator.extend())
+        self.btn_6.place(relx=buttonWidth,rely=0.1,relheight=0.1,relwidth=buttonWidth)
+        self.btn_7 = tk.Button(controlFrame, text='Switch Valve 3', command=lambda:linearActuator.extend())
+        self.btn_7.place(relx=buttonWidth,rely=0.2,relheight=0.1,relwidth=buttonWidth)
+        self.btn_8 = tk.Button(controlFrame, text='Switch Valve 4', command=lambda:linearActuator.extend())
+        self.btn_8.place(relx=buttonWidth,rely=0.3,relheight=0.1,relwidth=buttonWidth)
+        self.btn_9 = tk.Button(controlFrame, text='Switch Valve 5', command=lambda:linearActuator.extend())
+        self.btn_9.place(relx=buttonWidth,rely=0.4,relheight=0.1,relwidth=buttonWidth)
+        self.btn_10 = tk.Button(controlFrame, text='Switch Valve 6', command=lambda:linearActuator.extend())
+        self.btn_10.place(relx=buttonWidth,rely=0.5,relheight=0.1,relwidth=buttonWidth)
 
-        lbl_1 = tk.Label(controlFrame, text='  Extend the linear actuator to the sensing chamber.', anchor='w')
-        lbl_1.place(relx=buttonWidth,rely=0,relheight=0.1,relwidth=(1-buttonWidth))
-        lbl_2 = tk.Label(controlFrame, text='  Retract the linear actuator to the clean chamber.', anchor='w')
-        lbl_2.place(relx=buttonWidth,rely=0.1,relheight=0.1,relwidth=(1-buttonWidth))
-        lbl_3 = tk.Label(controlFrame, text='  Reset the linear to the default (center) position.', anchor='w')
-        lbl_3.place(relx=buttonWidth,rely=0.2,relheight=0.1,relwidth=(1-buttonWidth))
-        lbl_4 = tk.Label(controlFrame, text='  Read the current value of the MOS (gas) sensor.', anchor='w')
-        lbl_4.place(relx=buttonWidth,rely=0.3,relheight=0.1,relwidth=(1-buttonWidth))
-        lbl_5 = tk.Label(controlFrame, text='  Read the current internal temperature of the device.', anchor='w')
-        lbl_5.place(relx=buttonWidth,rely=0.4,relheight=0.1,relwidth=(1-buttonWidth))
-        lbl_6 = tk.Label(controlFrame, text='   Toggle the inlet valve.', anchor='w')
-        lbl_6.place(relx=buttonWidth,rely=0.5,relheight=0.1,relwidth=(1-buttonWidth))
-        lbl_7 = tk.Label(controlFrame, text='   Toggle the outlet valve.', anchor='w')
-        lbl_7.place(relx=buttonWidth,rely=0.6,relheight=0.1,relwidth=(1-buttonWidth))
-        lbl_8 = tk.Label(controlFrame, text='  Toggle the pump.', anchor='w')
-        lbl_8.place(relx=buttonWidth,rely=0.7,relheight=0.1,relwidth=(1-buttonWidth))
+
+
+
+
+
+
+
+        # self.btn_1 = tk.Button(controlFrame, text='Extend Linear Actuator', command=lambda:linearActuator.extend())
+        # self.btn_1.place(relx=0,rely=0,relheight=0.1,relwidth=buttonWidth)
+        # self.btn_2 = tk.Button(controlFrame, text='Retract Linear Actuator', command=lambda:linearActuator.retract())
+        # self.btn_2.place(relx=0,rely=0.1,relheight=0.1,relwidth=buttonWidth)
+        # self.btn_3 = tk.Button(controlFrame, text='Default Linear Actuator', command=lambda:linearActuator.default())
+        # self.btn_3.place(relx=0,rely=0.2,relheight=0.1,relwidth=buttonWidth)
+        # self.btn_4 = tk.Button(controlFrame, text='Read MOS', command=lambda:mos.print())
+        # self.btn_4.place(relx=0,rely=0.3,relheight=0.1,relwidth=buttonWidth)
+        # self.btn_5 = tk.Button(controlFrame, text='Read Temperature Sensor', command=lambda:temperatureSensor.print())
+        # self.btn_5.place(relx=0,rely=0.4,relheight=0.1,relwidth=buttonWidth)
+        # self.btn_6 = tk.Button(controlFrame, text='Switch Inlet Valve', command=lambda:inValve.switch())
+        # self.btn_6.place(relx=0,rely=0.5,relheight=0.1,relwidth=buttonWidth)
+        # self.btn_7 = tk.Button(controlFrame, text='Switch Outlet Valve', command=lambda:inValve.switch())
+        # self.btn_7.place(relx=0,rely=0.6,relheight=0.1,relwidth=buttonWidth)
+        # self.btn_8 = tk.Button(controlFrame, text='Switch Pump', command=lambda:pump.switch())
+        # self.btn_8.place(relx=0,rely=0.7,relheight=0.1,relwidth=buttonWidth)
+        #
+        # lbl_1 = tk.Label(controlFrame, text='  Extend the linear actuator to the sensing chamber.', anchor='w')
+        # lbl_1.place(relx=buttonWidth,rely=0,relheight=0.1,relwidth=(1-buttonWidth))
+        # lbl_2 = tk.Label(controlFrame, text='  Retract the linear actuator to the clean chamber.', anchor='w')
+        # lbl_2.place(relx=buttonWidth,rely=0.1,relheight=0.1,relwidth=(1-buttonWidth))
+        # lbl_3 = tk.Label(controlFrame, text='  Reset the linear to the default (center) position.', anchor='w')
+        # lbl_3.place(relx=buttonWidth,rely=0.2,relheight=0.1,relwidth=(1-buttonWidth))
+        # lbl_4 = tk.Label(controlFrame, text='  Read the current value of the MOS (gas) sensor.', anchor='w')
+        # lbl_4.place(relx=buttonWidth,rely=0.3,relheight=0.1,relwidth=(1-buttonWidth))
+        # lbl_5 = tk.Label(controlFrame, text='  Read the current internal temperature of the device.', anchor='w')
+        # lbl_5.place(relx=buttonWidth,rely=0.4,relheight=0.1,relwidth=(1-buttonWidth))
+        # lbl_6 = tk.Label(controlFrame, text='   Toggle the inlet valve.', anchor='w')
+        # lbl_6.place(relx=buttonWidth,rely=0.5,relheight=0.1,relwidth=(1-buttonWidth))
+        # lbl_7 = tk.Label(controlFrame, text='   Toggle the outlet valve.', anchor='w')
+        # lbl_7.place(relx=buttonWidth,rely=0.6,relheight=0.1,relwidth=(1-buttonWidth))
+        # lbl_8 = tk.Label(controlFrame, text='  Toggle the pump.', anchor='w')
+        # lbl_8.place(relx=buttonWidth,rely=0.7,relheight=0.1,relwidth=(1-buttonWidth))
 
         # # TODO: add more buttons1
 
@@ -327,6 +355,8 @@ def suppress_buttons():
     app.frames[ManualControlPage].btn_6.config(state='disabled')
     app.frames[ManualControlPage].btn_7.config(state='disabled')
     app.frames[ManualControlPage].btn_8.config(state='disabled')
+    app.frames[ManualControlPage].btn_9.config(state='disabled')
+    app.frames[ManualControlPage].btn_10.config(state='disabled')
     app.frames[HomePage].exitBtn.config(state='disabled')
     app.frames[HomePage].shutdownBtn.config(state='disabled')
 
@@ -339,6 +369,8 @@ def release_buttons():
     app.frames[ManualControlPage].btn_6.config(state='normal')
     app.frames[ManualControlPage].btn_7.config(state='normal')
     app.frames[ManualControlPage].btn_8.config(state='normal')
+    app.frames[ManualControlPage].btn_9.config(state='normal')
+    app.frames[ManualControlPage].btn_10.config(state='normal')
     app.frames[HomePage].exitBtn.config(state='normal')
     app.frames[HomePage].shutdownBtn.config(state='normal')
 
