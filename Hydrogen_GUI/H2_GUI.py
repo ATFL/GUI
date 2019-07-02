@@ -87,8 +87,8 @@ fill_line_clense_time = 1
 
 
 ######## SAMPLE INJECTION CONCENTRATIONS ##########
-methane_injection_conc = [10,20,30] #Whatever vales you need
-hydrogen_injection_conc = [10,20,30] #whatever values you need
+methane_injection_conc = [100,200,300] #Whatever vales you need
+hydrogen_injection_conc = [100,200,300] #whatever values you need
 test_counter = 1
 
 ##############################################33333
@@ -237,7 +237,10 @@ class DataPage(tk.Frame):
 
         statusFrame = tk.LabelFrame(self, text ='Status')
         statusFrame.place(relx=0.8,rely=0.3,relheight=0.6,relwidth=0.2)
-
+        meFillTime = tk.label(statusFrame,text = 'Methane Time: ')
+        etFillTime = tk.label(statusFrame,text = 'Ethane Time: ')
+        meFillTime.place(relx = 0, rely = .1, relheight = 1, relwidth = 0.3)
+        meFillTime.place(relx = 0, rely = .2, relheight = 1, relwidth = 0.3)
         responseFrame = tk.Frame(self)
         responseFrame.place(relx=0.8,rely=0,relheight=0.3,relwidth=0.2)
         self.naturalGasLabel = tk.Label(responseFrame, text = 'Natural Gas\n Detected', relief='groove', borderwidth=2, anchor='center')
@@ -477,11 +480,11 @@ def multi_test_run():
     if counter <= num_tests:
         ##### Calculating the times ###########
         fill_methane_time = 0
-        methane_correction_factor = 1#found it on MKS website
+        methane_correction_factor = .5#found it on MKS website
         methane_flow_rate = 1#what the value on the MFC is set to
         methane_injection_amount = methane_injection_conc[counter - 1] / 500 # mL
         fill_methane_time = ( 60 * ( 1 / methane_correction_factor ) * metane_injection_amount ) / methane_flow_rate  # Time in seconds
-
+        app.frames[DataPage]
         fill_hydrogen_time =  0
         hydrogen_correction_factor = 1#found it on MKS website
         hydrogen_flow_rate = 1#what the value on the MFC is set to
