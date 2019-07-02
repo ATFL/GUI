@@ -27,7 +27,7 @@ from H2_components import *
 import RPi.GPIO as GPIO
 import time
 import os
-import adafruit_ads1x15 as ads
+import Adafruit_ADS1x15 as ads
 import serial
 from pathlib import Path
 
