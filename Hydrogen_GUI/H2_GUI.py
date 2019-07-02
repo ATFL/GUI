@@ -574,7 +574,7 @@ def end_testing():
 try:
     app = HetekGUI()
     app.mainloop()
-except keyboardinterrupt:
-    GPIO.cleanup()
+# except keyboardinterrupt:
+#     GPIO.cleanup()
 finally:
     GPIO.cleanup()
