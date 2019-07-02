@@ -231,7 +231,7 @@ class DataPage(tk.Frame):
         self.contFill = tk.Button(self.run_and_stop, text='CONTINUE', bg=runBtn_color, activebackground=runBtn_color, command=lambda:start_fill_thread())
         self.contFill.grid(row=0, column=0, sticky="nsew")
 
-        self.runBtn = tk.Button(self.run_and_stop, text='RUN', bg=runBtn_color, activebackground=runBtn_color, command=lambda:multi_test_run())
+        self.runBtn = tk.Button(self.run_and_stop, text='RUN', bg=runBtn_color, activebackground=runBtn_color, command=lambda:start_purge_thread())
         self.runBtn.grid(row=0, column=0, sticky="nsew")
 
 
@@ -471,14 +471,13 @@ def collect_data(xVector,yVector):
 
     pass
 
-def multi_test_run():
-    num_tests = len(methane_injection_conc)
-    if counter <= num_tests:
-
-        counter += 1
-        start_purge_thread()
-    else:
-        end_testing()
+# def multi_test_run():
+#     num_tests = len(methane_injection_conc)
+#     if counter <= num_tests:
+#         counter += 1
+#         start_purge_thread()
+#     else:
+#         end_testing()
 # def pressue_check_thread():
 #     if pressSensor.read() > press_threshold:
 
@@ -503,7 +502,7 @@ def check_purge_thread():
     else:
         app.frames[DataPage].progressbar.stop()
         if continueTest ==True:
-            app.frames[DataPage].contFill.tkraise()
+            start_fill_thread()
 
 def start_fill_thread():
     suppress_buttons()
