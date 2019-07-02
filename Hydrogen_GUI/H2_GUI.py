@@ -423,7 +423,7 @@ def collect_data(xVector,yVector):
 
     # Initial state checks
     if linearActuator.state != 'retracted':
-        linearActuator.re[counter - 1]tract()
+        linearActuator.retract()
     if valve1.state != False:
         valve1.disable()
     if valve2.state != False:
