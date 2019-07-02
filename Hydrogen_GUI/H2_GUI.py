@@ -87,8 +87,8 @@ fill_line_clense_time = 1
 
 
 ######## SAMPLE INJECTION CONCENTRATIONS ##########
-methane_injection_conc = 100 #Whatever vales you need
-hydrogen_injection_conc = 100 #whatever values you need
+methane_injection_conc = [100,200] #Whatever vales you need
+hydrogen_injection_conc = [100.200] #whatever values you need
 test_counter = 1
 
 ##############################################33333
@@ -458,6 +458,7 @@ def multi_test_run():
     if counter <= num_tests:
         counter += 1
         start_purge_thread()
+        pass
     else:
         end_testing()
 # def pressue_check_thread():
