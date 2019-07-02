@@ -93,17 +93,17 @@ test_counter = 1
 
 ##############################################33333
  ###### Deprecated ##########
-fill_methane_time = 0
+#fill_methane_time = 0
 methane_correction_factor = 0.73#found it on MKS website
 methane_flow_rate = 10#what the value on the MFC is set to
 methane_injection_amount = methane_injection_conc / 500 # mL
 fill_methane_time = ( 60 * ( 1 / methane_correction_factor ) * methane_injection_amount ) / methane_flow_rate  # Time in seconds
 
-fill_hydrogen_time =  0
+#fill_hydrogen_time =  0
 hydrogen_correction_factor = 0.73#found it on MKS website
-hydrogen_flow_rate = 10#what the value on the MFC is set to
+hydrogen_flow_rate = 20#what the value on the MFC is set to
 hydrogen_injection_amount = hydrogen_injection_conc / 500 # mL
-fill_hydrogen_time = ( 60 * ( 1 / hydrogen_correction_factor ) * hydrogen_injection_amount ) / methane_flow_rate  # Time in seconds
+fill_hydrogen_time = ( 60 * ( 1 / hydrogen_correction_factor ) * hydrogen_injection_amount ) / hydrogen_flow_rate  # Time in seconds
 
 #########################################################\
 
@@ -374,42 +374,24 @@ def fill_chamber():
 
     # Filling the chamber
     start_time = time.time()
+    while time.time() < (start_time + fill_hydrogen_time[counter - 1]) and time.time() < (start_time + fill_methane_time[counter - 1]) and continueTest == True:
+        if valve1.state != False:
+            valve1.disable()
+        if valve2.state != True:
+            valve2.enable()
+        if valve3.state != True:
+            valve3.enable()
+        if valve4.state != False:
+            valve4.disable()
+        if valve5.state != False:
+            valve5.disable()
+        if valve6.state != True:
+            valve6.enable()
+    while time.time() > (start_time + fill_hydrogen_time[counter - 1]) and time.time() < (start_time + fill_methane_time[counter - 1]) and continueTest == True:
+        valve3.disable()
+    pass
 
-    if fill_methane_time[counter - 1] > fill_hydrogen_time[counter - 1]:
-        while time.time() < (start_time + fill_hydrogen_time[counter - 1]) and continueTest == True:
-            if valve1.state != False:
-                valve1.disable()
-            if valve2.state != True:
-                valve2.enable()
-            if valve3.state != True:
-                valve3.enable()
-            if valve4.state != False:
-                valve4.disable()
-            if valve5.state != False:
-                valve5.disable()
-            if valve6.state != True:
-                valve6.enable()
-        while time.time() > (start_time + fill_hydrogen_time[counter - 1]) and time.time() < (start_time + fill_methane_time[counter - 1]) and continueTest == True:
-            valve3.disable()
-        pass
 
-    else:
-        while time.time() < (start_time + fill_methane_time) and continueTest == True:
-            if valve1.state != False:
-                valve1.disable()
-            if valve2.state != True:
-                valve2.enable()
-            if valve3.state != True:
-                valve3.enable()
-            if valve4.state != False:
-                valve4.disable()
-            if valve5.state != False:
-                valve5.disable()
-            if valve6.state != True:
-                valve6.enable()
-        while time.time() > (start_time + fill_methane_time[counter - 1]) and time.time() < (start_time + fill_hydrogen_time[counter - 1]) and continueTest == True:
-            valve2.disable()
-        pass
 
     pass
 
