@@ -245,8 +245,8 @@ class DataPage(tk.Frame):
         testLBL.place(relx = 0.1, rely = 0, relheight = 0.1, relwidth = 0.1)
         meConcLBL.place(relx = 0.1, rely = 0.1, relheight = 0.1, relwidth = 0.5)
         H2ConcLBL.place(relx = 0.1, rely = 0.2, relheight = 0.1, relwidth = 0.5)
-        meFillTime.place(relx = 0.1, rely = 0.3, relheight = 0.1, relwidth = 0.5)
-        H2FillTime.place(relx = 0.1, rely = 0.4, relheight = 0.1, relwidth = 0.5)
+        meFillTime.place(relx = 0.1, rely = 0.3, relheight = 0.1, relwidth = 0.4)
+        H2FillTime.place(relx = 0.1, rely = 0.4, relheight = 0.1, relwidth = 0.4)
 
         responseFrame = tk.Frame(self)
         responseFrame.place(relx=0.8,rely=0,relheight=0.3,relwidth=0.2)
