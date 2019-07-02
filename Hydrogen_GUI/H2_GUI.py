@@ -87,8 +87,8 @@ fill_line_clense_time = 1
 
 
 ######## SAMPLE INJECTION CONCENTRATIONS ##########
-methane_injection_conc = [100,200,300] #Whatever vales you need
-hydrogen_injection_conc = [100,200,300] #whatever values you need
+methane_injection_conc = 100 #Whatever vales you need
+hydrogen_injection_conc = 100 #whatever values you need
 test_counter = 1
 
 ##############################################33333
@@ -231,7 +231,7 @@ class DataPage(tk.Frame):
         self.contFill = tk.Button(self.run_and_stop, text='CONTINUE', bg=runBtn_color, activebackground=runBtn_color, command=lambda:start_fill_thread())
         self.contFill.grid(row=0, column=0, sticky="nsew")
 
-        self.runBtn = tk.Button(self.run_and_stop, text='RUN', bg=runBtn_color, activebackground=runBtn_color, command=lambda:start_purge_thread())
+        self.runBtn = tk.Button(self.run_and_stop, text='RUN', bg=runBtn_color, activebackground=runBtn_color, command=lambda:multi_test_run())
         self.runBtn.grid(row=0, column=0, sticky="nsew")
 
 
