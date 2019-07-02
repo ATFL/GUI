@@ -3,7 +3,7 @@ import RPi.GPIO as GPIO
 #import piplates.DAQC2plate as DAQC2
 import time
 import os
-import Adafruit_ADS1x15
+import adafruit_ads1x15
 
 
 class LinearActuator:
