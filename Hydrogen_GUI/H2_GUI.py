@@ -488,8 +488,11 @@ def multi_test_run():
         hydrogen_injection_amount = hydrogen_injection_conc[counter - 1] / 500 # mL
         fill_hydrogen_time = ( 60 * ( 1 / hydrogen_correction_factor ) * hydrogen_injection_amount ) / methane_flow_rate  # Time in seconds
         ##########################################
+        counter += 1
         start_purge_thread()
-    elif
+
+    elif:
+        end_testing()
 # def pressue_check_thread():
 #     if pressSensor.read() > press_threshold:
 
@@ -558,7 +561,7 @@ def check_data_thread():
         # release_buttons()
         # app.frames[DataPage].runBtn.tkraise()
         # app.frames[DataPage].status.set('  System ready.')
-
+        multi_test_run()
 def end_testing():
     if purge_thread.is_alive() or fill_thread.is_alive() or data_thread.is_alive():
         global continueTest
