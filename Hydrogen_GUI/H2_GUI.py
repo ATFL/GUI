@@ -33,8 +33,8 @@ from pathlib import Path
 
 #---->
 import numpy as np
-import sklearn
-import pickle
+# import sklearn
+# import pickle
 
 #################### Object Declaration ####################
 GPIO.setmode(GPIO.BOARD)
