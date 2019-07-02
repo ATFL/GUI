@@ -87,21 +87,23 @@ fill_line_clense_time = 20
 
 
 ######## SAMPLE INJECTION CONCENTRATIONS ##########
-methane_injection_conc = 1000 #Whatever vales you need
-hydrogen_injection_conc = 1000 #whatever values you need
+methane_injection_conc = [1000] #Whatever vales you need
+hydrogen_injection_conc = [1000] #whatever values you need
+test_counter = 1
+
 ##############################################33333
-
-fill_methane_time = 0
-methane_correction_factor = #found it on MKS website
-methane_flow_rate = #what the value on the MFC is set to
-methane_injection_amount = methane_injection_conc / 500 # mL
-fill_methane_time = ( 60 * ( 1 / methane_correction_factor ) * metane_injection_amount ) / methane_flow_rate  # Time in seconds
-
-fill_hydrogen_time =  0
-hydrogen_correction_factor = #found it on MKS website
-hydrogen_flow_rate = #what the value on the MFC is set to
-hydrogen_injection_amount = hydrogen_injection_conc / 500 # mL
-fill_hydrogen_time = ( 60 * ( 1 / hydrogen_correction_factor ) * hydrogen_injection_amount ) / methane_flow_rate  # Time in seconds
+ ###### Deprecated ##########
+# fill_methane_time = 0
+# methane_correction_factor = 0#found it on MKS website
+# methane_flow_rate = 0#what the value on the MFC is set to
+# methane_injection_amount = methane_injection_conc / 500 # mL
+# fill_methane_time = ( 60 * ( 1 / methane_correction_factor ) * metane_injection_amount ) / methane_flow_rate  # Time in seconds
+#
+# fill_hydrogen_time =  0
+# hydrogen_correction_factor = 0#found it on MKS website
+# hydrogen_flow_rate = 0#what the value on the MFC is set to
+# hydrogen_injection_amount = hydrogen_injection_conc / 500 # mL
+# fill_hydrogen_time = ( 60 * ( 1 / hydrogen_correction_factor ) * hydrogen_injection_amount ) / methane_flow_rate  # Time in seconds
 
 #########################################################\
 
@@ -112,6 +114,9 @@ sensing_retract_time = 50 # normally 50, time allowed before sensor is retracted
 duration_of_signal = 200 # normally 150, time allowed for data acquisition per test run
 
 total_time = chamber_purge_time + fill_line_clense_time + max(fill_methane_time,fill_hydrogen_time) + duration_of_signal
+
+######### TESTING ARRAY #########################
+
 
 #################### Data Array ####################
 # DO NOT TOUCH #
@@ -467,8 +472,24 @@ def collect_data(xVector,yVector):
 
     pass
 
-# def multi_test_run():
-#
+def multi_test_run():
+    num_tests = len(methane_injection_conc)
+    if counter <= num_tests:
+        ##### Calculating the times ###########
+        fill_methane_time = 0
+        methane_correction_factor = 1#found it on MKS website
+        methane_flow_rate = 1#what the value on the MFC is set to
+        methane_injection_amount = methane_injection_conc[counter - 1] / 500 # mL
+        fill_methane_time = ( 60 * ( 1 / methane_correction_factor ) * metane_injection_amount ) / methane_flow_rate  # Time in seconds
+
+        fill_hydrogen_time =  0
+        hydrogen_correction_factor = 1#found it on MKS website
+        hydrogen_flow_rate = 1#what the value on the MFC is set to
+        hydrogen_injection_amount = hydrogen_injection_conc[counter - 1] / 500 # mL
+        fill_hydrogen_time = ( 60 * ( 1 / hydrogen_correction_factor ) * hydrogen_injection_amount ) / methane_flow_rate  # Time in seconds
+        ##########################################
+        start_purge_thread()
+    elif
 # def pressue_check_thread():
 #     if pressSensor.read() > press_threshold:
 
@@ -534,9 +555,9 @@ def check_data_thread():
     else:
         app.frames[DataPage].progressbar.stop()
         app.frames[DataPage].graph.update(timeVector,dataVector)
-        release_buttons()
-        app.frames[DataPage].runBtn.tkraise()
-        app.frames[DataPage].status.set('  System ready.')
+        # release_buttons()
+        # app.frames[DataPage].runBtn.tkraise()
+        # app.frames[DataPage].status.set('  System ready.')
 
 def end_testing():
     if purge_thread.is_alive() or fill_thread.is_alive() or data_thread.is_alive():
