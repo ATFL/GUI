@@ -303,49 +303,6 @@ class ManualControlPage(tk.Frame):
         self.btn_10 = tk.Button(controlFrame, text='Switch Valve 6', command=lambda:valve6.switch())
         self.btn_10.place(relx=buttonWidth,rely=0.5,relheight=0.1,relwidth=buttonWidth)
 
-
-
-
-
-
-
-
-        # self.btn_1 = tk.Button(controlFrame, text='Extend Linear Actuator', command=lambda:linearActuator.extend())
-        # self.btn_1.place(relx=0,rely=0,relheight=0.1,relwidth=buttonWidth)
-        # self.btn_2 = tk.Button(controlFrame, text='Retract Linear Actuator', command=lambda:linearActuator.retract())
-        # self.btn_2.place(relx=0,rely=0.1,relheight=0.1,relwidth=buttonWidth)
-        # self.btn_3 = tk.Button(controlFrame, text='Default Linear Actuator', command=lambda:linearActuator.default())
-        # self.btn_3.place(relx=0,rely=0.2,relheight=0.1,relwidth=buttonWidth)
-        # self.btn_4 = tk.Button(controlFrame, text='Read MOS', command=lambda:mos.print())
-        # self.btn_4.place(relx=0,rely=0.3,relheight=0.1,relwidth=buttonWidth)
-        # self.btn_5 = tk.Button(controlFrame, text='Read Temperature Sensor', command=lambda:temperatureSensor.print())
-        # self.btn_5.place(relx=0,rely=0.4,relheight=0.1,relwidth=buttonWidth)
-        # self.btn_6 = tk.Button(controlFrame, text='Switch Inlet Valve', command=lambda:inValve.switch())
-        # self.btn_6.place(relx=0,rely=0.5,relheight=0.1,relwidth=buttonWidth)
-        # self.btn_7 = tk.Button(controlFrame, text='Switch Outlet Valve', command=lambda:inValve.switch())
-        # self.btn_7.place(relx=0,rely=0.6,relheight=0.1,relwidth=buttonWidth)
-        # self.btn_8 = tk.Button(controlFrame, text='Switch Pump', command=lambda:pump.switch())
-        # self.btn_8.place(relx=0,rely=0.7,relheight=0.1,relwidth=buttonWidth)
-        #
-        # lbl_1 = tk.Label(controlFrame, text='  Extend the linear actuator to the sensing chamber.', anchor='w')
-        # lbl_1.place(relx=buttonWidth,rely=0,relheight=0.1,relwidth=(1-buttonWidth))
-        # lbl_2 = tk.Label(controlFrame, text='  Retract the linear actuator to the clean chamber.', anchor='w')
-        # lbl_2.place(relx=buttonWidth,rely=0.1,relheight=0.1,relwidth=(1-buttonWidth))
-        # lbl_3 = tk.Label(controlFrame, text='  Reset the linear to the default (center) position.', anchor='w')
-        # lbl_3.place(relx=buttonWidth,rely=0.2,relheight=0.1,relwidth=(1-buttonWidth))
-        # lbl_4 = tk.Label(controlFrame, text='  Read the current value of the MOS (gas) sensor.', anchor='w')
-        # lbl_4.place(relx=buttonWidth,rely=0.3,relheight=0.1,relwidth=(1-buttonWidth))
-        # lbl_5 = tk.Label(controlFrame, text='  Read the current internal temperature of the device.', anchor='w')
-        # lbl_5.place(relx=buttonWidth,rely=0.4,relheight=0.1,relwidth=(1-buttonWidth))
-        # lbl_6 = tk.Label(controlFrame, text='   Toggle the inlet valve.', anchor='w')
-        # lbl_6.place(relx=buttonWidth,rely=0.5,relheight=0.1,relwidth=(1-buttonWidth))
-        # lbl_7 = tk.Label(controlFrame, text='   Toggle the outlet valve.', anchor='w')
-        # lbl_7.place(relx=buttonWidth,rely=0.6,relheight=0.1,relwidth=(1-buttonWidth))
-        # lbl_8 = tk.Label(controlFrame, text='  Toggle the pump.', anchor='w')
-        # lbl_8.place(relx=buttonWidth,rely=0.7,relheight=0.1,relwidth=(1-buttonWidth))
-
-        # # TODO: add more buttons1
-
 def suppress_buttons():
     app.frames[ManualControlPage].btn_1.config(state='disabled')
     app.frames[ManualControlPage].btn_2.config(state='disabled')
@@ -375,7 +332,7 @@ def release_buttons():
     app.frames[HomePage].shutdownBtn.config(state='normal')
 
 def purge_system():
-    print("Test will take %d seconds",total_time)
+    #print("Test will take %d seconds",total_time)
     start_time = time.time()
     while time.time() < (start_time + chamber_purge_time) and continueTest == True:
         if linearActuator.state != 'extended':
@@ -418,8 +375,8 @@ def fill_chamber():
     # Filling the chamber
     start_time = time.time()
 
-    if fill_methane_time > fill_hydrogen_time:
-        while time.time() < (start_time + fill_hydrogen_time) and continueTest == True:
+    if fill_methane_time[counter - 1] > fill_hydrogen_time[counter - 1]:
+        while time.time() < (start_time + fill_hydrogen_time[counter - 1]) and continueTest == True:
             if valve1.state != False:
                 valve1.disable()
             if valve2.state != True:
@@ -432,11 +389,11 @@ def fill_chamber():
                 valve5.disable()
             if valve6.state != True:
                 valve6.enable()
-        while time.time() > (start_time + fill_hydrogen_time) and time.time() < (start_time + fill_methane_time) and continueTest == True:
+        while time.time() > (start_time + fill_hydrogen_time[counter - 1]) and time.time() < (start_time + fill_methane_time[counter - 1]) and continueTest == True:
             valve3.disable()
         pass
 
-    elif fill_hydrogen_time > fill_methane_time:
+    elif fill_hydrogen_time[counter - 1] > fill_methane_time[counter - 1]:
         while time.time() < (start_time + fill_methane_time) and continueTest == True:
             if valve1.state != False:
                 valve1.disable()
@@ -450,7 +407,7 @@ def fill_chamber():
                 valve5.disable()
             if valve6.state != True:
                 valve6.enable()
-        while time.time() > (start_time + fill_methane_time) and time.time() < (start_time + fill_hydrogen_time) and continueTest == True:
+        while time.time() > (start_time + fill_methane_time[counter - 1]) and time.time() < (start_time + fill_hydrogen_time[counter - 1]) and continueTest == True:
             valve2.disable()
         pass
 
@@ -466,7 +423,7 @@ def collect_data(xVector,yVector):
 
     # Initial state checks
     if linearActuator.state != 'retracted':
-        linearActuator.retract()
+        linearActuator.re[counter - 1]tract()
     if valve1.state != False:
         valve1.disable()
     if valve2.state != False:
@@ -517,19 +474,7 @@ def collect_data(xVector,yVector):
 def multi_test_run():
     num_tests = len(methane_injection_conc)
     if counter <= num_tests:
-        ##### Calculating the times ###########
-        # fill_methane_time = 0
-        # methane_correction_factor = .5#found it on MKS website
-        # methane_flow_rate = 1#what the value on the MFC is set to
-        # methane_injection_amount = methane_injection_conc[counter - 1] / 500 # mL
-        # fill_methane_time = ( 60 * ( 1 / methane_correction_factor ) * metane_injection_amount ) / methane_flow_rate  # Time in seconds
-        # app.frames[DataPage]
-        # fill_hydrogen_time =  0
-        # hydrogen_correction_factor = 1#found it on MKS website
-        # hydrogen_flow_rate = 1#what the value on the MFC is set to
-        # hydrogen_injection_amount = hydrogen_injection_conc[counter - 1] / 500 # mL
-        # fill_hydrogen_time = ( 60 * ( 1 / hydrogen_correction_factor ) * hydrogen_injection_amount ) / methane_flow_rate  # Time in seconds
-        ##########################################
+
         counter += 1
         start_purge_thread()
     else:
