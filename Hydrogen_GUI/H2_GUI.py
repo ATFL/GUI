@@ -286,7 +286,7 @@ class ManualControlPage(tk.Frame):
         self.btn_1.place(relx=0,rely=0,relheight=0.1,relwidth=buttonWidth)
         self.btn_2 = tk.Button(controlFrame, text='Retract Linear Actuator', command=lambda:linearActuator.retract())
         self.btn_2.place(relx=0,rely=0.1,relheight=0.1,relwidth=buttonWidth)
-        self.btn_3 = tk.Button(controlFrame, text='Read MOS', command=lambda:MOS.print())
+        self.btn_3 = tk.Button(controlFrame, text='Read MOS', command=lambda:mos.print())
         self.btn_3.place(relx=0,rely=0.2,relheight=0.1,relwidth=buttonWidth)
         self.btn_4 = tk.Button(controlFrame, text='Read Pressure', command=lambda:pressSensor.print())
         self.btn_4.place(relx=0,rely=0.3,relheight=0.1,relwidth=buttonWidth)
