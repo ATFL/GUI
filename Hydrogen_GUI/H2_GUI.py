@@ -94,14 +94,14 @@ test_counter = 1
 ##############################################33333
  ###### Deprecated ##########
 fill_methane_time = 0
-methane_correction_factor = 0#found it on MKS website
-methane_flow_rate = 0#what the value on the MFC is set to
+methane_correction_factor = 0.73#found it on MKS website
+methane_flow_rate = 10#what the value on the MFC is set to
 methane_injection_amount = methane_injection_conc / 500 # mL
 fill_methane_time = ( 60 * ( 1 / methane_correction_factor ) * metane_injection_amount ) / methane_flow_rate  # Time in seconds
 
 fill_hydrogen_time =  0
-hydrogen_correction_factor = 0#found it on MKS website
-hydrogen_flow_rate = 0#what the value on the MFC is set to
+hydrogen_correction_factor = 0.73#found it on MKS website
+hydrogen_flow_rate = 10#what the value on the MFC is set to
 hydrogen_injection_amount = hydrogen_injection_conc / 500 # mL
 fill_hydrogen_time = ( 60 * ( 1 / hydrogen_correction_factor ) * hydrogen_injection_amount ) / methane_flow_rate  # Time in seconds
 
@@ -284,9 +284,9 @@ class ManualControlPage(tk.Frame):
         buttonWidth = 0.4 #Relative width of buttons within the frame
         self.btn_1 = tk.Button(controlFrame, text='Extend Linear Actuator', command=lambda:linearActuator.extend())
         self.btn_1.place(relx=0,rely=0,relheight=0.1,relwidth=buttonWidth)
-        self.btn_2 = tk.Button(controlFrame, text='Retract Linear Actuator', command=lambda:linearActuator.extend())
+        self.btn_2 = tk.Button(controlFrame, text='Retract Linear Actuator', command=lambda:linearActuator.retract())
         self.btn_2.place(relx=0,rely=0.1,relheight=0.1,relwidth=buttonWidth)
-        self.btn_3 = tk.Button(controlFrame, text='Read MOS', command=lambda:linearActuator.extend())
+        self.btn_3 = tk.Button(controlFrame, text='Read MOS', command=lambda:MOS.read())
         self.btn_3.place(relx=0,rely=0.2,relheight=0.1,relwidth=buttonWidth)
         self.btn_4 = tk.Button(controlFrame, text='Read Pressure', command=lambda:linearActuator.extend())
         self.btn_4.place(relx=0,rely=0.3,relheight=0.1,relwidth=buttonWidth)
