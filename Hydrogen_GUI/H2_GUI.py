@@ -244,7 +244,7 @@ class DataPage(tk.Frame):
         H2FillTime = tk.Label(statusFrame,text = 'Hydrogen Time: ')
         testLBL.place(relx = 0, rely = 0, relheight = 0.1, relwidth = 0.3)
         meConcLBL.place(relx = 0, rely = 0.1, relheight = 0.1, relwidth = 0.3)
-        H2meConcLBL.place(relx = 0, rely = 0.2, relheight = 0.1, relwidth = 0.3)
+        H2ConcLBL.place(relx = 0, rely = 0.2, relheight = 0.1, relwidth = 0.3)
         meFillTime.place(relx = 0, rely = 0.3, relheight = 0.1, relwidth = 0.3)
         H2FillTime.place(relx = 0, rely = 0.4, relheight = 0.1, relwidth = 0.3)
 
