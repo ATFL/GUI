@@ -239,8 +239,8 @@ class DataPage(tk.Frame):
         statusFrame.place(relx=0.8,rely=0.3,relheight=0.6,relwidth=0.2)
         meFillTime = tk.Label(statusFrame,text = 'Methane Time: ')
         etFillTime = tk.Label(statusFrame,text = 'Ethane Time: ')
-        meFillTime.place(relx = 0, rely = .1, relheight = 1, relwidth = 0.3)
-        meFillTime.place(relx = 0, rely = .2, relheight = 1, relwidth = 0.3)
+        meFillTime.place(relx = 0, rely = 0, relheight = 0.1, relwidth = 0.1)
+        meFillTime.place(relx = 0, rely = 0.1, relheight = 0.1, relwidth = 0.1)
         responseFrame = tk.Frame(self)
         responseFrame.place(relx=0.8,rely=0,relheight=0.3,relwidth=0.2)
         self.naturalGasLabel = tk.Label(responseFrame, text = 'Natural Gas\n Detected', relief='groove', borderwidth=2, anchor='center')
@@ -574,7 +574,7 @@ def end_testing():
 try:
     app = HetekGUI()
     app.mainloop()
-# except keyboardinterrupt:
-#     GPIO.cleanup()
+except keyboardinterrupt:
+    GPIO.cleanup()
 finally:
     GPIO.cleanup()
