@@ -78,17 +78,17 @@ valve6 = Valve('Valve6',pinvalve6) #output vent valve
 #################### System Variables ####################
 
 #PURGING VARIABLES
-chamber_purge_time = 120 #Time to purge chamber: experiment with it
+chamber_purge_time = 1 #Time to purge chamber: experiment with it
 
 
 #########FILLING CHAMBER WITH TARGET GAS #############
 # Filling Variables
-fill_line_clense_time = 20
+fill_line_clense_time = 1
 
 
 ######## SAMPLE INJECTION CONCENTRATIONS ##########
-methane_injection_conc = [1000] #Whatever vales you need
-hydrogen_injection_conc = [1000] #whatever values you need
+methane_injection_conc = [10,20,30] #Whatever vales you need
+hydrogen_injection_conc = [10,20,30] #whatever values you need
 test_counter = 1
 
 ##############################################33333
@@ -109,9 +109,9 @@ test_counter = 1
 
 # Testing Variables
 sampling_time = 0.1 # tim50e between samples taken, determines sampling frequency
-sensing_delay_time = 5 # normall 5, time delay after beginning data acquisition till when the sensor is exposed to sample
-sensing_retract_time = 50 # normally 50, time allowed before sensor is retracted, no longer exposed to sample
-duration_of_signal = 200 # normally 150, time allowed for data acquisition per test run
+sensing_delay_time = 1 # normall 5, time delay after beginning data acquisition till when the sensor is exposed to sample
+sensing_retract_time = 3 # normally 50, time allowed before sensor is retracted, no longer exposed to sample
+duration_of_signal = 10 # normally 150, time allowed for data acquisition per test run
 
 #total_time = chamber_purge_time + fill_line_clense_time + max(fill_methane_time,fill_hydrogen_time) + duration_of_signal
 
