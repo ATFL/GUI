@@ -97,13 +97,13 @@ test_counter = 1
 methane_correction_factor = 0.73#found it on MKS website
 methane_flow_rate = 10#what the value on the MFC is set to
 methane_injection_amount = methane_injection_conc / 500 # mL
-fill_methane_time = ( 60 * ( 1 / methane_correction_factor ) * methane_injection_amount ) / methane_flow_rate  # Time in seconds
+fill_methane_time = int(( 60 * ( 1 / methane_correction_factor ) * methane_injection_amount ) / methane_flow_rate)  # Time in seconds
 
 #fill_hydrogen_time =  0
 hydrogen_correction_factor = 0.73#found it on MKS website
 hydrogen_flow_rate = 20#what the value on the MFC is set to
 hydrogen_injection_amount = hydrogen_injection_conc / 500 # mL
-fill_hydrogen_time = ( 60 * ( 1 / hydrogen_correction_factor ) * hydrogen_injection_amount ) / hydrogen_flow_rate  # Time in seconds
+fill_hydrogen_time = int(( 60 * ( 1 / hydrogen_correction_factor ) * hydrogen_injection_amount ) / hydrogen_flow_rate)  # Time in seconds
 
 #########################################################\
 
