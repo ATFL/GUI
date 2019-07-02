@@ -237,8 +237,8 @@ class DataPage(tk.Frame):
 
         statusFrame = tk.LabelFrame(self, text ='Status')
         statusFrame.place(relx=0.8,rely=0.3,relheight=0.6,relwidth=0.2)
-        meFillTime = tk.label(statusFrame,text = 'Methane Time: ')
-        etFillTime = tk.label(statusFrame,text = 'Ethane Time: ')
+        meFillTime = tk.Label(statusFrame,text = 'Methane Time: ')
+        etFillTime = tk.Label(statusFrame,text = 'Ethane Time: ')
         meFillTime.place(relx = 0, rely = .1, relheight = 1, relwidth = 0.3)
         meFillTime.place(relx = 0, rely = .2, relheight = 1, relwidth = 0.3)
         responseFrame = tk.Frame(self)
