@@ -393,7 +393,7 @@ def fill_chamber():
             valve3.disable()
         pass
 
-    elif fill_hydrogen_time[counter - 1] > fill_methane_time[counter - 1]:
+    else:
         while time.time() < (start_time + fill_methane_time) and continueTest == True:
             if valve1.state != False:
                 valve1.disable()
