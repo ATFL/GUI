@@ -27,7 +27,7 @@ from H2_components import *
 import RPi.GPIO as GPIO
 import time
 import os
-import Adafruit_ADS1x15
+import adafruit_ads1x15 as ads
 import serial
 from pathlib import Path
 
@@ -43,7 +43,7 @@ pinLA = 12
 pinEnable = 18
 linearActuator = LinearActuator(pinLA, pinEnable)
 # Analog-Digital Converter
-adc = Adafruit_ADS1x15.ADS1115(0x48)
+adc = ads.ADS1115(0x48)
 # MOS Sensor
 MOS_adc_channel = 0
 mos = MOS(adc, MOS_adc_channel)
