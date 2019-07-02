@@ -490,8 +490,7 @@ def multi_test_run():
         ##########################################
         counter += 1
         start_purge_thread()
-
-    elif:
+    else:
         end_testing()
 # def pressue_check_thread():
 #     if pressSensor.read() > press_threshold:
