@@ -450,7 +450,7 @@ def collect_data(xVector,yVector):
     # This section of code is used for generating the output file name. The file name will contain date/time of test, as well as concentration values present during test
     filename = strftime("testsH2/%a%d%b%Y%H%M%S.csv",localtime())
     np.savetxt(filename,combinedVector, fmt='%.10f', delimiter=',')
-    print("Test %i File Saved",test_counter)
+    print("Test %d File Saved",test_counter)
 
 
     pass
