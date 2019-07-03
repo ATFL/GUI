@@ -462,6 +462,12 @@ def multi_test_run():
         start_purge_thread()
         pass
     else:
+        global continueTest
+        continueTest = False #Set the test flag to false, stops testing.
+        release_buttons()
+        app.frames[DataPage].runBtn.tkraise()
+        app.frames[DataPage].status.set('  System ready.')
+        print("%d Tests Completed",num_tests + 1)
         end_testing()
 # def pressue_check_thread():
 #     if pressSensor.read() > press_threshold:
