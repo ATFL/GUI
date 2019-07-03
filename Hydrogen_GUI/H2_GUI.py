@@ -89,7 +89,8 @@ fill_line_clense_time = 1
 ######## SAMPLE INJECTION CONCENTRATIONS ##########
 methane_injection_conc = [100,200,300] #Whatever vales you need
 hydrogen_injection_conc = [100.200,300] #whatever values you need
-global test_counter = 0
+global test_counter
+test_counter = 0
 
 ##############################################
 
