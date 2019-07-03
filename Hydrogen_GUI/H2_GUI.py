@@ -91,6 +91,8 @@ methane_injection_conc = [100,200,300] #Whatever vales you need
 hydrogen_injection_conc = [100.200,300] #whatever values you need
 global test_counter
 test_counter = 0
+global num_tests
+num_tests = len(methane_injection_conc)
 
 ##############################################
 
@@ -334,16 +336,16 @@ def release_buttons():
     app.frames[HomePage].shutdownBtn.config(state='normal')
 
 def purge_system():
-    testLBL = tk.Label(statusFrame,text = test_counter + 1, " of ", len(methane_injection_conc) )
-    meConcLBL = tk.Label(statusFrame,text = methane_injection_conc[test_counter])
-    H2ConcLBL = tk.Label(statusFrame,text = hydrogen_injection_conc[test_counter])
-    meFillTime = tk.Label(statusFrame,text = fill_methane_time[test_counter])
-    H2FillTime = tk.Label(statusFrame,text = fill_hydrogen_time[test_counter])
-    testLBL.place(relx = 0.3, rely = 0, relheight = 0.1, relwidth = 0.2)
-    meConcLBL.place(relx = 0.4, rely = 0.1, relheight = 0.1, relwidth = 0.1)
-    H2ConcLBL.place(relx = 0.4, rely = 0.2, relheight = 0.1, relwidth = 0.1)
-    meFillTime.place(relx = 0.4, rely = 0.3, relheight = 0.1, relwidth = 0.1)
-    H2FillTime.place(relx = 0.4, rely = 0.4, relheight = 0.1, relwidth = 0.1)
+    testLBLval = tk.Label(statusFrame,text = test_counter + 1, " of ", len(methane_injection_conc) )
+    meConcLBLval = tk.Label(statusFrame,text = methane_injection_conc[test_counter])
+    H2ConcLBLval = tk.Label(statusFrame,text = hydrogen_injection_conc[test_counter])
+    meFillTimeval = tk.Label(statusFrame,text = fill_methane_time[test_counter])
+    H2FillTimeval = tk.Label(statusFrame,text = fill_hydrogen_time[test_counter])
+    testLBLval.place(relx = 0.3, rely = 0, relheight = 0.1, relwidth = 0.2)
+    meConcLBLval.place(relx = 0.4, rely = 0.1, relheight = 0.1, relwidth = 0.1)
+    H2ConcLBLval.place(relx = 0.4, rely = 0.2, relheight = 0.1, relwidth = 0.1)
+    meFillTimeval.place(relx = 0.4, rely = 0.3, relheight = 0.1, relwidth = 0.1)
+    H2FillTimeval.place(relx = 0.4, rely = 0.4, relheight = 0.1, relwidth = 0.1)
 
 
     start_time = time.time()
@@ -467,7 +469,8 @@ def collect_data(xVector,yVector):
     pass
 
 def multi_test_run():
-    num_tests = len(methane_injection_conc)
+    global num_tests
+    #num_tests = len(methane_injection_conc)
     global test_counter
     if test_counter < num_tests:
         start_purge_thread()
