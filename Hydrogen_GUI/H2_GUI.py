@@ -89,7 +89,7 @@ fill_line_clense_time = 1
 ######## SAMPLE INJECTION CONCENTRATIONS ##########
 methane_injection_conc = [100,200,300] #Whatever vales you need
 hydrogen_injection_conc = [100.200,300] #whatever values you need
-test_counter = 0
+global test_counter = 0
 
 ##############################################
 
@@ -447,7 +447,7 @@ def collect_data(xVector,yVector):
     combinedVector = np.column_stack((timeVector, dataVector))
 
     # This section of code is used for generating the output file name. The file name will contain date/time of test, as well as concentration values present during test
-    filename = strftime("testsP/%a %d %b %Y %H%M%S.csv",localtime())
+    filename = strftime("testsH2/%a%d%b%Y%H%M%S.csv",localtime())
     np.savetxt(filename,combinedVector, fmt='%.10f', delimiter=',')
 
 
@@ -456,6 +456,7 @@ def collect_data(xVector,yVector):
 
 def multi_test_run():
     num_tests = len(methane_injection_conc)
+    global test_counter
     if test_counter <= num_tests:
         start_purge_thread()
         pass
@@ -529,6 +530,7 @@ def check_data_thread():
         # release_buttons()
         # app.frames[DataPage].runBtn.tkraise()
         # app.frames[DataPage].status.set('  System ready.')
+        global test_counter
         test_counter += 1
         multi_test_run()
 def end_testing():
