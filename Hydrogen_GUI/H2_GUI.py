@@ -403,7 +403,8 @@ def fill_chamber():
         if valve6.state != True:
             valve6.enable()
     while time.time() > (start_time + fill_hydrogen_time[test_counter]) and time.time() < (start_time + fill_methane_time[test_counter]) and continueTest == True:
-        valve3.disable()
+        if valve3.state != False:
+            valve3.disable()
     pass
 
 
@@ -481,7 +482,7 @@ def multi_test_run():
         release_buttons()
         app.frames[DataPage].runBtn.tkraise()
         app.frames[DataPage].status.set('  System ready.')
-        print(num_tests - 1," Tests Completed")
+        print(num_tests 1," Tests Completed")
         end_testing()
 # def pressue_check_thread():
 #     if pressSensor.read() > press_threshold:
