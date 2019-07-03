@@ -99,19 +99,19 @@ num_tests = len(methane_injection_conc)
 
 ##############################################
 
-#fill_methane_time = [0,0,0]
-fill_methane_time = [0] * num_tests
+fill_methane_time = [0,0,0,0]
+#fill_methane_time = [0] * len
 methane_correction_factor = 0.73#found it on MKS website
 methane_flow_rate = 10#what the value on the MFC is set to
 methane_flow_factor = 60/(500*methane_correction_factor*methane_flow_rate)
 
-#fill_hydrogen_time =  [0,0,0]
-fill_hydrogen_time = [0] * num_tests
+fill_hydrogen_time =  [0,0,0,0]
+#fill_hydrogen_time = [0] * num_tests
 hydrogen_correction_factor = 0.73#found it on MKS website
 hydrogen_flow_rate = 20#what the value on the MFC is set to
 hydrogen_flow_factor = 60/(500*hydrogen_correction_factor*hydrogen_flow_rate)
 
-for i in range(0, len(methane_injection_conc)):
+for i in range(0, len(methane_injection_conc)-1):
     fill_methane_time[i] = int(methane_injection_conc[i]*methane_flow_factor)
     fill_hydrogen_time[i] = int(hydrogen_injection_conc[i]*hydrogen_flow_factor)
 #########################################################\
