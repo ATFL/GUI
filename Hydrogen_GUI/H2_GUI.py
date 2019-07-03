@@ -458,7 +458,7 @@ def collect_data(xVector,yVector):
 def multi_test_run():
     num_tests = len(methane_injection_conc)
     global test_counter
-    if test_counter <= num_tests:
+    if test_counter < num_tests:
         start_purge_thread()
         pass
     else:
