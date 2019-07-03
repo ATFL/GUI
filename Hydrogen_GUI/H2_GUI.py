@@ -336,7 +336,7 @@ def release_buttons():
     app.frames[HomePage].shutdownBtn.config(state='normal')
 
 def purge_system():
-    testLBLval = tk.Label(statusFrame,text = test_counter + 1, " of ", len(methane_injection_conc) )
+    testLBLval = tk.Label(statusFrame,text = (test_counter + 1, " of ", len(methane_injection_conc)) )
     meConcLBLval = tk.Label(statusFrame,text = methane_injection_conc[test_counter])
     H2ConcLBLval = tk.Label(statusFrame,text = hydrogen_injection_conc[test_counter])
     meFillTimeval = tk.Label(statusFrame,text = fill_methane_time[test_counter])
