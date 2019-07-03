@@ -218,8 +218,8 @@ class DataPage(tk.Frame):
         self.progressTitle = tk.Label(self, textvariable = self.status, anchor='w')
         self.progressTitle.place(relx=0,rely=0.9,relheight=0.07,relwidth=0.8)
 
-        self.progressbar = ttk.Progressbar(self, orient='horizontal', mode='determinate', maximum=100)
-        self.progressbar.place(relx=0,rely=0.97,relheight=0.03,relwidth=0.8)
+        #self.progressbar = ttk.Progressbar(self, orient='horizontal', mode='determinate', maximum=100)
+        #self.progressbar.place(relx=0,rely=0.97,relheight=0.03,relwidth=0.8)
 
         self.run_and_stop = tk.Frame(self)
         self.run_and_stop.place(relx=0.8,rely=0.9,relheight=0.1,relwidth=0.2)
@@ -475,7 +475,7 @@ def start_purge_thread():
     purge_thread = threading.Thread(target=purge_system)
     purge_thread.daemon = True
     app.frames[DataPage].status.set('  Purging chambers...')
-    app.frames[DataPage].progressbar.start((chamber_purge_time)*10)
+    #app.frames[DataPage].progressbar.start((chamber_purge_time)*10)
     purge_thread.start()
     app.after(20, check_purge_thread)
 
@@ -483,7 +483,7 @@ def check_purge_thread():
     if purge_thread.is_alive():
         app.after(20, check_purge_thread)
     else:
-        app.frames[DataPage].progressbar.stop()
+        #app.frames[DataPage].progressbar.stop()
         if continueTest ==True:
             start_fill_thread()
 
@@ -496,7 +496,7 @@ def start_fill_thread():
     fill_thread = threading.Thread(target=fill_chamber)
     fill_thread.daemon = True
     app.frames[DataPage].status.set('  Filling sample chamber...')
-    app.frames[DataPage].progressbar.start(max(fill_methane_time,fill_hydrogen_time)*10)
+    #app.frames[DataPage].progressbar.start(max(fill_methane_time,fill_hydrogen_time)*10)
     fill_thread.start()
     app.after(20, check_fill_thread)
 
@@ -504,7 +504,7 @@ def check_fill_thread():
     if fill_thread.is_alive():
         app.after(20, check_fill_thread)
     else:
-        app.frames[DataPage].progressbar.stop()
+        #app.frames[DataPage].progressbar.stop()
         if continueTest == True:
             start_data_thread()
 
@@ -516,7 +516,7 @@ def start_data_thread():
     data_thread = threading.Thread(target=collect_data,args=(timeVector,dataVector))
     data_thread.daemon = True
     app.frames[DataPage].status.set('  Capturing data...')
-    app.frames[DataPage].progressbar.start(duration_of_signal*10)
+    #app.frames[DataPage].progressbar.start(duration_of_signal*10)
     data_thread.start()
     app.after(20, check_data_thread)
 
@@ -524,7 +524,7 @@ def check_data_thread():
     if data_thread.is_alive():
         app.after(20, check_data_thread)
     else:
-        app.frames[DataPage].progressbar.stop()
+        #app.frames[DataPage].progressbar.stop()
         app.frames[DataPage].graph.update(timeVector,dataVector)
         # release_buttons()
         # app.frames[DataPage].runBtn.tkraise()
