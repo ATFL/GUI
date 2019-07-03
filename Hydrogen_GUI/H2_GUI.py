@@ -482,7 +482,7 @@ def multi_test_run():
         release_buttons()
         app.frames[DataPage].runBtn.tkraise()
         app.frames[DataPage].status.set('  System ready.')
-        print(num_tests 1," Tests Completed")
+        print(num_tests," Tests Completed")
         end_testing()
 # def pressue_check_thread():
 #     if pressSensor.read() > press_threshold:
