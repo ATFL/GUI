@@ -85,10 +85,13 @@ chamber_purge_time = 1 #Time to purge chamber: experiment with it
 # Filling Variables
 fill_line_clense_time = 1
 
+##############################################################
+######## SAMPLE INJECTION CONCENTRATIONS #####################
+methane_injection_conc = [100,200,300,400] #Whatever vales you need
+hydrogen_injection_conc = [100.200,300.400] #whatever values you need
+##############################################################
+##############################################################
 
-######## SAMPLE INJECTION CONCENTRATIONS ##########
-methane_injection_conc = [100,200,300] #Whatever vales you need
-hydrogen_injection_conc = [100.200,300] #whatever values you need
 global test_counter
 test_counter = 0
 global num_tests
@@ -117,7 +120,7 @@ for i in range(0, len(methane_injection_conc)-1):
 sampling_time = 0.1 # tim50e between samples taken, determines sampling frequency
 sensing_delay_time = 1 # normall 5, time delay after beginning data acquisition till when the sensor is exposed to sample
 sensing_retract_time = 3 # normally 50, time allowed before sensor is retracted, no longer exposed to sample
-duration_of_signal = 10 # normally 150, time allowed for data acquisition per test run
+duration_of_signal = 5 # normally 150, time allowed for data acquisition per test run
 
 #total_time = chamber_purge_time + fill_line_clense_time + max(fill_methane_time,fill_hydrogen_time) + duration_of_signal
 
