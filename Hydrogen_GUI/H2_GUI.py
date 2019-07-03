@@ -89,7 +89,7 @@ fill_line_clense_time = 1
 ######## SAMPLE INJECTION CONCENTRATIONS ##########
 methane_injection_conc = [100,200,300] #Whatever vales you need
 hydrogen_injection_conc = [100.200,300] #whatever values you need
-counter = 1
+test_counter = 0
 
 ##############################################
 
@@ -375,7 +375,7 @@ def fill_chamber():
 
     # Filling the chamber
     start_time = time.time()
-    while time.time() < (start_time + fill_hydrogen_time[counter - 1]) and time.time() < (start_time + fill_methane_time[counter - 1]) and continueTest == True:
+    while time.time() < (start_time + fill_hydrogen_time[test_counter]) and time.time() < (start_time + fill_methane_time[test_counter]) and continueTest == True:
         if valve1.state != False:
             valve1.disable()
         if valve2.state != True:
@@ -388,7 +388,7 @@ def fill_chamber():
             valve5.disable()
         if valve6.state != True:
             valve6.enable()
-    while time.time() > (start_time + fill_hydrogen_time[counter - 1]) and time.time() < (start_time + fill_methane_time[counter - 1]) and continueTest == True:
+    while time.time() > (start_time + fill_hydrogen_time[test_counter]) and time.time() < (start_time + fill_methane_time[test_counter]) and continueTest == True:
         valve3.disable()
     pass
 
@@ -456,8 +456,7 @@ def collect_data(xVector,yVector):
 
 def multi_test_run():
     num_tests = len(methane_injection_conc)
-    if counter <= num_tests:
-        counter += 1
+    if test_counter <= num_tests:
         start_purge_thread()
         pass
     else:
@@ -530,6 +529,7 @@ def check_data_thread():
         # release_buttons()
         # app.frames[DataPage].runBtn.tkraise()
         # app.frames[DataPage].status.set('  System ready.')
+        test_counter += 1
         multi_test_run()
 def end_testing():
     if purge_thread.is_alive() or fill_thread.is_alive() or data_thread.is_alive():
