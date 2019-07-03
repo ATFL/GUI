@@ -22,7 +22,7 @@ methane_flow_rate = 10
 fill_methane_time = [0,0,0]
 divisor = 60/(500*methane_correction_factor*methane_flow_rate)
 
-for i in range(0,len(methane_injection_conc)-1):
+for i in range(0,len(methane_injection_conc)):
     fill_methane_time[i] = int(methane_injection_conc[i] * divisor)
 
 print(fill_methane_time)
