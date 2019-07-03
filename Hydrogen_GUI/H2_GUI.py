@@ -334,7 +334,18 @@ def release_buttons():
     app.frames[HomePage].shutdownBtn.config(state='normal')
 
 def purge_system():
-    #print("Test will take %d seconds",total_time)
+    testLBL = tk.Label(statusFrame,text = test_counter + 1, " of ", len(methane_injection_conc) )
+    meConcLBL = tk.Label(statusFrame,text = methane_injection_conc[test_counter])
+    H2ConcLBL = tk.Label(statusFrame,text = hydrogen_injection_conc[test_counter])
+    meFillTime = tk.Label(statusFrame,text = fill_methane_time[test_counter])
+    H2FillTime = tk.Label(statusFrame,text = fill_hydrogen_time[test_counter])
+    testLBL.place(relx = 0.3, rely = 0, relheight = 0.1, relwidth = 0.2)
+    meConcLBL.place(relx = 0.4, rely = 0.1, relheight = 0.1, relwidth = 0.1)
+    H2ConcLBL.place(relx = 0.4, rely = 0.2, relheight = 0.1, relwidth = 0.1)
+    meFillTime.place(relx = 0.4, rely = 0.3, relheight = 0.1, relwidth = 0.1)
+    H2FillTime.place(relx = 0.4, rely = 0.4, relheight = 0.1, relwidth = 0.1)
+
+
     start_time = time.time()
     while time.time() < (start_time + chamber_purge_time) and continueTest == True:
         if linearActuator.state != 'extended':
@@ -450,7 +461,7 @@ def collect_data(xVector,yVector):
     # This section of code is used for generating the output file name. The file name will contain date/time of test, as well as concentration values present during test
     filename = strftime("testsH2/%a%d%b%Y%H%M%S.csv",localtime())
     np.savetxt(filename,combinedVector, fmt='%.10f', delimiter=',')
-    print("Test %d File Saved",test_counter)
+    print("Test ",test_counter + 1," File Saved")
 
 
     pass
@@ -467,7 +478,7 @@ def multi_test_run():
         release_buttons()
         app.frames[DataPage].runBtn.tkraise()
         app.frames[DataPage].status.set('  System ready.')
-        print("%d Tests Completed",num_tests + 1)
+        print(num_tests - 1," Tests Completed")
         end_testing()
 # def pressue_check_thread():
 #     if pressSensor.read() > press_threshold:
