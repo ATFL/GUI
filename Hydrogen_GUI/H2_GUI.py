@@ -91,21 +91,21 @@ methane_injection_conc = [100,200,300] #Whatever vales you need
 hydrogen_injection_conc = [100.200,300] #whatever values you need
 test_counter = 1
 
-##############################################33333
- ###### Deprecated ##########
+##############################################
+
 fill_methane_time = [0,0,0]
 methane_correction_factor = 0.73#found it on MKS website
 methane_flow_rate = 10#what the value on the MFC is set to
-#methane_injection_amount = methane_injection_conc / 500 # mL
+methane_flow_factor = 60/(500*methane_correction_factor*methane_flow_rate)
 
 fill_hydrogen_time =  [0,0,0]
 hydrogen_correction_factor = 0.73#found it on MKS website
 hydrogen_flow_rate = 20#what the value on the MFC is set to
-#hydrogen_injection_amount = hydrogen_injection_conc / 500 # mL
-#fill_hydrogen_time = int(( 60 * ( 1 / hydrogen_correction_factor ) * hydrogen_injection_amount ) / hydrogen_flow_rate)  # Time in seconds
+hydrogen_flow_factor = 60/(500*hydrogen_correction_factor*hydrogen_flow_rate)
+
 for i in range(0, len(methane_injection_conc)):
-    fill_methane_time[i] = ( 60 * ( 1 / methane_correction_factor ) * (methane_injection_conc[i]/500 ) / methane_flow_rate
-    fill_hydrogen_time[i] = ( 60 * ( 1 / hydrogen_correction_factor ) * (hydrogen_injection_conc[i]/500 ) / hydrogen_flow_rate
+    fill_methane_time[i] = methane_injection_conc*methane_flow_factor
+    fill_hydrogen_time[i] = hydrogen_injection_conc*hydrogen_flow_factor
 #########################################################\
 
 # Testing Variables
