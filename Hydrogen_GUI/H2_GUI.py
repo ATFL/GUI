@@ -60,20 +60,22 @@ pinvalve4 = 16
 pinvalve5 = 18
 pinvalve6 = 22
 
-valve1 = Valve('Valve1',pinvalve1) #lets clean air into chamber
-valve2 = Valve('Valve2',pinvalve2) #lets Methane into chamber
-valve3 = Valve('Valve3',pinvalve3) #lets Hydrogen into chamber
-valve4 = Valve('Valve4',pinvalve4) #venting valve to clean methane fill line
-valve5 = Valve('Valve5',pinvalve5) #venting valve to clean hydrogen fill line
-valve6 = Valve('Valve6',pinvalve6) #output vent valve
+valve1 = Valve('Valve1',pinvalve1) #Methane Tank to MFC
+valve2 = Valve('Valve2',pinvalve2) #H2 Tank to MFC
+valve3 = Valve('Valve3',pinvalve3) #Line Venting
+valve4 = Valve('Valve4',pinvalve4) #Sample Gas into Chamber
+valve5 = Valve('Valve5',pinvalve5) #Air into Chamber
+valve6 = Valve('Valve6',pinvalve6) #Chamber Exhaust
 
 ################## EXPERIMENTAL STEPS ################
 
 
-#STEP 1: PURGE BOX::: V1:Y V2:N V3:N V4:N V5:N V6:Y
-#STEP 2: CLENSE FILL LINE::: V1:N V2:N V3:N V4:Y V5:Y V6:N
-#STEP 3: FILL CHAMBER::: V1:N V2:Y V3:Y V4:N V5:N V6:Y
-#STEP 4: TEST::: V1:N V2:N V3:N V4:N V5:N V6:N
+#STEP 1: PURGE BOX::: V1:N V2:N V3:N V4:N V5:Y V6:Y
+#STEP 2: FILL METHANE P1::: V1:Y V2:N V3:Y V4:N V5:N V6:N
+#STEP 3: FILL METHANE P2::: V1:Y V2:N V3:N V4:Y V5:N V6:Y
+#STEP 4: FILL H2 P1::: V1:N V2:Y V3:Y V4:N V5:N V6:N
+#STEP 5: FILL H2 P2::: V1:N V2:Y V3:N V4:Y V5:N V6:Y
+#STEP 6: TEST::: V1:N V2:N V3:N V4:N V5:N V6:N
 
 #################### System Variables ####################
 
@@ -341,60 +343,98 @@ def release_buttons():
     app.frames[HomePage].shutdownBtn.config(state='normal')
 
 def purge_system():
-    # testLBLval = tk.Label(statusFrame,text = (test_counter + 1, " of ", len(methane_injection_conc)) )
-    # meConcLBLval = tk.Label(statusFrame,text = methane_injection_conc[test_counter])
-    # H2ConcLBLval = tk.Label(statusFrame,text = hydrogen_injection_conc[test_counter])
-    # meFillTimeval = tk.Label(statusFrame,text = fill_methane_time[test_counter])
-    # H2FillTimeval = tk.Label(statusFrame,text = fill_hydrogen_time[test_counter])
-    # testLBLval.place(relx = 0.3, rely = 0, relheight = 0.1, relwidth = 0.2)
-    # meConcLBLval.place(relx = 0.4, rely = 0.1, relheight = 0.1, relwidth = 0.1)
-    # H2ConcLBLval.place(relx = 0.4, rely = 0.2, relheight = 0.1, relwidth = 0.1)
-    # meFillTimeval.place(relx = 0.4, rely = 0.3, relheight = 0.1, relwidth = 0.1)
-    # H2FillTimeval.place(relx = 0.4, rely = 0.4, relheight = 0.1, relwidth = 0.1)
-
 
     start_time = time.time()
+    print("Purging System \n V1:N V2:N V3:N V4:N V5:Y V6:Y")
     while time.time() < (start_time + chamber_purge_time) and continueTest == True:
         if linearActuator.state != 'extended':
             linearActuator.extend()
-        if valve1.state != True:
-            valve1.enable()
-        if valve2.state != False:
-            valve2.disable()
-        if valve3.state != False:
-            valve3.disable()
-        if valve4.state != False:
-            valve4.disable()
-        if valve5.state != False:
-            valve5.disable()
-        if valve6.state != True:
-            valve6.enable()
-
-    linearActuator.retract()
-    pass
-
-def fill_chamber():
-    if linearActuator.state != 'retracted':
-        linearActuator.retract()
-    #Cleansing Fill Lines
-    start_time = time.time()
-    while time.time() < (start_time + fill_line_clense_time) and continueTest == True:
         if valve1.state != False:
             valve1.disable()
         if valve2.state != False:
             valve2.disable()
         if valve3.state != False:
             valve3.disable()
-        if valve4.state != True:
-            valve4.enable()
+        if valve4.state != False:
+            valve4.disable()
         if valve5.state != True:
             valve5.enable()
+        if valve6.state != True:
+            valve6.enable()
+    print("Done purging \n V1:N V2:N V3:N V4:N V5:N V6:N")
+    if linearActuator.state != 'retracted':
+        linearActuator.retract()
+    if valve1.state != False:
+        valve1.disable()
+    if valve2.state != False:
+        valve2.disable()
+    if valve3.state != False:
+        valve3.disable()
+    if valve4.state != False:
+        valve4.disable()
+    if valve5.state != False:
+        valve5.disable()
+    if valve6.state != False:
+        valve6.disable()
+    pass
+
+def fill_chamber():
+    if linearActuator.state != 'retracted':
+        linearActuator.retract()
+    #########FILL METHANE############
+    start_time = time.time() #Methane Fill Line Clensing
+    print("Cleansing Methane Line \n V1:Y V2:N V3:Y V4:N V5:N V6:N")
+    while time.time() < (start_time + fill_line_clense_time) and continueTest == True:
+        if valve1.state != True:
+            valve1.enable()
+        if valve2.state != False:
+            valve2.disable()
+        if valve3.state != True:
+            valve3.enable()
+        if valve4.state != False:
+            valve4.disable()
+        if valve5.state != False:
+            valve5.disable()
         if valve6.state != False:
             valve6.disable()
-
+        pass
     # Filling the chamber
     start_time = time.time()
-    while time.time() < (start_time + fill_hydrogen_time[test_counter]) and time.time() < (start_time + fill_methane_time[test_counter]) and continueTest == True:
+    print("Filling Chamber with methane \n V1:Y V2:N V3:N V4:Y V5:N V6:Y")
+    while time.time() < (start_time + fill_methane_time[test_counter]) and continueTest == True:
+        if valve1.state != True:
+            valve1.enable()
+        if valve2.state != False:
+            valve2.disable()
+        if valve3.state != False:
+            valve3.disable()
+        if valve4.state != True:
+            valve4.enable()
+        if valve5.state != False:
+            valve5.disable()
+        if valve6.state != True:
+            valve6.enable()
+        pass
+    print("Done Filling Methane \n V1:N V2:N V3:N V4:N V5:N V6:N")
+    if valve1.state != False:
+        valve1.disable()
+    if valve2.state != False:
+        valve2.disable()
+    if valve3.state != False:
+        valve3.disable()
+    if valve4.state != False:
+        valve4.disable()
+    if valve5.state != False:
+        valve5.disable()
+    if valve6.state != False:
+        valve6.disable()
+
+    ########END METHANE FILL########
+
+    #######FILL HYDROGEN ##############
+    start_time = time.time() #Methane Fill Line Clensing
+    print("Cleansing Hydrogen Line \n V1:N V2:Y V3:Y V4:N V5:N V6:N")
+    while time.time() < (start_time + fill_line_clense_time) and continueTest == True:
         if valve1.state != False:
             valve1.disable()
         if valve2.state != True:
@@ -405,16 +445,41 @@ def fill_chamber():
             valve4.disable()
         if valve5.state != False:
             valve5.disable()
-        if valve6.state != True:
-            valve6.enable()
-    while time.time() > (start_time + fill_hydrogen_time[test_counter]) and time.time() < (start_time + fill_methane_time[test_counter]) and continueTest == True:
+        if valve6.state != False:
+            valve6.disable()
+        pass
+    # Filling the chamber
+    start_time = time.time()
+    print("Filling Chamber with Hydrogen \n V1:N V2:Y V3:N V4:Y V5:N V6:Y")
+    while time.time() < (start_time + fill_hydrogen_time[test_counter]) and continueTest == True:
+        if valve1.state != False:
+            valve1.disable()
+        if valve2.state != True:
+            valve2.enable()
         if valve3.state != False:
             valve3.disable()
+        if valve4.state != True:
+            valve4.enable()
+        if valve5.state != False:
+            valve5.disable()
+        if valve6.state != True:
+            valve6.enable()
+        pass
+    print("Done Filling Hydrogen \n V1:N V2:N V3:N V4:N V5:N V6:N")
+    if valve1.state != False:
+        valve1.disable()
+    if valve2.state != False:
+        valve2.disable()
+    if valve3.state != False:
+        valve3.disable()
+    if valve4.state != False:
+        valve4.disable()
+    if valve5.state != False:
+        valve5.disable()
+    if valve6.state != False:
+        valve6.disable()
     pass
 
-
-
-    pass
 
 def collect_data(xVector,yVector):
     start_time = time.time()  # Local value. Capture the time at which the test began. All time values can use start_time as a reference
