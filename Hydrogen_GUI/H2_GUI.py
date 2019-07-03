@@ -336,16 +336,16 @@ def release_buttons():
     app.frames[HomePage].shutdownBtn.config(state='normal')
 
 def purge_system():
-    testLBLval = tk.Label(statusFrame,text = (test_counter + 1, " of ", len(methane_injection_conc)) )
-    meConcLBLval = tk.Label(statusFrame,text = methane_injection_conc[test_counter])
-    H2ConcLBLval = tk.Label(statusFrame,text = hydrogen_injection_conc[test_counter])
-    meFillTimeval = tk.Label(statusFrame,text = fill_methane_time[test_counter])
-    H2FillTimeval = tk.Label(statusFrame,text = fill_hydrogen_time[test_counter])
-    testLBLval.place(relx = 0.3, rely = 0, relheight = 0.1, relwidth = 0.2)
-    meConcLBLval.place(relx = 0.4, rely = 0.1, relheight = 0.1, relwidth = 0.1)
-    H2ConcLBLval.place(relx = 0.4, rely = 0.2, relheight = 0.1, relwidth = 0.1)
-    meFillTimeval.place(relx = 0.4, rely = 0.3, relheight = 0.1, relwidth = 0.1)
-    H2FillTimeval.place(relx = 0.4, rely = 0.4, relheight = 0.1, relwidth = 0.1)
+    # testLBLval = tk.Label(statusFrame,text = (test_counter + 1, " of ", len(methane_injection_conc)) )
+    # meConcLBLval = tk.Label(statusFrame,text = methane_injection_conc[test_counter])
+    # H2ConcLBLval = tk.Label(statusFrame,text = hydrogen_injection_conc[test_counter])
+    # meFillTimeval = tk.Label(statusFrame,text = fill_methane_time[test_counter])
+    # H2FillTimeval = tk.Label(statusFrame,text = fill_hydrogen_time[test_counter])
+    # testLBLval.place(relx = 0.3, rely = 0, relheight = 0.1, relwidth = 0.2)
+    # meConcLBLval.place(relx = 0.4, rely = 0.1, relheight = 0.1, relwidth = 0.1)
+    # H2ConcLBLval.place(relx = 0.4, rely = 0.2, relheight = 0.1, relwidth = 0.1)
+    # meFillTimeval.place(relx = 0.4, rely = 0.3, relheight = 0.1, relwidth = 0.1)
+    # H2FillTimeval.place(relx = 0.4, rely = 0.4, relheight = 0.1, relwidth = 0.1)
 
 
     start_time = time.time()
