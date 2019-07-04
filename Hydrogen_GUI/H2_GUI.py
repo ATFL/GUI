@@ -90,7 +90,7 @@ fill_line_clense_time = 1
 ##############################################################
 ######## SAMPLE INJECTION CONCENTRATIONS #####################
 methane_injection_conc = [100,200,300,400] #Whatever vales you need
-hydrogen_injection_conc = [100.200,300.400] #whatever values you need
+hydrogen_injection_conc = [100,200,300,400] #whatever values you need
 ##############################################################
 ##############################################################
 
