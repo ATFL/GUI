@@ -1,6 +1,6 @@
 import H2_components
 
-valve1 = valve('vavle1',18)
+valve1 = Valve('vavle1',18)
 
 while True:
     A = input("1 for HIGH, 0 for LOW")
