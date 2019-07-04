@@ -40,7 +40,7 @@ import numpy as np
 GPIO.setmode(GPIO.BOARD)
 # Linear Actuator
 pinLA = 12
-pinEnable = 18
+pinEnable = 24
 linearActuator = LinearActuator(pinLA, pinEnable)
 # Analog-Digital Converter
 adc = ads.ADS1115(0x48)
@@ -53,7 +53,7 @@ pressSensor = PressureSensor(adc,press_adc_channel)
 
 # Valves
 
-pinvalve1 = 11
+pinvalve1 = 7
 pinvalve2 = 13
 pinvalve3 = 15
 pinvalve4 = 16
