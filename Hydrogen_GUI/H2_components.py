@@ -48,7 +48,7 @@ class Valve:
         self.name = name
         self.pin = pin
         GPIO.setup(self.pin, GPIO.OUT)
-        GPIO.output(self.pin, GPIO.HIGH)
+        GPIO.output(self.pin, GPIO.LOW)
         self.state = False
 
     def switch(self):
@@ -58,12 +58,12 @@ class Valve:
             self.disable()
 
     def enable(self):
-        GPIO.output(self.pin, GPIO.LOW)
+        GPIO.output(self.pin, GPIO.HIGH)
         self.state = True
         print(self.name + ' enabled.')
 
     def disable(self):
-        GPIO.output(self.pin, GPIO.HIGH)
+        GPIO.output(self.pin, GPIO.LOW)
         self.state = False
         print(self.name + ' disabled.')
 
