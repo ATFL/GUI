@@ -7,40 +7,40 @@ import adafruit_ads1x15
 
 
 class LinearActuator:
-    def __init__(self, pinLA , pinEnable):
+    def __init__(self, pinLA):
         self.pinLA = pinLA
-        self.pinEnable = pinEnable
+        #self.pinEnable = pinEnable
         GPIO.setup(self.pinLA, GPIO.OUT)
-        GPIO.setup(self.pinEnable, GPIO.OUT)
-        GPIO.output(self.pinEnable, GPIO.HIGH)
+        #GPIO.setup(self.pinEnable, GPIO.OUT)
+        #GPIO.output(self.pinEnable, GPIO.HIGH)
         self.pwm = GPIO.PWM(pinLA, 50)
         self.pwm.start(7)
         time.sleep(1)
-        GPIO.output(self.pinEnable, GPIO.LOW)
+        #GPIO.output(self.pinEnable, GPIO.LOW)
         self.state = 'default'
 
     def extend(self):
         print('Extending linear actuator.')
-        GPIO.output(self.pinEnable, GPIO.HIGH)
+        #GPIO.output(self.pinEnable, GPIO.HIGH)
         self.pwm.ChangeDutyCycle(9)
         time.sleep(1.5)
-        GPIO.output(self.pinEnable, GPIO.LOW)
+        #GPIO.output(self.pinEnable, GPIO.LOW)
         self.state = 'extended'
 
     def retract(self):
         print('Retracting linear actuator.')
-        GPIO.output(self.pinEnable, GPIO.HIGH)
+        #GPIO.output(self.pinEnable, GPIO.HIGH)
         self.pwm.ChangeDutyCycle(5)
         time.sleep(1.5)
-        GPIO.output(self.pinEnable, GPIO.LOW)
+        #GPIO.output(self.pinEnable, GPIO.LOW)
         self.state = 'retracted'
 
     def default(self):
         print('Moving linear actuator to default(center) position.')
-        GPIO.output(self.pinEnable, GPIO.HIGH)
+        #GPIO.output(self.pinEnable, GPIO.HIGH)
         self.pwm.ChangeDutyCycle(7)
         time.sleep(1.5)
-        GPIO.output(self.pinEnable, GPIO.LOW)
+        #GPIO.output(self.pinEnable, GPIO.LOW)
         self.state = 'default'
 
 class Valve:

@@ -40,8 +40,8 @@ import numpy as np
 GPIO.setmode(GPIO.BOARD)
 # Linear Actuator
 pinLA = 12
-pinEnable = 24
-linearActuator = LinearActuator(pinLA, pinEnable)
+#pinEnable = 24
+linearActuator = LinearActuator(pinLA)
 # Analog-Digital Converter
 adc = ads.ADS1115(0x48)
 # MOS Sensor
