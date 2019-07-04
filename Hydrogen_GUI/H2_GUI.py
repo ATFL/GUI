@@ -171,7 +171,12 @@ class HetekGUI(tk.Tk):
         self.fullscreen = True
         self.bind("<F11>", self.toggle_fullscreen)
         self.bind("<Escape>", self.end_fullscreen)
-
+        valve1.disable()
+        valve2.disable()
+        valve3.disable()
+        valve4.disable()
+        valve5.disable()
+        valve6.disable()
         print('System ready.')
 
     def show_frame(self, cont): #Control buttons will run this command for their corresponding pages.
