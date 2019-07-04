@@ -53,7 +53,7 @@ pressSensor = PressureSensor(adc,press_adc_channel)
 
 # Valves
 
-pinvalve1 = 7
+pinvalve1 = 11
 pinvalve2 = 13
 pinvalve3 = 15
 pinvalve4 = 16
