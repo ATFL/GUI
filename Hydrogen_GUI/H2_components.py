@@ -48,8 +48,8 @@ class Valve:
         self.name = name
         self.pin = pin
         GPIO.setup(self.pin, GPIO.OUT)
-        GPIO.output(self.pin, GPIO.LOW)
-        self.state = False
+        GPIO.output(self.pin, GPIO.HIGH)
+        self.state = True
 
     def switch(self):
         if self.state == False:
