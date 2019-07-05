@@ -61,12 +61,13 @@ class Valve:
         GPIO.output(self.pin, GPIO.LOW)
         self.state = True
         print(self.name + ' enabled.')
+        print("GPIO.LOW")
 
     def disable(self):
         GPIO.output(self.pin, GPIO.HIGH)
         self.state = False
         print(self.name + ' disabled.')
-
+        print("GPIO.HIGH")
 class MOS:
     def __init__(self, adc, channel):
         # Choose a gain of 1 for reading voltages from 0 to 4.09V.
