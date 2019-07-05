@@ -83,12 +83,12 @@ class Valve:
         elif self.state == True:
             self.LOW()
 
-    def HIGH():
+    def HIGH(self):
         GPIO.output(self.pin,GPIO.HIGH)
         self.state = True
         print(self.name + ' HIGH.')
 
-    def LOW():
+    def LOW(self):
         GPIO.output(self.pin,GPIO.LOW)
         self.state = False
         print(self.name + ' LOW.')
