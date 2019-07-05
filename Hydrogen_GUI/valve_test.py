@@ -1,4 +1,4 @@
-from H2H2_components import *
+from H2_components import *
 valve1 = Valve('vavle1',18)
 
 while True:
