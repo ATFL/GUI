@@ -53,12 +53,12 @@ pressSensor = PressureSensor(adc,press_adc_channel)
 
 # Valves
 
-pinvalve1 = 12
-pinvalve2 = 16
-pinvalve3 = 18
-pinvalve4 = 22
-pinvalve5 = 36
-pinvalve6 = 40
+# pinvalve1 = 12
+# pinvalve2 = 16
+# pinvalve3 = 18
+# pinvalve4 = 22
+# pinvalve5 = 36
+# pinvalve6 = 40
 
 pinvalve1 = 12
 pinvalve2 = 22
@@ -95,8 +95,8 @@ fill_line_clense_time = 5
 
 ##############################################################
 ######## SAMPLE INJECTION CONCENTRATIONS #####################
-methane_injection_conc = [80,160,240,320,400,480,560,640,720,800] #Whatever vales you need
-hydrogen_injection_conc = [20,40,60,80,100,120,140,160,180,200] #whatever values you need
+methane_injection_conc = [100,200,300,400] #Whatever vales you need
+hydrogen_injection_conc = [100,200,300,400] #whatever values you need
 
 # CH4=[80,160,240,320,400,480,560,640,720,800]
 # H2=[20,40,60,80,100,120,140,160,180,200]
