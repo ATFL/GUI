@@ -53,12 +53,12 @@ pressSensor = PressureSensor(adc,press_adc_channel)
 
 # Valves
 
-pinvalve1 = 11
-pinvalve2 = 13
-pinvalve3 = 15
-pinvalve4 = 16
-pinvalve5 = 18
-pinvalve6 = 22
+pinvalve1 = 12
+pinvalve2 = 16
+pinvalve3 = 18
+pinvalve4 = 22
+pinvalve5 = 36
+pinvalve6 = 40
 
 valve1 = Valve('Valve1',pinvalve1) #Methane Tank to MFC
 valve2 = Valve('Valve2',pinvalve2) #H2 Tank to MFC
