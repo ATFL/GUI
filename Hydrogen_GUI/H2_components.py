@@ -86,7 +86,7 @@ class Valve:
     def HIGH():
         GPIO.output(self.pin,GPIO.HIGH)
         self.state = True
-        print(self.name + ' HIGH.'')
+        print(self.name + ' HIGH.')
 
     def LOW():
         GPIO.output(self.pin,GPIO.LOW)
