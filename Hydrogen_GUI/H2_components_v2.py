@@ -16,7 +16,7 @@ class LinearActuator:
         GPIO.output(self.pinEnable, GPIO.HIGH)
         self.pwm = GPIO.PWM(pinLA, 50)
         self.pwm.start(7)
-        time.sleep(1)
+        #time.sleep(1)
         GPIO.output(self.pinEnable, GPIO.LOW)
         self.state = 'default'
 
@@ -24,7 +24,7 @@ class LinearActuator:
         print('Extending linear actuator.')
         GPIO.output(self.pinEnable, GPIO.HIGH)
         self.pwm.ChangeDutyCycle(4.6)
-        time.sleep(1.5)
+        #time.sleep(1.5)
         GPIO.output(self.pinEnable, GPIO.LOW)
         self.state = 'extended'
 
@@ -32,7 +32,7 @@ class LinearActuator:
         print('Retracting linear actuator.')
         GPIO.output(self.pinEnable, GPIO.HIGH)
         self.pwm.ChangeDutyCycle(9.6)
-        time.sleep(1.5)
+        #time.sleep(1.5)
         GPIO.output(self.pinEnable, GPIO.LOW)
         self.state = 'retracted'
 
