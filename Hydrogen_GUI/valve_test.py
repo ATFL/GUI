@@ -9,6 +9,8 @@ while True:
     if A == '1':
         print("LOW")
         valve1.LOW()
-    else:
+    elif A == '0':
         print("HIGH")
         valve1.HIGH()
+    else:
+        print('INVALID')
