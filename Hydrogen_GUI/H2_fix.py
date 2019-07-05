@@ -85,13 +85,7 @@ valve6 = Valve('Valve6',pinvalve6) #Chamber Exhaust
 
 #################### System Variables ####################
 
-#PURGING VARIABLES
-chamber_purge_time = 5 #Time to purge chamber: experiment with it
-                        #normally 30
 
-#########FILLING CHAMBER WITH TARGET GAS #############
-# Filling Variables
-fill_line_clense_time = 5 #normally 20
 
 ##############################################################
 ######## SAMPLE INJECTION CONCENTRATIONS #####################
@@ -130,8 +124,16 @@ for i in range(0, len(hydrogen_injection_conc)-1):
 #########################################################\
 
 # Testing Variables
-sampling_time = 0.1 # tim50e between samples taken, determines sampling frequency
-sensing_delay_time = 3 # normall 5, time delay after beginning data acquisition till when the sensor is exposed to sample
+
+#PURGING VARIABLES
+chamber_purge_time = 5 #normally 30 #Time to purge chamber: experiment with it
+
+#########FILLING CHAMBER WITH TARGET GAS #############
+# Filling Variables
+fill_line_clense_time = 5 #normally 20
+
+sampling_time = 0.1 # DO NOT TOUCHtime between samples taken, determines sampling frequency
+sensing_delay_time = 3 # normall 10, time delay after beginning data acquisition till when the sensor is exposed to sample
 sensing_retract_time = 5 # normally 40, time allowed before sensor is retracted, no longer exposed to sample
 duration_of_signal = 10 # normally 200, time allowed for data acquisition per test run
 
