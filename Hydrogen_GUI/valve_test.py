@@ -4,7 +4,7 @@ GPIO.setmode(GPIO.BOARD)
 valve1 = Valves('vavle1',11)
 
 while True:
-    A = input("1 for HIGH, 0 for LOW")
+    A = input("1 for LOW, 0 for HIGH")
     print(A)
     if A == '1':
         print("LOW")
