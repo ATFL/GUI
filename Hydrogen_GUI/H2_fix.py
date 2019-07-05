@@ -584,7 +584,7 @@ def collect_data(xVector,yVector):
         # Otherwise, keep outputs off
         else:
             if linearActuator.state != 'retracted':
-                linearActuator.retracted()
+                linearActuator.retract()
 
     combinedVector = np.column_stack((timeVector, dataVector))
 
