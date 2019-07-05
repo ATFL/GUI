@@ -87,19 +87,19 @@ valve6 = Valve('Valve6',pinvalve6) #Chamber Exhaust
 
 #PURGING VARIABLES
 chamber_purge_time = 5 #Time to purge chamber: experiment with it
-
+                        #normally 30
 
 #########FILLING CHAMBER WITH TARGET GAS #############
 # Filling Variables
-fill_line_clense_time = 5
+fill_line_clense_time = 5 #normally 20
 
 ##############################################################
 ######## SAMPLE INJECTION CONCENTRATIONS #####################
 methane_injection_conc = [100,200,300,400] #Whatever vales you need
 hydrogen_injection_conc = [100,200,300,400] #whatever values you need
 
-# CH4=[80,160,240,320,400,480,560,640,720,800]
-# H2=[20,40,60,80,100,120,140,160,180,200]
+# methane_injection_conc=[80,160,240,320,400,480,560,640,720,800]
+# hydrogen_injection_conc=[20,40,60,80,100,120,140,160,180,200]
 ##############################################################
 ##############################################################
 
@@ -111,13 +111,15 @@ num_tests = len(methane_injection_conc)
 ##############################################
 
 fill_methane_time = [0,0,0,0]
-#fill_methane_time = [0] * len
+#fill_methane_time = [0,0,0,0,0,0,0,0,0,0]
+
 methane_correction_factor = 0.72#found it on MKS website
 methane_flow_rate = 10#what the value on the MFC is set to
 methane_flow_factor = 60/(500*methane_correction_factor*methane_flow_rate)
 
 fill_hydrogen_time =  [0,0,0,0]
-#fill_hydrogen_time = [0] * num_tests
+#fill_hydrogen_time = [0,0,0,0,0,0,0,0,0,0]
+
 hydrogen_correction_factor = 1.01#found it on MKS website
 hydrogen_flow_rate = 10#what the value on the MFC is set to
 hydrogen_flow_factor = 60/(500*hydrogen_correction_factor*hydrogen_flow_rate)
@@ -130,8 +132,8 @@ for i in range(0, len(hydrogen_injection_conc)-1):
 # Testing Variables
 sampling_time = 0.1 # tim50e between samples taken, determines sampling frequency
 sensing_delay_time = 3 # normall 5, time delay after beginning data acquisition till when the sensor is exposed to sample
-sensing_retract_time = 5 # normally 50, time allowed before sensor is retracted, no longer exposed to sample
-duration_of_signal = 10 # normally 150, time allowed for data acquisition per test run
+sensing_retract_time = 5 # normally 40, time allowed before sensor is retracted, no longer exposed to sample
+duration_of_signal = 10 # normally 200, time allowed for data acquisition per test run
 
 #total_time = chamber_purge_time + fill_line_clense_time + max(fill_methane_time,fill_hydrogen_time) + duration_of_signal
 
