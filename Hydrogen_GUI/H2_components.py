@@ -43,33 +43,33 @@ class LinearActuator:
         #GPIO.output(self.pinEnable, GPIO.LOW)
         self.state = 'default'
 
-# class Valve:
-#     def __init__(self, name, pin):
-#         self.name = name
-#         self.pin = pin
-#         GPIO.setup(self.pin, GPIO.OUT)
-#         GPIO.output(self.pin, GPIO.LOW)
-#         self.state = False
-#
-#     def switch(self):
-#         if self.state == False:
-#             self.enable()
-#         elif self.state == True:
-#             self.disable()
-#
-#     def enable(self):
-#         GPIO.output(self.pin, GPIO.LOW)
-#         self.state = True
-#         print(self.name + ' enabled.')
-#         #print("GPIO.LOW")
-#
-#     def disable(self):
-#         GPIO.output(self.pin, GPIO.HIGH)
-#         self.state = False
-#         print(self.name + ' disabled.')
-#         #print("GPIO.HIGH")
-
 class Valve:
+    def __init__(self, name, pin):
+        self.name = name
+        self.pin = pin
+        GPIO.setup(self.pin, GPIO.OUT)
+        GPIO.output(self.pin, GPIO.LOW)
+        self.state = False
+
+    def switch(self):
+        if self.state == False:
+            self.enable()
+        elif self.state == True:
+            self.disable()
+
+    def enable(self):
+        GPIO.output(self.pin, GPIO.LOW)
+        self.state = True
+        print(self.name + ' enabled.')
+        #print("GPIO.LOW")
+
+    def disable(self):
+        GPIO.output(self.pin, GPIO.HIGH)
+        self.state = False
+        print(self.name + ' disabled.')
+        #print("GPIO.HIGH")
+
+class Valves:
     def __init__(self,name,pin):
         self.name = name
         self.pin = pin
