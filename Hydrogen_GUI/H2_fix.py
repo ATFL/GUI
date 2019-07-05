@@ -167,10 +167,24 @@ class HetekGUI(tk.Tk):
         self.show_frame(HomePage) #Sets the default page.
 
         #Setup controls for fullscreen
-        self.attributes("-fullscreen", True)
+        (self.attributes("-fullscreen", True)
         self.fullscreen = True
         self.bind("<F11>", self.toggle_fullscreen)
         self.bind("<Escape>", self.end_fullscreen)
+
+        valve1.enable()
+        time.sleep(0.2)
+        valve2.enable()
+        time.sleep(0.2)
+        valve3.enable()
+        time.sleep(0.2)
+        valve4.enable()
+        time.sleep(0.2)
+        valve5.enable()
+        time.sleep(0.2)
+        valve6.enable()
+        time.sleep(0.2)
+
         valve1.disable()
         valve2.disable()
         valve3.disable()
