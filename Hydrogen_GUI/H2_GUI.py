@@ -39,7 +39,7 @@ import numpy as np
 #################### Object Declaration ####################
 GPIO.setmode(GPIO.BOARD)
 # Linear Actuator
-pinLA = 12
+pinLA = 38
 pinEnable = 24
 linearActuator = LinearActuator(pinLA,pinEnable)
 # Analog-Digital Converter
