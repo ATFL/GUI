@@ -60,6 +60,12 @@ pinvalve4 = 22
 pinvalve5 = 36
 pinvalve6 = 40
 
+pinvalve1 = 12
+pinvalve2 = 22
+pinvalve3 = 16
+pinvalve4 = 18
+pinvalve5 = 36
+pinvalve6 = 40
 valve1 = Valve('Valve1',pinvalve1) #Methane Tank to MFC
 valve2 = Valve('Valve2',pinvalve2) #H2 Tank to MFC
 valve3 = Valve('Valve3',pinvalve3) #Line Venting
