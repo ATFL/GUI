@@ -572,19 +572,19 @@ def collect_data(xVector,yVector):
         # If time is between 10-50 seconds and the Linear Actuator position sensor signal from the ADC indicates a retracted state, extend the sensor
         elif (time.time() >= (start_time + sensing_delay_time) and time.time() <= (
                 sensing_retract_time + start_time) and (continueTest == True)):
-            if linearActuator.state != 'retracted':
-                linearActuator.retract()
+            if linearActuator.state != 'extended':
+                linearActuator.extend()
 
         # If time is less than 10 seconds or greater than 50 seconds and linear actuator position sensor signal from the ADC indicates an extended state, retract the sensor
         elif (((time.time() < (sensing_delay_time + start_time)) or (
                 time.time() > (sensing_retract_time + start_time)))) and (continueTest == True):
-            if linearActuator.state != 'extended':
-                linearActuator.extend()
+            if linearActuator.state != 'retracted':
+                linearActuator.retract()
 
         # Otherwise, keep outputs off
         else:
-            if linearActuator.state != 'extended':
-                linearActuator.extend()
+            if linearActuator.state != 'retracted':
+                linearActuator.retracted()
 
     combinedVector = np.column_stack((timeVector, dataVector))
 
