@@ -90,7 +90,7 @@ valve6 = Valve('Valve6',pinvalve6) #Chamber Exhaust
 ##############################################################
 ######## SAMPLE INJECTION CONCENTRATIONS #####################
 methane_injection_conc = [100,200,300,400] #Whatever vales you need
-hydrogen_injection_conc = [100,200,300,400] #whatever values you need
+hydrogen_injection_conc = [50,100,150,200] #whatever values you need
 
 # methane_injection_conc=[80,160,240,320,400,480,560,640,720,800]
 # hydrogen_injection_conc=[20,40,60,80,100,120,140,160,180,200]
