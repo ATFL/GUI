@@ -1,3 +1,4 @@
+
 # -----> RPi Imports <------
 import RPi.GPIO as GPIO
 #import piplates.DAQC2plate as DAQC2
@@ -58,40 +59,40 @@ class Valve:
             self.disable()
 
     def enable(self):
-        GPIO.output(self.pin, GPIO.LOW)
+        GPIO.output(self.pin, GPIO.HIGH)
         self.state = True
         print(self.name + ' enabled.')
         #print("GPIO.LOW")
 
     def disable(self):
-        GPIO.output(self.pin, GPIO.HIGH)
+        GPIO.output(self.pin, GPIO.LOW)
         self.state = False
         print(self.name + ' disabled.')
         #print("GPIO.HIGH")
 
-class Valves:
-    def __init__(self,name,pin):
-        self.name = name
-        self.pin = pin
-        GPIO.setup(self.pin, GPIO.OUT)
-        GPIO.output(self.pin, GPIO.LOW)
-        self.state = False
-
-    def switch(self):
-        if self.state == False:
-            self.HIGH()
-        elif self.state == True:
-            self.LOW()
-
-    def enable(self):
-        GPIO.output(self.pin,GPIO.HIGH)
-        self.state = True
-        print(self.name + ' HIGH.')
-
-    def disable(self):
-        GPIO.output(self.pin,GPIO.LOW)
-        self.state = False
-        print(self.name + ' LOW.')
+# class Valves:
+#     def __init__(self,name,pin):
+#         self.name = name
+#         self.pin = pin
+#         GPIO.setup(self.pin, GPIO.OUT)
+#         GPIO.output(self.pin, GPIO.LOW)
+#         self.state = False
+#
+#     def switch(self):
+#         if self.state == False:
+#             self.HIGH()
+#         elif self.state == True:
+#             self.LOW()
+#
+#     def enable(self):
+#         GPIO.output(self.pin,GPIO.HIGH)
+#         self.state = True
+#         print(self.name + ' HIGH.')
+#
+#     def disable(self):
+#         GPIO.output(self.pin,GPIO.LOW)
+#         self.state = False
+#         print(self.name + ' LOW.')
 
 class MOS:
     def __init__(self, adc, channel):

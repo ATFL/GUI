@@ -22,7 +22,7 @@ import matplotlib.animation as animation
 from matplotlib import style
 # -----> Auxiliary Imports <------
 from gui_widgets import *
-from H2_components import *
+from H2_components_v2 import *
 # -----> RPi Imports <------
 import RPi.GPIO as GPIO
 import time
@@ -309,15 +309,15 @@ class ManualControlPage(tk.Frame):
 
         self.btn_5 = tk.Button(controlFrame, text='Valve 1 Enable', command=lambda:valve1.enable())
         self.btn_5.place(relx=buttonWidth,rely=0,relheight=0.1,relwidth=buttonWidth/2)
-        self.btn_6 = tk.Button(controlFrame, text='Valve 1 Enable', command=lambda:valve2.enable())
+        self.btn_6 = tk.Button(controlFrame, text='Valve 2 Enable', command=lambda:valve2.enable())
         self.btn_6.place(relx=buttonWidth,rely=0.1,relheight=0.1,relwidth=buttonWidth/2)
-        self.btn_7 = tk.Button(controlFrame, text='Valve 1 Enable', command=lambda:valve3.enable())
+        self.btn_7 = tk.Button(controlFrame, text='Valve 3 Enable', command=lambda:valve3.enable())
         self.btn_7.place(relx=buttonWidth,rely=0.2,relheight=0.1,relwidth=buttonWidth/2)
-        self.btn_8 = tk.Button(controlFrame, text='Valve 1 Enable', command=lambda:valve4.enable())
+        self.btn_8 = tk.Button(controlFrame, text='Valve 4 Enable', command=lambda:valve4.enable())
         self.btn_8.place(relx=buttonWidth,rely=0.3,relheight=0.1,relwidth=buttonWidth/2)
-        self.btn_9 = tk.Button(controlFrame, text='Valve 1 Enable', command=lambda:valve5.enable())
+        self.btn_9 = tk.Button(controlFrame, text='Valve 5 Enable', command=lambda:valve5.enable())
         self.btn_9.place(relx=buttonWidth,rely=0.4,relheight=0.1,relwidth=buttonWidth/2)
-        self.btn_10 = tk.Button(controlFrame, text='Valve 1 Enable', command=lambda:valve6.enable())
+        self.btn_10 = tk.Button(controlFrame, text='Valve 6 Enable', command=lambda:valve6.enable())
         self.btn_10.place(relx=buttonWidth,rely=0.5,relheight=0.1,relwidth=buttonWidth/2)
 
         self.btn_11 = tk.Button(controlFrame, text='Valve 1 Disable', command=lambda:valve1.disable())
