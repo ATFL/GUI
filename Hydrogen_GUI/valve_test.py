@@ -8,7 +8,7 @@ while True:
     print(A)
     if A == '1':
         print("LOW")
-        valve1.enable()
+        valve1.LOW()
     else:
         print("HIGH")
-        valve1.disable()
+        valve1.HIGH()
