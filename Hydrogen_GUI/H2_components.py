@@ -43,8 +43,34 @@ class LinearActuator:
         #GPIO.output(self.pinEnable, GPIO.LOW)
         self.state = 'default'
 
+# class Valve:
+#     def __init__(self, name, pin):
+#         self.name = name
+#         self.pin = pin
+#         GPIO.setup(self.pin, GPIO.OUT)
+#         GPIO.output(self.pin, GPIO.LOW)
+#         self.state = False
+#
+#     def switch(self):
+#         if self.state == False:
+#             self.enable()
+#         elif self.state == True:
+#             self.disable()
+#
+#     def enable(self):
+#         GPIO.output(self.pin, GPIO.LOW)
+#         self.state = True
+#         print(self.name + ' enabled.')
+#         #print("GPIO.LOW")
+#
+#     def disable(self):
+#         GPIO.output(self.pin, GPIO.HIGH)
+#         self.state = False
+#         print(self.name + ' disabled.')
+#         #print("GPIO.HIGH")
+
 class Valve:
-    def __init__(self, name, pin):
+    def __init__(self,name,pin):
         self.name = name
         self.pin = pin
         GPIO.setup(self.pin, GPIO.OUT)
@@ -53,21 +79,20 @@ class Valve:
 
     def switch(self):
         if self.state == False:
-            self.enable()
+            self.HIGH()
         elif self.state == True:
-            self.disable()
+            self.LOW()
 
-    def enable(self):
-        GPIO.output(self.pin, GPIO.LOW)
+    def HIGH():
+        GPIO.output(self.pin,GPIO.HIGH)
         self.state = True
-        print(self.name + ' enabled.')
-        print("GPIO.LOW")
+        print(self.name + ' HIGH.'')
 
-    def disable(self):
-        GPIO.output(self.pin, GPIO.HIGH)
+    def LOW():
+        GPIO.output(self.pin,GPIO.LOW)
         self.state = False
-        print(self.name + ' disabled.')
-        print("GPIO.HIGH")
+        print(self.name + ' LOW.')
+
 class MOS:
     def __init__(self, adc, channel):
         # Choose a gain of 1 for reading voltages from 0 to 4.09V.
