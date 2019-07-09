@@ -5,10 +5,10 @@ import matplotlib.pyplot as plt
 from sklearn import preprocessing
 import itertools
 from mpl_toolkits.mplot3d import Axes3D
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split,ShuffleSplit
 from numpy import genfromtxt
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-from sklearn.externals import joblib 
+from sklearn.externals import joblib
 from sklearn.model_selection import LeaveOneOut
 from sklearn.neighbors import NearestNeighbors, KNeighborsClassifier
 from keras.utils import np_utils
@@ -48,18 +48,18 @@ def initializeClassifier(algorithm, x_train, params):
 		activation = params[2]
 		dropout = params[3]
 		l2 = params[4]
-		
+
 		for j in range(len(layers)):
 			if j == 0:
 				classifier.add(Dense(layers[j], input_shape = (x_train.shape[1],),activation = activation,kernel_regularizer = regularizers.l2(l2)))
 			else:
 				classifier.add(Dense(layers[j],activation = activation, kernel_regularizer = regularizers.l2(l2)))
 		classifier.add(Dense(3, activation = 'softmax'))
-		
+
 		adam = Adam(lr=learnRate, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.001)
 		classifier.compile(loss = 'categorical_crossentropy', optimizer = adam, metrics = ['accuracy'])
-		
-	
+
+
 	if algorithm == 'SVM':
 		classifier = SVC( kernel='rbf', C = params[0], gamma = params[1] )
 
@@ -75,7 +75,7 @@ def initializeFCN(x_train, params):
 	activation = params[4]
 	dropout = params[5]
 	l2 = params[6]
-	
+
 	for j in range(n_layers):
 		if j == 0:
 			classifier.add(Conv1D( n_filters, filter_length, input_shape = (x_train.shape[1],1), activation = activation, kernel_regularizer = regularizers.l2(l2), padding = 'valid' ))
@@ -83,32 +83,37 @@ def initializeFCN(x_train, params):
 		else:
 			classifier.add(Conv1D( n_filters, int(filter_length/(2**j)), activation = activation, kernel_regularizer = regularizers.l2(l2), padding = 'valid' ))
 			classifier.add( MaxPooling1D(2) )
-	
+
 	classifier.add( Flatten() )
 	classifier.add(Dense(32, activation = 'relu'))
-	classifier.add(Dense(32, activation = 'relu'))		
+	classifier.add(Dense(32, activation = 'relu'))
 	classifier.add(Dense(3, activation = 'softmax'))
-	
+
 	adam = Adam(lr=learnRate, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.001)
 	classifier.compile(loss = 'categorical_crossentropy', optimizer = adam, metrics = ['accuracy'])
-		
+
 	return classifier
 
-	
+
 def standard_scaler(train, test):
 	scaler = preprocessing.StandardScaler().fit(train)
 	train = scaler.transform(train)
 	test = scaler.transform(test)
-	
+
 	return train, test
 
 # Load data
-x_train = np.transpose( genfromtxt('C:/Users/barr_mt/Desktop/Testing_algorithms_on_arbitrary_mix/data_and_targets/processed_train_data.csv', delimiter=',') )
-x_val = np.transpose( genfromtxt('C:/Users/barr_mt/Desktop/Testing_algorithms_on_arbitrary_mix/data_and_targets/processed_val_data.csv', delimiter=',') )
+X = genfromtxt('/home/adiravishankara/Documents/ATFL/gui/Hydrogen_GUI/ML/training/class_training_X.csv', delimiter=',')
+Y = genfromtxt('/home/adiravishankara/Documents/ATFL/gui/Hydrogen_GUI/ML/training/class_training_Y.csv', delimiter=',')
+Y = np.transpose(Y)
+X_train,X_test,y_train,y_test = train_test_split(X,Y,test_size=5)
+
+x_train = np.transpose(X_train)
+x_val = np.transpose(X_test)
 
 # Concentration targets
-y_train = genfromtxt('C:/Users/barr_mt/Desktop/Testing_algorithms_on_arbitrary_mix/data_and_targets/targets_train_binary.csv', delimiter=',')
-y_val = genfromtxt('C:/Users/barr_mt/Desktop/Testing_algorithms_on_arbitrary_mix/data_and_targets/targets_val_binary.csv', delimiter=',')
+# y_train =
+# y_val = genfromtxt('C:/Users/barr_mt/Desktop/Testing_algorithms_on_arbitrary_mix/data_and_targets/targets_val_binary.csv', delimiter=',')
 y_train_enc = np_utils.to_categorical(y_train)
 y_val_enc = np_utils.to_categorical(y_val)
 
@@ -172,7 +177,7 @@ for params in ParamList:
 	if alg == 'SVM':
 		clf = initializeClassifier('SVM', x_train, params)
 		clf.fit(x_train, y_train)
-		
+
 		y_pred = clf.predict(x_val)
 
 
