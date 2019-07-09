@@ -105,15 +105,32 @@ def standard_scaler(train, test):
 # Load data
 X = genfromtxt('/home/adiravishankara/Documents/ATFL/gui/Hydrogen_GUI/ML/training/class_training_X.csv', delimiter=',')
 Y = genfromtxt('/home/adiravishankara/Documents/ATFL/gui/Hydrogen_GUI/ML/training/class_training_Y.csv', delimiter=',')
-Y = np.transpose(Y)
-X_train,X_test,y_train,y_test = train_test_split(X,Y,test_size=5)
+
+X_test = np.column_stack((X[:,53],X[:,33],X[:,48],X[:,26],X[:,11]))
+X_train = np.delete(X,[53,33,48,26,11],1)
+Y_test = np.array([Y[53,],Y[33,],Y[48,],Y[26,],Y[11,]])
+#Y_test = np.column_stack((Y_test))
+Y_train = np.delete(Y,[53,33,48,26,11],0)
+#Y_train = np.column_stack((Y_train))
 
 x_train = np.transpose(X_train)
 x_val = np.transpose(X_test)
 
+
+
 # Concentration targets
-# y_train =
-# y_val = genfromtxt('C:/Users/barr_mt/Desktop/Testing_algorithms_on_arbitrary_mix/data_and_targets/targets_val_binary.csv', delimiter=',')
+# y_train = np.transpose(Y_train)
+# y_val = np.transpose(Y_test)
+y_train = Y_train
+y_val = Y_test
+
+print('Original Shape X: ',X.shape, 'Original Shape Y: ', Y.shape)
+print('Modified Shape X_train: ',x_train.shape,' Modified Shape X_test: ',x_val.shape)
+print('Modified Shape Y_train: ',y_train.shape,' Modified Shape Y_test: ',y_val.shape)
+np.savetxt('X_test1.csv',X_test, fmt='%.10f', delimiter=',')
+np.savetxt('X_train1.csv',X_train, fmt='%.10f', delimiter=',')
+np.savetxt('Y_test1.csv',y_val, fmt='%.10f', delimiter=',')
+np.savetxt('Y_train1.csv',y_train, fmt='%.10f', delimiter=',')
 y_train_enc = np_utils.to_categorical(y_train)
 y_val_enc = np_utils.to_categorical(y_val)
 
@@ -121,7 +138,7 @@ y_val_enc = np_utils.to_categorical(y_val)
 ##############################################
 # Test params
 post_p = False
-alg = 'CNN'
+alg = 'ANN'
 prep = 4
 ##############################################
 
@@ -278,20 +295,3 @@ if alg == 'CNN':
 	bestCNNEpochs = best_epochs[bestScoreIndex]
 	bestCNNParams = CNNParamList[bestScoreIndex]
 	print("Best results for CNN: %s with %s and %s epochs" % (  bestScore, bestCNNParams, bestCNNEpochs ))
-
-
-
-
-# Generate heatmap plot for SVM
-# print(SVMScoreMatrix)
-# plt.figure(figsize=(8, 6))
-# # plt.subplots_adjust(left=.2, right=0.95, bottom=0.15, top=0.95)
-# plt.imshow(SVMScoreMatrix, interpolation='nearest', cmap=plt.cm.hot,
-#            norm=MidpointNormalize(vmin=0.2, midpoint=0.8))
-# plt.xlabel('gamma')
-# plt.ylabel('C')
-# plt.colorbar()
-# plt.xticks(np.arange(len(gammaList)), gammaList, rotation=45)
-# plt.yticks(np.arange(len(cList)), cList)
-# plt.title('Validation Accuracy for SVM - 70 features')
-# plt.show()
