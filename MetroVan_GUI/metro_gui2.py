@@ -73,15 +73,58 @@ valve4 = Valve('Valve4',pinvalve4) #Sample Gas into Chamber
 valve5 = Valve('Valve5',pinvalve5) #Air into Chamber
 valve6 = Valve('Valve6',pinvalve6) #Chamber Exhaust
 
-################## EXPERIMENTAL STEPS ################
+################## EXPERIMENTAL STEPS METROVAN ################
 
+##EXTRACTION
+    #V1-a
+    #v2-a
+    #v3-a
+    #v4-b
+    #stepper retract
+    #v3-b
+    #stepper extend
+    
+## Vaporization Test
+    #Heater on
+    #sleep(240)
+    #Heater off
+    #LA Extend
+    #Data Capture
+    #LA Retract (Continue Data capture)
+    #sleep(__)
+    #Finish data capture
 
-#STEP 1: PURGE BOX::: V1:N V2:N V3:N V4:N V5:Y V6:Y
-#STEP 2: FILL METHANE P1::: V1:Y V2:N V3:Y V4:N V5:N V6:N
-#STEP 3: FILL METHANE P2::: V1:Y V2:N V3:N V4:Y V5:N V6:Y
-#STEP 4: FILL H2 P1::: V1:N V2:Y V3:Y V4:N V5:N V6:N
-#STEP 5: FILL H2 P2::: V1:N V2:Y V3:N V4:Y V5:N V6:Y
-#STEP 6: TEST::: V1:N V2:N V3:N V4:N V5:N V6:N
+##Cleanse
+    #v1-a
+    #v2-a
+    #v3-a
+    #v4-b
+    #v5-a
+
+    #Repeat x times
+        
+        #stepper retract
+        #v3-b
+        #stepper extend
+        #v3-a
+
+    #v3-b
+    #v2-b
+    #pump on
+    #sleep(_short time_)
+    #v4-a
+    #pump off
+    #Heater on   -  maybe earlier
+    #sleep()
+    #Heater off
+
+##Purge
+    #v5-b
+    #pump on
+    #sleep(__)
+    #pump off
+    #v5-a
+
 
 #################### System Variables ####################
 
@@ -696,3 +739,4 @@ except keyboardinterrupt:
     GPIO.cleanup()
 finally:
     GPIO.cleanup()
+

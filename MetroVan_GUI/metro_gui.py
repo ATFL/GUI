@@ -36,11 +36,15 @@ import numpy as np
 # import sklearn
 # import pickle
 
+
+
+
+
 #################### Object Declaration ####################
 GPIO.setmode(GPIO.BOARD)
 # Linear Actuator
-pinLA = 15
-pinEnable = 24
+pinLA = 7
+pinEnable = 40 ## Enable pin is not in yet
 linearActuator = LinearActuator(pinLA,pinEnable)
 # Analog-Digital Converter
 adc = ads.ADS1115(0x48)
@@ -51,6 +55,7 @@ mos = MOS(adc, MOS_adc_channel)
 press_adc_channel = 1
 pressSensor = PressureSensor(adc,press_adc_channel)
 
+heater = 37
 # Valves
 
 # pinvalve1 = 12
@@ -60,19 +65,18 @@ pressSensor = PressureSensor(adc,press_adc_channel)
 # pinvalve5 = 36
 # pinvalve6 = 40
 
-pinvalve1 = 12
-pinvalve2 = 22
-pinvalve3 = 16
-pinvalve4 = 18
-pinvalve5 = 36
-pinvalve6 = 40
+pinvalve1 = 11
+pinvalveS = 13 #v5 on the PCB
+pump = 16 #v3 on the PCB
+pinvalve4 = 15
+pinvalve5 = 29
+pinvalve6 = 35
 valve1 = Valve('Valve1',pinvalve1) #Methane Tank to MFC
-valve2 = Valve('Valve2',pinvalve2) #H2 Tank to MFC
-valve3 = Valve('Valve3',pinvalve3) #Line Venting
+valve2 = Valve('Valve2',pinvalveS) #Controls pump flow
 valve4 = Valve('Valve4',pinvalve4) #Sample Gas into Chamber
 valve5 = Valve('Valve5',pinvalve5) #Air into Chamber
 valve6 = Valve('Valve6',pinvalve6) #Chamber Exhaust
-
+#Pump = Pump(pump)
 ################## EXPERIMENTAL STEPS ################
 
 
