@@ -44,7 +44,7 @@ import numpy as np
 GPIO.setmode(GPIO.BOARD)
 # Linear Actuator
 pinLA = 7
-pinEnable = 40 ## Enable pin is not in yet
+pinEnable = 33 ## Enable pin is not in yet
 linearActuator = LinearActuator(pinLA,pinEnable)
 # Analog-Digital Converter
 adc = ads.ADS1115(0x48)
@@ -66,11 +66,11 @@ heater = 37
 # pinvalve6 = 40
 
 pinvalve1 = 11
-pinvalveS = 13 #v5 on the PCB
-pump = 16 #v3 on the PCB
+pinvalveS = 13 #v2 on the PCB
+pump = 38 #v3 on the PCB
 pinvalve4 = 15
 pinvalve5 = 29
-pinvalve6 = 35
+pinvalve6 = 35 
 valve1 = Valve('Valve1',pinvalve1) #Methane Tank to MFC
 valve2 = Valve('Valve2',pinvalveS) #Controls pump flow
 valve4 = Valve('Valve4',pinvalve4) #Sample Gas into Chamber
