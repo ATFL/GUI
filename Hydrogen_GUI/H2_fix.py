@@ -90,9 +90,10 @@ valve6 = Valve('Valve6',pinvalve6) #Chamber Exhaust
 ##############################################################
 ######## SAMPLE INJECTION CONCENTRATIONS #####################
 #methane_injection_conc = [300,400] #Whatever vales you need
-hydrogen_injection_conc = [0,0,0,0,0,0] #whatever values you need
-#hydrogen_injection_conc = [10,20]
-methane_injection_conc= [120,240,360,480,600,720]
+#hydrogen_injection_conc = [20,40,60,80,100,120,140,160,180,200,30,50,70,90,110,130,150,170,190] #whatever values you need
+hydrogen_injection_conc = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+#methane_injection_conc= [80,160,240,320,400,480,560,640,720,800,120,200,280,360,440,520,600,680,760]
+methane_injection_conc= [100,120,140,160,180,200,220,240,260,280,300,320,340,360,380,400,480,500,520,600,650,700]
 #methane_injection_conc = [13,23]
 #hydrogen_injection_conc=[20,40,60,80,100,120,140,160,180,200]
 ##############################################################
@@ -106,14 +107,14 @@ num_tests = len(methane_injection_conc)
 ##############################################
 
 #fill_methane_time = [0,0]
-fill_methane_time = [0,0,0,0,0,0]
+fill_methane_time = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 
 methane_correction_factor = 0.72#found it on MKS website
 methane_flow_rate = 10#what the value on the MFC is set to
 methane_flow_factor = 60/(500*methane_correction_factor*methane_flow_rate)
 
 #fill_hydrogen_time =  [0,0]
-fill_hydrogen_time = [0,0,0,0,0,0]
+fill_hydrogen_time = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 
 hydrogen_correction_factor = 1.01#found it on MKS website
 hydrogen_flow_rate = 10#what the value on the MFC is set to
@@ -127,15 +128,15 @@ for i in range(0, len(hydrogen_injection_conc)-1):
 # Testing Variables
 
 #PURGING VARIABLES
-chamber_purge_time = 120 #normally 30 #Time to purge chamber: experiment with it
+chamber_purge_time = 100 #normally 30 #Time to purge chamber: experiment with it
 
 #########FILLING CHAMBER WITH TARGET GAS #############
 # Filling Variables
 fill_line_clense_time = 20 #normally 20
 
 sampling_time = 0.1 # DO NOT TOUCHtime between samples taken, determines sampling frequency
-sensing_delay_time = 5 # normall 10, time delay after beginning data acquisition till when the sensor is exposed to sample
-sensing_retract_time = 25 # normally 40, time allowed before sensor is retracted, no longer exposed to sample
+sensing_delay_time = 1 # normall 10, time delay after beginning data acquisition till when the sensor is exposed to sample
+sensing_retract_time = 40 # normally 40, time allowed before sensor is retracted, no longer exposed to sample
 duration_of_signal = 240 # normally 200, time allowed for data acquisition per test run
 
 
@@ -307,7 +308,7 @@ class DataPage(tk.Frame):
 
         responseFrame = tk.Frame(self)
         responseFrame.place(relx=0.8,rely=0,relheight=0.3,relwidth=0.2)
-        self.naturalGasLabel = tk.Label(responseFrame, text = 'Natural Gas\n Detected', relief='groove', borderwidth=2, anchor='center')
+        self.naturalGasLabel = tk.Label(responseFrame, text = '', relief='groove', borderwidth=2, anchor='center')
         self.naturalGasLabel.place(relx=0,rely=0,relheight=0.7,relwidth=1)
         self.orig_color = self.naturalGasLabel.cget("background") # Store the original color of the label.
 
@@ -534,8 +535,8 @@ def fill_chamber():
             valve4.enable()
         if valve5.state != False:
             valve5.disable()
-        if valve6.state != True:
-            valve6.enable() 
+        if valve6.state != False:
+            valve6.disable() 
         pass
     print("Done Filling Hydrogen \n V1:N V2:N V3:N V4:N V5:N V6:N")
     if valve1.state != False:

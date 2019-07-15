@@ -24,7 +24,11 @@ class LinearActuator:
         print('Extending linear actuator.')
         GPIO.output(self.pinEnable, GPIO.HIGH)
         self.pwm.ChangeDutyCycle(4.6)
+#<<<<<<< HEAD
         time.sleep(2)
+#=======
+        #time.sleep(1.5)
+#>>>>>>> c6a46305f25e224c08dacacd200edfd9dece1ca9
         GPIO.output(self.pinEnable, GPIO.LOW)
         self.state = 'extended'
 
