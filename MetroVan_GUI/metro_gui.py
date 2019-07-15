@@ -36,11 +36,15 @@ import numpy as np
 # import sklearn
 # import pickle
 
+
+
+
+
 #################### Object Declaration ####################
 GPIO.setmode(GPIO.BOARD)
 # Linear Actuator
-pinLA = 37
-pinEnable = 15
+pinLA = 7
+pinEnable = 33 ## Enable pin is not in yet
 linearActuator = LinearActuator(pinLA,pinEnable)
 # Analog-Digital Converter
 adc = ads.ADS1115(0x48)
@@ -51,6 +55,7 @@ mos = MOS(adc, MOS_adc_channel)
 press_adc_channel = 1
 pressSensor = PressureSensor(adc,press_adc_channel)
 
+heater = 37
 # Valves
 
 # pinvalve1 = 12
@@ -60,19 +65,18 @@ pressSensor = PressureSensor(adc,press_adc_channel)
 # pinvalve5 = 36
 # pinvalve6 = 40
 
-pinvalve1 = 12
-pinvalve2 = 22
-pinvalve3 = 16
-pinvalve4 = 18
-pinvalve5 = 36
-pinvalve6 = 40
+pinvalve1 = 11
+pinvalveS = 13 #v2 on the PCB
+pump = 38 #v3 on the PCB
+pinvalve4 = 15
+pinvalve5 = 29
+pinvalve6 = 35 
 valve1 = Valve('Valve1',pinvalve1) #Methane Tank to MFC
-valve2 = Valve('Valve2',pinvalve2) #H2 Tank to MFC
-valve3 = Valve('Valve3',pinvalve3) #Line Venting
+valve2 = Valve('Valve2',pinvalveS) #Controls pump flow
 valve4 = Valve('Valve4',pinvalve4) #Sample Gas into Chamber
 valve5 = Valve('Valve5',pinvalve5) #Air into Chamber
 valve6 = Valve('Valve6',pinvalve6) #Chamber Exhaust
-
+#Pump = Pump(pump)
 ################## EXPERIMENTAL STEPS ################
 
 
@@ -89,13 +93,11 @@ valve6 = Valve('Valve6',pinvalve6) #Chamber Exhaust
 
 ##############################################################
 ######## SAMPLE INJECTION CONCENTRATIONS #####################
-#methane_injection_conc = [300,400] #Whatever vales you need
-#hydrogen_injection_conc = [20,40,60,80,100,120,140,160,180,200,30,50,70,90,110,130,150,170,190] #whatever values you need
-hydrogen_injection_conc = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-#methane_injection_conc= [80,160,240,320,400,480,560,640,720,800,120,200,280,360,440,520,600,680,760]
-methane_injection_conc= [100,120,140,160,180,200,220,240,260,280,300,320,340,360,380,400,480,500,520,600,650,700]
-#methane_injection_conc = [13,23]
-#hydrogen_injection_conc=[20,40,60,80,100,120,140,160,180,200]
+methane_injection_conc = [80,160] #Whatever vales you need
+hydrogen_injection_conc = [20,40] #whatever values you need
+
+# methane_injection_conc=[80,160,240,320,400,480,560,640,720,800]
+# hydrogen_injection_conc=[20,40,60,80,100,120,140,160,180,200]
 ##############################################################
 ##############################################################
 
@@ -106,15 +108,15 @@ num_tests = len(methane_injection_conc)
 
 ##############################################
 
-#fill_methane_time = [0,0]
-fill_methane_time = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+fill_methane_time = [0,0]
+#fill_methane_time = [0,0,0,0,0,0,0,0,0,0]
 
 methane_correction_factor = 0.72#found it on MKS website
 methane_flow_rate = 10#what the value on the MFC is set to
 methane_flow_factor = 60/(500*methane_correction_factor*methane_flow_rate)
 
-#fill_hydrogen_time =  [0,0]
-fill_hydrogen_time = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+fill_hydrogen_time =  [0,0]
+#fill_hydrogen_time = [0,0,0,0,0,0,0,0,0,0]
 
 hydrogen_correction_factor = 1.01#found it on MKS website
 hydrogen_flow_rate = 10#what the value on the MFC is set to
@@ -128,29 +130,16 @@ for i in range(0, len(hydrogen_injection_conc)-1):
 # Testing Variables
 
 #PURGING VARIABLES
-chamber_purge_time = 100 #normally 30 #Time to purge chamber: experiment with it
+chamber_purge_time = 30 #normally 30 #Time to purge chamber: experiment with it
 
 #########FILLING CHAMBER WITH TARGET GAS #############
 # Filling Variables
 fill_line_clense_time = 20 #normally 20
 
 sampling_time = 0.1 # DO NOT TOUCHtime between samples taken, determines sampling frequency
-sensing_delay_time = 1 # normall 10, time delay after beginning data acquisition till when the sensor is exposed to sample
+sensing_delay_time = 10 # normall 10, time delay after beginning data acquisition till when the sensor is exposed to sample
 sensing_retract_time = 40 # normally 40, time allowed before sensor is retracted, no longer exposed to sample
-duration_of_signal = 240 # normally 200, time allowed for data acquisition per test run
-
-
-
-#chamber_purge_time = 1 #normally 30 #Time to purge chamber: experiment with it
-#
-##########FILLING CHAMBER WITH TARGET GAS #############
-## Filling Variables
-#fill_line_clense_time = 2#normally 20
-#
-#sampling_time = 0.1 # DO NOT TOUCHtime between samples taken, determines sampling frequency
-#sensing_delay_time = 1 # normall 10, time delay after beginning data acquisition till when the sensor is exposed to sample
-#sensing_retract_time = 2 # normally 40, time allowed before sensor is retracted, no longer exposed to sample
-#duration_of_signal = 5 #
+duration_of_signal = 200 # normally 200, time allowed for data acquisition per test run
 
 #total_time = chamber_purge_time + fill_line_clense_time + max(fill_methane_time,fill_hydrogen_time) + duration_of_signal
 
@@ -169,7 +158,7 @@ runBtn_color = '#9DE55F'
 stopBtn_color = '#FF4E4E'
 
 #################### GUI ####################
-projectName = 'Hydrogen Detection'
+projectName = 'Hetek Project'
 class HetekGUI(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs) #Passes all aguments to the parent class.
@@ -200,18 +189,18 @@ class HetekGUI(tk.Tk):
         self.bind("<F11>", self.toggle_fullscreen)
         self.bind("<Escape>", self.end_fullscreen)
 
-#        valve1.enable()
-#        time.sleep(0.2)
-#        valve2.enable()
-#        time.sleep(0.2)
-#        valve3.enable()
-#        time.sleep(0.2)
-#        valve4.enable()
-#        time.sleep(0.2)
-#        valve5.enable()
-#        time.sleep(0.2)
-#        valve6.enable()
-#        time.sleep(0.2)
+        valve1.enable()
+        time.sleep(0.2)
+        valve2.enable()
+        time.sleep(0.2)
+        valve3.enable()
+        time.sleep(0.2)
+        valve4.enable()
+        time.sleep(0.2)
+        valve5.enable()
+        time.sleep(0.2)
+        valve6.enable()
+        time.sleep(0.2)
 
         valve1.disable()
         valve2.disable()
@@ -308,7 +297,7 @@ class DataPage(tk.Frame):
 
         responseFrame = tk.Frame(self)
         responseFrame.place(relx=0.8,rely=0,relheight=0.3,relwidth=0.2)
-        self.naturalGasLabel = tk.Label(responseFrame, text = '', relief='groove', borderwidth=2, anchor='center')
+        self.naturalGasLabel = tk.Label(responseFrame, text = 'Natural Gas\n Detected', relief='groove', borderwidth=2, anchor='center')
         self.naturalGasLabel.place(relx=0,rely=0,relheight=0.7,relwidth=1)
         self.orig_color = self.naturalGasLabel.cget("background") # Store the original color of the label.
 
@@ -419,8 +408,8 @@ def purge_system():
     start_time = time.time()
     print("Purging System \n V1:N V2:N V3:N V4:N V5:Y V6:Y")
     while time.time() < (start_time + chamber_purge_time) and continueTest == True:
-        if linearActuator.state != 'retracted':
-            linearActuator.retract()
+        if linearActuator.state != 'extended':
+            linearActuator.extend()
         if valve1.state != False:
             valve1.disable()
         if valve2.state != False:
@@ -454,26 +443,25 @@ def fill_chamber():
     if linearActuator.state != 'retracted':
         linearActuator.retract()
     #########FILL METHANE############
-    
-#    start_time = time.time() #Methane Fill Line Clensing
-#    print("Cleansing Methane Line \n V1:Y V2:N V3:Y V4:N V5:N V6:N")
-#    while time.time() < (start_time + fill_line_clense_time) and continueTest == True:
-#        if valve1.state != True:
-#            valve1.enable()
-#        if valve2.state != False:
-#            valve2.disable()
-#        if valve3.state != True:
-#            valve3.enable()
-#        if valve4.state != False:
-#            valve4.disable()
-#        if valve5.state != False:
-#            valve5.disable()
-#        if valve6.state != False:
-#            valve6.disable()
-#        pass
+    start_time = time.time() #Methane Fill Line Clensing
+    print("Cleansing Methane Line \n V1:Y V2:N V3:Y V4:N V5:N V6:N")
+    while time.time() < (start_time + fill_line_clense_time) and continueTest == True:
+        if valve1.state != True:
+            valve1.enable()
+        if valve2.state != False:
+            valve2.disable()
+        if valve3.state != True:
+            valve3.enable()
+        if valve4.state != False:
+            valve4.disable()
+        if valve5.state != False:
+            valve5.disable()
+        if valve6.state != False:
+            valve6.disable()
+        pass
     # Filling the chamber
     start_time = time.time()
-    print("Filling Chamber with methane \n V1:Y V2:N V3:N V4:Y V5:N V6:N")
+    print("Filling Chamber with methane \n V1:Y V2:N V3:N V4:Y V5:N V6:Y")
     while time.time() < (start_time + fill_methane_time[test_counter]) and continueTest == True:
         if valve1.state != True:
             valve1.enable()
@@ -505,25 +493,25 @@ def fill_chamber():
     ########END METHANE FILL########
 
     #######FILL HYDROGEN ##############
-#    start_time = time.time() #Methane Fill Line Clensing
-#    print("Cleansing Hydrogen Line \n V1:N V2:Y V3:Y V4:N V5:N V6:N")
-#    while time.time() < (start_time + fill_line_clense_time) and continueTest == True:
-#        if valve1.state != False:
-#            valve1.disable()
-#        if valve2.state != True:
-#            valve2.enable()
-#        if valve3.state != True:
-#            valve3.enable()
-#        if valve4.state != False:
-#            valve4.disable()
-#        if valve5.state != False:
-#            valve5.disable()
-#        if valve6.state != False:
-#            valve6.disable()
-#        pass
+    start_time = time.time() #Methane Fill Line Clensing
+    print("Cleansing Hydrogen Line \n V1:N V2:Y V3:Y V4:N V5:N V6:N")
+    while time.time() < (start_time + fill_line_clense_time) and continueTest == True:
+        if valve1.state != False:
+            valve1.disable()
+        if valve2.state != True:
+            valve2.enable()
+        if valve3.state != True:
+            valve3.enable()
+        if valve4.state != False:
+            valve4.disable()
+        if valve5.state != False:
+            valve5.disable()
+        if valve6.state != False:
+            valve6.disable()
+        pass
     # Filling the chamber
     start_time = time.time()
-    print("Filling Chamber with Hydrogen \n V1:N V2:Y V3:N V4:Y V5:N V6:N")
+    print("Filling Chamber with Hydrogen \n V1:N V2:Y V3:N V4:Y V5:N V6:Y")
     while time.time() < (start_time + fill_hydrogen_time[test_counter]) and continueTest == True:
         if valve1.state != False:
             valve1.disable()
@@ -535,8 +523,8 @@ def fill_chamber():
             valve4.enable()
         if valve5.state != False:
             valve5.disable()
-        if valve6.state != False:
-            valve6.disable() 
+        if valve6.state != True:
+            valve6.enable()
         pass
     print("Done Filling Hydrogen \n V1:N V2:N V3:N V4:N V5:N V6:N")
     if valve1.state != False:
@@ -559,7 +547,6 @@ def collect_data(xVector,yVector):
     dataVector = yVector
     timeVector = xVector
     dataVector.clear()
-  
     timeVector.clear()
     sampling_time_index = 1
 
@@ -579,13 +566,10 @@ def collect_data(xVector,yVector):
     if valve6.state != False:
         valve6.disable()
 
-    start_time = time.time()
     print('Starting data capture.')
     while (time.time() < (start_time + duration_of_signal)) and (continueTest == True):  # While time is less than duration of logged file
         if (time.time() > (start_time + (sampling_time * sampling_time_index)) and (continueTest == True)):  # if time since last sample is more than the sampling time, take another sample
             dataVector.append(mos.read())  # Perform analog to digital function, reading voltage from first sensor channel
-#            dataVector2.append(methane_injection_conc[testcounter])
-#            dataVector3.append(hydrogen_injection_conc[testcounter])
             timeVector.append(time.time() - start_time)
             sampling_time_index += 1
 
@@ -594,25 +578,19 @@ def collect_data(xVector,yVector):
                 sensing_retract_time + start_time) and (continueTest == True)):
             if linearActuator.state != 'extended':
                 linearActuator.extend()
-                print("The linear actuator should be extended")
 
         # If time is less than 10 seconds or greater than 50 seconds and linear actuator position sensor signal from the ADC indicates an extended state, retract the sensor
         elif (((time.time() < (sensing_delay_time + start_time)) or (
                 time.time() > (sensing_retract_time + start_time)))) and (continueTest == True):
             if linearActuator.state != 'retracted':
                 linearActuator.retract()
-                print("The linear actuator should be retracted")
 
         # Otherwise, keep outputs off
         else:
             if linearActuator.state != 'retracted':
                 linearActuator.retract()
-    time_len = len(timeVector)
-    methConc_array = np.ndarray(shape=(time_len,1))
-    methConc_array.fill(methane_injection_conc[test_counter])
-    H2Conc_array = np.ndarray(shape=(time_len,1))
-    H2Conc_array.fill(hydrogen_injection_conc[test_counter]) 
-    combinedVector = np.column_stack((timeVector, dataVector,methConc_array,H2Conc_array))
+
+    combinedVector = np.column_stack((timeVector, dataVector))
 
     # This section of code is used for generating the output file name. The file name will contain date/time of test, as well as concentration values present during test
     filename = strftime("testsH2/%a%d%b%Y%H%M%S.csv",localtime())

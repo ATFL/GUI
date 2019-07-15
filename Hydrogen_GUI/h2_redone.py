@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 plt.style.use('ggplot')
 import matplotlib as mpl
 mpl.use("TkAgg")
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
 import matplotlib.animation as animation
 from matplotlib import style
@@ -92,8 +92,8 @@ valve6 = Valve('Valve6',pinvalve6) #Chamber Exhaust
 #methane_injection_conc = [300,400] #Whatever vales you need
 #hydrogen_injection_conc = [20,40,60,80,100,120,140,160,180,200,30,50,70,90,110,130,150,170,190] #whatever values you need
 hydrogen_injection_conc = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-#methane_injection_conc= [80,160,240,320,400,480,560,640,720,800,120,200,280,360,440,520,600,680,760]
-methane_injection_conc= [100,120,140,160,180,200,220,240,260,280,300,320,340,360,380,400,480,500,520,600,650,700]
+#methane_injection_conc(test 1&2)= [80,160,240,320,400,480,560,640,720,800,120,200,280,360,440,520,600,680,760]
+#methane_injection_conc(test3)= [100,120,140,160,180,200,220,240,260,280,300,320,340,360,380,400,480,500,520,600,650,700]
 #methane_injection_conc = [13,23]
 #hydrogen_injection_conc=[20,40,60,80,100,120,140,160,180,200]
 ##############################################################
