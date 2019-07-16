@@ -103,15 +103,15 @@ def standard_scaler(train, test):
 	return train, test
 
 # Load data
-X = genfromtxt('/home/adiravishankara/Documents/ATFL/gui/Hydrogen_GUI/ML/training/class_training_X.csv', delimiter=',')
-Y = genfromtxt('/home/adiravishankara/Documents/ATFL/gui/Hydrogen_GUI/ML/training/class_training_Y.csv', delimiter=',')
+X = genfromtxt('/home/adiravishankara/Documents/ATFL/gui/Hydrogen_GUI/ML/clf_data.csv', delimiter=',')
+Y = genfromtxt('/home/adiravishankara/Documents/ATFL/gui/Hydrogen_GUI/ML/clf_Y.csv', delimiter=',')
 
-X_test = np.column_stack((X[:,53],X[:,33],X[:,48],X[:,26],X[:,11]))
-X_train = np.delete(X,[53,33,48,26,11],1)
-Y_test = np.array([Y[53,],Y[33,],Y[48,],Y[26,],Y[11,]])
-#Y_test = np.column_stack((Y_test))
-Y_train = np.delete(Y,[53,33,48,26,11],0)
-#Y_train = np.column_stack((Y_train))
+X_test = np.column_stack((X[:,17],X[:,23],X[:,7],X[:,4],X[:,2]))
+X_train = np.delete(X,[17,23,7,4,2],1)
+Y_test = np.array([Y[17,],Y[23,],Y[7,],Y[4,],Y[2,]])
+#Y_test = np.column_stack((Y_test,Y_test))
+Y_train = np.delete(Y,[17,23,7,4,2],0)
+#Y_train = np.column_stack((Y_train,Y_train))
 
 x_train = np.transpose(X_train)
 x_val = np.transpose(X_test)
@@ -119,10 +119,10 @@ x_val = np.transpose(X_test)
 
 
 # Concentration targets
-# y_train = np.transpose(Y_train)
-# y_val = np.transpose(Y_test)
-y_train = Y_train
-y_val = Y_test
+y_train = np.transpose(Y_train)
+y_val = np.transpose(Y_test)
+# y_train = Y_train
+# y_val = Y_test
 
 print('Original Shape X: ',X.shape, 'Original Shape Y: ', Y.shape)
 print('Modified Shape X_train: ',x_train.shape,' Modified Shape X_test: ',x_val.shape)
@@ -138,7 +138,7 @@ y_val_enc = np_utils.to_categorical(y_val)
 ##############################################
 # Test params
 post_p = False
-alg = 'ANN'
+alg = 'RF'
 prep = 4
 ##############################################
 
