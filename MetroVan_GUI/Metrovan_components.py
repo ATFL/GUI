@@ -29,7 +29,7 @@ class LinearActuator:
         print('Extending linear actuator.')
         GPIO.output(self.pinEnable, GPIO.HIGH)
         self.pwm.ChangeDutyCycle(4.8)
-        time.sleep(1.5)
+        time.sleep(2)
         GPIO.output(self.pinEnable, GPIO.LOW)
         self.state = 'extended'
 
@@ -37,7 +37,7 @@ class LinearActuator:
         print('Retracting linear actuator.')
         GPIO.output(self.pinEnable, GPIO.HIGH)
         self.pwm.ChangeDutyCycle(10.2)
-        time.sleep(1.5)
+        time.sleep(2)
         GPIO.output(self.pinEnable, GPIO.LOW)
         self.state = 'retracted'
 
@@ -56,6 +56,8 @@ class LinearActuator:
         time.sleep(1.5)
         GPIO.output(self.pinEnable, GPIO.LOW)
         self.state = 'purge'
+    def endLinAc(self):
+        self.pwm.stop()
 class Valve:
     def __init__(self, name, pin):
         self.name = name
