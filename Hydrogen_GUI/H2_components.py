@@ -15,7 +15,7 @@ class LinearActuator:
         GPIO.output(self.pinEnable, GPIO.HIGH)
         self.pwm = GPIO.PWM(pinLA, 50)
         self.pwm.start(7)
-        time.sleep(1)
+        time.sleep(1.5)
         GPIO.output(self.pinEnable, GPIO.LOW)
         self.state = 'default'
 
