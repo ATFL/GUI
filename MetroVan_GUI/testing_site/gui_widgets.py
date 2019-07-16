@@ -143,8 +143,7 @@ class AutoLiveGraph(tk.Frame):
         self.canvas = FigureCanvasTkAgg(self.fig, master=self)  # A tk.DrawingArea.
         self.canvas.draw()
         self.canvas.get_tk_widget().pack(side='top', fill='both', expand=1)
-        print(self.fig.xlim())
-        print(self.fig.ylim())
+        self.fig.add_axes([0,0,5,5])
     def update(self, xList, yList):
         self.fig.clear()
         self.fig.add_subplot(111).plot(xList, yList)
