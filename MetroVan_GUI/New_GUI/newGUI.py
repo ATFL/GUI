@@ -25,9 +25,10 @@ class heater_Button(QPushButton):
         super(heater_Button, self).__init__()
         self.setIconSize(QSize(15,15))
         self.setStyleSheet("QPushButton {font: 13px; max-height: 20px}")
-        self.green = QtGui.QIcon("/home/pi/Downloads/object_On.png")
-
-        self.red = QtGui.QIcon("/home/pi/Downloads/object_Off.png")
+        # Must be changed if working on Raspberry Pi or personal Laptop
+        self.green = QtGui.QIcon("/Users/EmilyEarl/Documents/ATFL/GUI/GUI/MetroVan_GUI/New_GUI/on.svg")
+        # Must be changed if working on Raspberry Pi or personal laptop
+        self.red = QtGui.QIcon("/Users/EmilyEarl/Documents/ATFL/GUI/GUI/MetroVan_GUI/New_GUI/off.svg")
         self.setIcon(self.red)
         self.setText("Heater Off")
         self.state = "off"
@@ -51,8 +52,10 @@ class valve_Button(QPushButton):
         self.schematic = schematic
         self.setIconSize(QSize(15,15))
         self.setStyleSheet("QPushButton {font: 13px}")
-        self.A = QtGui.QIcon("/home/pi/Downloads/valveA.svg")
-        self.B = QtGui.QIcon("/home/pi/Downloads/valveB.svg")
+        # Must be changed if working on Raspberry Pi or personal Laptop
+        # Must be changed if working on Raspberry Pi or personal laptop
+        self.A = QtGui.QIcon("/Users/EmilyEarl/Documents/ATFL/GUI/GUI/MetroVan_GUI/New_GUI/A.svg")
+        self.B = QtGui.QIcon("/Users/EmilyEarl/Documents/ATFL/GUI/GUI/MetroVan_GUI/New_GUI/B.svg")
         self.setIcon(self.A)
         self.clicked.connect(lambda: self.valve_Switch())
     def valve_Switch(self):
@@ -72,8 +75,10 @@ class pump_Button(QPushButton):
         self.setStyleSheet("QPushButton {font: 13px}")
         self.setText("Pump Off")
         self.state = "off"
-        self.green = QtGui.QIcon("/home/pi/Downloads/object_On.png")
-        self.red = QtGui.QIcon("/home/pi/Downloads/object_Off.png")
+        # Must be changed if working on Raspberry pi or personal laptop
+        # Must be changed if working on Raspberry Pi or personal laptop
+        self.green = QtGui.QIcon("/Users/EmilyEarl/Documents/ATFL/GUI/GUI/MetroVan_GUI/New_GUI/on.svg")
+        self.red = QtGui.QIcon("/Users/EmilyEarl/Documents/ATFL/GUI/GUI/MetroVan_GUI/New_GUI/off.svg")
         self.setIcon(self.red)
         self.clicked.connect(lambda: self.pump_Switch())
     def pump_Switch(self):
@@ -193,8 +198,9 @@ class start_Button(QPushButton):
         self.setStyleSheet("QPushButton {font: 13px}")
         self.setText("Start")
         self.clicked.connect(lambda: self.start_Procedure())
-    def start_Procedure(self):pyqtgraph
+    def start_Procedure(self):
         print("Starting Test...")
+        
         
 class stop_Button(QPushButton):
     def __init__(self,parent=None):
@@ -233,8 +239,9 @@ class plot_Random(): # This is designed to test the success of the multithreadin
             live_Graph.plot(myListX,myListY)
             
 class update_Graph(QThread):
-    xData = pyqtSignal(list)
-    yData = pyqtSignal(list)
+    def __init__(self, xlist, ylist):
+        xData = pyqtSignal(list)
+        yData = pyqtSignal(list)
     
             
         
@@ -266,7 +273,8 @@ firstPage.setLayout(fpLayout)
 secondPage = QWidget()
 spLayout = QGridLayout()
 spLayout.setVerticalSpacing(0)
-schem1 = schematic("/home/pi/Downloads/object_Off.png","/home/pi/Downloads/object_On.png")
+# Must be changed if working on raspberry pi or personal laptop
+schem1 = schematic("/Users/EmilyEarl/Documents/ATFL/GUI/GUI/MetroVan_GUI/New_GUI/on.svg","/Users/EmilyEarl/Documents/ATFL/GUI/GUI/MetroVan_GUI/New_GUI/off.svg")
 v1 = valve_Button(1,schem1)
 v2 = valve_Button(2, schem1)
 v3 = valve_Button(3, schem1)
