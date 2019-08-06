@@ -8,6 +8,7 @@ import pyqtgraph as pg
 import random
 import sys
 import time
+from Metrovan_components import * 
 
 
 ## General Thoughts and Planning
@@ -15,10 +16,32 @@ import time
 # The worker thread should be the one that takes the plot data from the main thread during the data capture
 # time and plots it on the graph. Another worker thread should consider how many points have been
 # plotted and change the progress bar accordingly...
+# Jk - threads suck, not using threads - instead we are using a bunch of global variables and forcing 
+# the app to recognize changes using app.processEvents() 
 
 pg.setConfigOption('background', 'w')
 pg.setConfigOption('foreground', 'k')
 ## GUI Functions
+
+## Global Variable Initialization 
+global app 
+global v1
+global v2
+global v3
+global v4 
+global v5
+global v6
+global pump 
+global heaterB
+global pumpB
+global printing
+global linearAc 
+global steppB
+global liveGraph 
+global progress
+global emergencyStop 
+emergencyStop = "RUN"
+
 
 class heater_Button(QPushButton):
     def __init__(self, parent=None):
@@ -199,7 +222,13 @@ class start_Button(QPushButton):
         self.setText("Start")
         self.clicked.connect(lambda: self.start_Procedure())
     def start_Procedure(self):
+        global emergencyStop 
+        emergencyStop = "RUN" 
         print("Starting Test...")
+        global liveGraph
+        liveGraph.clear()
+        plot_Random(liveGraph)
+        
         
         
 class stop_Button(QPushButton):
@@ -209,7 +238,11 @@ class stop_Button(QPushButton):
         self.setText("Stop")
         self.clicked.connect(lambda:self.stop_Procedure())
     def stop_Procedure(self):
+        global emergencyStop
+        emergencyStop = "STOP" 
         print("Stopping Test...")
+        
+        
         
 class print_Data(QLabel):
     def __init__(self,parent=None):
@@ -219,10 +252,12 @@ class print_Data(QLabel):
 class print_Garbage(): # This is designed to test the success of the multithreading functionality 
     def __init__(self,parent=None):
         super(print_Garbage,self).__init__()
-        count = 0
-        while count < 4000:
+        count = True 
+        global emergencyStop
+        while (count == True) & (emergencyStop != "STOP"):
             print("Hello, I am the muffin man")
-            count = count +1
+            app.processEvents() 
+            
             
 class plot_Random(): # This is designed to test the success of the multithreading functionality
     def __init__(self,live_Graph, parent=None):
@@ -231,14 +266,22 @@ class plot_Random(): # This is designed to test the success of the multithreadin
         myListY= []
         myXCounter = 0
         myYCounter = 0
-        while myYCounter < 301:
+        global emergencyStop
+        global app
+        global progress
+        totalVal = 300
+        while (myYCounter < 301) & (emergencyStop != "STOP"):
+            
             myXCounter = myXCounter + 1
+            progress.setValue(myXCounter/totalVal * 100)
             myListX.append(myXCounter)
             myYCounter = myYCounter + 1
             myListY.append(random.randint(0,5))
             live_Graph.plot(myListX,myListY)
+            app.processEvents()
             
-class update_Graph(QThread):
+            
+class update_Graph():
     def __init__(self, xlist, ylist):
         xData = pyqtSignal(list)
         yData = pyqtSignal(list)
@@ -263,10 +306,12 @@ empty = QLabel("")
 startB = start_Button()
 stopB = stop_Button()
 printing = print_Data()
+progress = QtGui.QProgressBar()
 fpLayout.addWidget(startB,3,1)
 fpLayout.addWidget(stopB,3,2)
-fpLayout.addWidget(printing,4,1,1,2)
+fpLayout.addWidget(printing,5,1,1,2)
 fpLayout.addWidget(liveGraph,1,1,2,2)
+fpLayout.addWidget(progress, 4,1,1,2)
 firstPage.setLayout(fpLayout)
 
 ## Manual Controls Page Initiation 
@@ -280,6 +325,7 @@ v2 = valve_Button(2, schem1)
 v3 = valve_Button(3, schem1)
 v4 = valve_Button(4, schem1)
 v5 = valve_Button(5, schem1)
+v6 = valve_Button(6, schem1)
 heaterB = heater_Button()
 pumpB = pump_Button()
 linearAc = linAc_Button()
@@ -292,8 +338,9 @@ spLayout.addWidget(v2, 2,1)
 spLayout.addWidget(v3, 3,1)
 spLayout.addWidget(v4, 4,1)
 spLayout.addWidget(v5, 5,1)
-spLayout.addWidget(heaterB, 6,1)
-spLayout.addWidget(pumpB,7,1)
+spLayout.addWidget(v6, 6,1)
+spLayout.addWidget(heaterB, 6,2)
+spLayout.addWidget(pumpB,7,2)
 spLayout.addWidget(linearAc,1,2)
 spLayout.addWidget(steppB, 2,2)
 spLayout.addWidget(mos,3,2)
