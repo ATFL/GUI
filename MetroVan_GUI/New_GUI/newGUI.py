@@ -8,7 +8,16 @@ import pyqtgraph as pg
 import random
 import sys
 import time
-from Metrovan_components import * 
+from Metrovan_components import *
+import RPi.GPIO as GPIO
+import Adafruit_ADS1x15 as ads
+import busio
+import adafruit_bme280
+import digitalio
+import Adafruit_MAX31855
+import board
+
+
 
 
 ## General Thoughts and Planning
@@ -28,24 +37,25 @@ global app
 global v1
 global v2
 global v3
-global v4 
+global v4
 global v5
 global v6
-global pump 
+global pumpB 
 global heaterB
-global pumpB
 global printing
-global linearAc 
-global steppB
-global liveGraph 
+global linearAc
+global stepperB
+global liveGraph
+global mos 
 global progress
 global emergencyStop 
 emergencyStop = "RUN"
 
 
 class heater_Button(QPushButton):
-    def __init__(self, parent=None):
+    def __init__(self, heater, parent=None):
         super(heater_Button, self).__init__()
+        self.heater = heater
         self.setIconSize(QSize(15,15))
         self.setStyleSheet("QPushButton {font: 13px; max-height: 20px}")
         # Must be changed if working on Raspberry Pi or personal Laptop
@@ -223,11 +233,16 @@ class start_Button(QPushButton):
         self.clicked.connect(lambda: self.start_Procedure())
     def start_Procedure(self):
         global emergencyStop 
-        emergencyStop = "RUN" 
+        emergencyStop = "RUN"
+        self.setEnabled(False) 
         print("Starting Test...")
+        
         global liveGraph
         liveGraph.clear()
         plot_Random(liveGraph)
+        
+        
+        self.setEnabled(True) 
         
         
         
@@ -286,7 +301,70 @@ class update_Graph():
         xData = pyqtSignal(list)
         yData = pyqtSignal(list)
     
-            
+        #################### Object Declaration ####################
+GPIO.setmode(GPIO.BCM)
+# Linear Actuator
+pinLA = 16 
+pinEnable = 13 
+linearActuator = LinearActuator(pinLA,pinEnable)
+# Analog-Digital Converter
+adc = ads.ADS1115(0x48)
+GAIN = 2/3
+# 
+# MOS Sensor
+MOS_adc_channel = 1
+mos = MOS(adc, MOS_adc_channel)
+# Heater
+heater = 26
+Metro_Heater = Heater(heater) 
+# Pump (Acting as Valve 3 on the PCB)
+pump_pin = 20 
+pump = Pump(pump_pin) 
+# Valves
+pinvalve1 = 17
+pinvalve2 = 22
+pinvalve3 = 19
+pinvalve4 = 5
+pinvalve5 = 27
+##Valve 6 was never actually created, reconfiguring this value will be necessary 
+pinvalve6 = 28
+valve1 = Valve('Valve1',pinvalve1) #Methane Tank to MFC
+valve2 = Valve('Valve2',pinvalve2) #H2 Tank to MFC
+valve3 = Valve('Valve3',pinvalve3) #Sample Gas into Chamber
+valve4 = Valve('Valve4',pinvalve4) #Air into Chamber
+valve5 = Valve('Valve5',pinvalve5) #Chamber Exhaust
+valve6 = Valve('Valve6',pinvalve6)
+
+#Stepper Motor Information
+# Need to convert from BCM to BOARD 
+DIR = 25   # Direction GPIO Pin
+STEP = 24  # Step GPIO Pin
+CW = 1     # Clockwise Rotation
+CCW = 0    # Counterclockwise Rotation
+SPR = 400   # Steps per Revolution (360 / 7.5)
+MODE = (15, 18, 23)   # Microstep Resolution GPIO Pins
+RESOLUTION = {'Full': (0, 0, 0),
+              'Half': (1, 0, 0),
+              '1/4': (0, 1, 0),
+              '1/8': (1, 1, 0),
+              '1/16': (0, 0, 1),
+              '1/32': (1, 0, 1)}
+
+Stepper_Motor = StepperMotor(DIR, STEP, CW, CCW, SPR, MODE, RESOLUTION) 
+
+
+#Max31855
+spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
+cs = digitalio.DigitalInOut(board.D21)
+max31855 = adafruit_max31855.MAX31855(spi, cs)
+
+# Bme280 (I2C Network)
+# First BME 
+##i2c = busio.I2C(board.SCL, board.SDA)
+##bme280 = adafruit_bme280_76.Adafruit_BME280_I2C(i2c)
+### Second BME 
+##bme280_2 = adafruit_bme280.Adafruit_BME280_I2C(i2c)
+    
         
 ## Main Page Initiation
 app = QApplication([])
@@ -326,7 +404,7 @@ v3 = valve_Button(3, schem1)
 v4 = valve_Button(4, schem1)
 v5 = valve_Button(5, schem1)
 v6 = valve_Button(6, schem1)
-heaterB = heater_Button()
+heaterB = heater_Button(Metro_Heater)
 pumpB = pump_Button()
 linearAc = linAc_Button()
 steppB = stepper_Button()
