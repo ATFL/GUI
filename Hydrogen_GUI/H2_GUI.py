@@ -50,6 +50,9 @@ mos = MOS(adc, MOS_adc_channel)
 # Pressure sensor
 press_adc_channel = 1
 pressSensor = PressureSensor(adc,press_adc_channel)
+# Linear Actuaotor Position Sensor
+Lin_act_position_adc_channel = 2
+ActPosition = PositionSensor(adc,Lin_act_position_channel)
 
 # Valves
 
@@ -119,8 +122,8 @@ for i in range(0, len(hydrogen_injection_conc)-1):
 #########################################################\
 
 # Testing Variables
-sampling_time = 0.1 # tim50e between samples taken, determines sampling frequency
-sensing_delay_time = 3 # normall 5, time delay after beginning data acquisition till when the sensor is exposed to sample
+sampling_time = 0.1 # time between samples taken, determines sampling frequency
+sensing_delay_time = 3 # normally 5, time delay after beginning data acquisition till when the sensor is exposed to sample
 sensing_retract_time = 5 # normally 50, time allowed before sensor is retracted, no longer exposed to sample
 duration_of_signal = 10 # normally 150, time allowed for data acquisition per test run
 
@@ -144,7 +147,7 @@ stopBtn_color = '#FF4E4E'
 projectName = 'Hetek Project'
 class HetekGUI(tk.Tk):
     def __init__(self, *args, **kwargs):
-        tk.Tk.__init__(self, *args, **kwargs) #Passes all aguments to the parent class.
+        tk.Tk.__init__(self, *args, **kwargs) #Passes all arguments to the parent class.
 
         self.title(projectName + ' GUI') #Title of the master window.
         self.geometry('640x480') #Initial size of the master window.
@@ -185,7 +188,7 @@ class HetekGUI(tk.Tk):
 
     def toggle_fullscreen(self, event=None):
         self.fullscreen = not self.fullscreen  # Just toggling the boolean.
-        self.attributes("-fullscreen", self.fullscreen) #Pass the fullcreen boolean to tkinter.
+        self.attributes("-fullscreen", self.fullscreen) #Pass the fullscreen boolean to tkinter.
         return "break"
 
     def end_fullscreen(self, event=None):
@@ -212,7 +215,7 @@ class HomePage(tk.Frame):
         introduction = tk.Label(self, text=intro, anchor='n')
         introduction.place(relx=0.1,rely=0.55,relheight=0.35,relwidth=0.8)
 
-        #Hash this out if no such functionallity is required. Or if there are bugs.
+        #Hash this out if no such functionality is required. Or if there are bugs.
         self.exitBtn = tk.Button(self, text='Exit Fullscreen', command=lambda:controller.end_fullscreen())
         self.exitBtn.place(relx=0.1,rely=0.8,relheight=0.2,relwidth=0.3)
         self.shutdownBtn = tk.Button(self, text='Shutdown', command=lambda:controller.shutdown())
@@ -517,13 +520,15 @@ def collect_data(xVector,yVector):
             timeVector.append(time.time() - start_time)
             sampling_time_index += 1
 
-        # If time is between 10-50 seconds and the Linear Actuator position sensor signal from the ADC indicates a retracted state, extend the sensor
+        # If time is between 10-50 seconds and the Linear Actuator position sensor signal from the ADC indicates a
+        # retracted state, extend the sensor
         elif (time.time() >= (start_time + sensing_delay_time) and time.time() <= (
                 sensing_retract_time + start_time) and (continueTest == True)):
             if linearActuator.state != 'retracted':
                 linearActuator.retract()
 
-        # If time is less than 10 seconds or greater than 50 seconds and linear actuator position sensor signal from the ADC indicates an extended state, retract the sensor
+        # If time is less than 10 seconds or greater than 50 seconds and linear actuator position sensor signal from
+        # the ADC indicates an extended state, retract the sensor
         elif (((time.time() < (sensing_delay_time + start_time)) or (
                 time.time() > (sensing_retract_time + start_time)))) and (continueTest == True):
             if linearActuator.state != 'extended':
