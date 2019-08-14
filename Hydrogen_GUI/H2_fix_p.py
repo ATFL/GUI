@@ -1,5 +1,8 @@
+# This version of the code is designed to be used with the P-Type linear actuator.
+# This code was made by editing the file H2_fix.py, which was designed to be used with
+# the R-Type linear actuator.
 #!/usr/bin/python3
-#Last edit: 28/05/2019
+#Last edit: 02/08/2019
 # -----> System Imports <-----
 import os
 import sys
@@ -22,7 +25,7 @@ import matplotlib.animation as animation
 from matplotlib import style
 # -----> Auxiliary Imports <------
 from gui_widgets import *
-from H2_components_v2 import *
+from H2_components_v2_p import *
 # -----> RPi Imports <------
 import RPi.GPIO as GPIO
 import time
@@ -36,16 +39,83 @@ import numpy as np
 # import sklearn
 # import pickle
 
+global positionSensor
+
+class PositionSensor():
+    def __init__(self, adc, channel):
+        # Choose a gain of 1 for reading voltages from 0 to 4.09V.
+        # Or pick a different gain to change the range of voltages that are read:
+        #  - 2/3 = +/-6.144V
+        #  -   1 = +/-4.096V
+        #  -   2 = +/-2.048V
+        #  -   4 = +/-1.024V
+        #  -   8 = +/-0.512V
+        #  -  16 = +/-0.256V
+        # See table 3 in the ADS1015/ADS1115 datasheet for more info on gain.
+        self.GAIN = 2 / 3
+        self.adc = adc
+        self.channel = channel
+        self.conversion_value = (self.adc.read_adc(self.channel,gain=self.GAIN)/pow(2, 15))*6.144
+
+    def read(self):
+        self.conversion_value = (self.adc.read_adc(self.channel,gain=self.GAIN)/pow(2, 15))*6.144
+        return self.conversion_value
+
+    def print(self):
+        self.read()
+        print("\nReading from Linear Actuator Position Sensor: {}".format(self.conversion_value))
+
+
+class LinearActuator:
+    def __init__(self, LinActRetract,LinActExtend):
+        self.LinActRetract = LinActRetract
+        self.LinActExtend = LinActExtend
+        self.extended_state = 4
+        self.retracted_state = 1.2
+        GPIO.setup(self.LinActRetract, GPIO.OUT)
+        GPIO.setup(self.LinActExtend, GPIO.OUT)
+        GPIO.output(self.LinActRetract, GPIO.LOW)
+        GPIO.output(self.LinActExtend, GPIO.LOW)
+        self.state = 'default'
+        
+        
+    def extend(self):
+        print('Extending linear actuator.')
+        global positionSensor
+        while (positionSensor.read() < self.extended_state):
+            GPIO.output(LinActRetract, GPIO.LOW)
+            GPIO.output(LinActExtend, GPIO.HIGH)
+        self.state = 'extended'    
+        GPIO.output(LinActRetract, GPIO.LOW)
+        GPIO.output(LinActExtend, GPIO.LOW)
+        time.sleep(2)
+
+    def retract(self):
+        global positionSensor
+        print('Retracting linear actuator.')
+        while (positionSensor.read() > self.retracted_state):
+            GPIO.output(LinActRetract, GPIO.HIGH)
+            GPIO.output(LinActExtend, GPIO.LOW)
+        self.state = 'retracted'
+        GPIO.output(LinActRetract, GPIO.LOW)
+        GPIO.output(LinActExtend, GPIO.LOW)
+        time.sleep(2)
+
+
+# Analog-Digital Converter
+adc = ads.ADS1115(0x48)
+
 #################### Object Declaration ####################
 GPIO.setmode(GPIO.BOARD)
 # Linear Actuator
-pinLA = 37
-pinEnable = 15
-linearActuator = LinearActuator(pinLA,pinEnable)
-# Analog-Digital Converter
-adc = ads.ADS1115(0x48)
+#pinLA = 37 
+#pinEnable = 15
+#linearActuator = LinearActuator(pinLA,pinEnable)
+LinActRetract = 15
+LinActExtend = 13
+linearActuator = LinearActuator(LinActRetract,LinActExtend)
 # MOS Sensor
-MOS_adc_channel = 0
+MOS_adc_channel = 3
 mos = MOS(adc, MOS_adc_channel)
 # Pressure sensor
 press_adc_channel = 1
@@ -92,12 +162,12 @@ valve6 = Valve('Valve6',pinvalve6) #Chamber Exhaust
 
 ##############################################################
 ######## SAMPLE INJECTION CONCENTRATIONS #####################
-#methane_injection_conc = [300,400] #Whatever vales you need
+hydrogen_injection_conc = [0,0,0,0,0,0,0,0,0,0,0,0] #Whatever vales you need
 #hydrogen_injection_conc = [20,40,60,80,100,120,140,160,180,200,30,50,70,90,110,130,150,170,190] #whatever values you need
-hydrogen_injection_conc = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+#hydrogen_injection_conc = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 #methane_injection_conc= [80,160,240,320,400,480,560,640,720,800,120,200,280,360,440,520,600,680,760]
-methane_injection_conc= [100,120,140,160,180,200,220,240,260,280,300,320,340,360,380,400,480,500,520,600,650,700]
-#methane_injection_conc = [13,23]
+#methane_injection_conc= [100,120,140,160,180,200,220,240,260,280,300,320,340,360,380,400,480,500,520,600,650,700]
+methane_injection_conc = [400,500,600,700,300,250,550,350,650,150,450,50]
 #hydrogen_injection_conc=[20,40,60,80,100,120,140,160,180,200]
 ##############################################################
 ##############################################################
@@ -110,14 +180,14 @@ num_tests = len(methane_injection_conc)
 ##############################################
 
 #fill_methane_time = [0,0]
-fill_methane_time = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+fill_methane_time = [0,0,0,0,0,0,0,0,0,0,0,0]
 
 methane_correction_factor = 0.72#found it on MKS website
 methane_flow_rate = 10#what the value on the MFC is set to
 methane_flow_factor = 60/(500*methane_correction_factor*methane_flow_rate)
 
 #fill_hydrogen_time =  [0,0]
-fill_hydrogen_time = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+fill_hydrogen_time = [0,0,0,0,0,0,0,0,0,0,0,0]
 
 hydrogen_correction_factor = 1.01#found it on MKS website
 hydrogen_flow_rate = 10#what the value on the MFC is set to
@@ -139,7 +209,7 @@ fill_line_clense_time = 20 #normally 20
 
 sampling_time = 0.1 # DO NOT TOUCHtime between samples taken, determines sampling frequency
 sensing_delay_time = 1 # normall 10, time delay after beginning data acquisition till when the sensor is exposed to sample
-sensing_retract_time = 40 # normally 40, time allowed before sensor is retracted, no longer exposed to sample
+sensing_retract_time = 51 # normally 40, time allowed before sensor is retracted, no longer exposed to sample
 duration_of_signal = 240 # normally 200, time allowed for data acquisition per test run
 
 
@@ -432,10 +502,11 @@ def purge_system():
             valve3.disable()
         if valve4.state != False:
             valve4.disable()
-        if valve5.state != True:
-            valve5.enable()
         if valve6.state != True:
             valve6.enable()
+        if valve5.state != True:
+            valve5.enable()
+       
     print("Done purging \n V1:N V2:N V3:N V4:N V5:N V6:N")
     if linearActuator.state != 'retracted':
         linearActuator.retract()
@@ -456,24 +527,24 @@ def purge_system():
 def fill_chamber():
     if linearActuator.state != 'retracted':
         linearActuator.retract()
-    #########FILL METHANE############
+    #########FILL METHANE and Hydrogen############
     
-#    start_time = time.time() #Methane Fill Line Clensing
-#    print("Cleansing Methane Line \n V1:Y V2:N V3:Y V4:N V5:N V6:N")
-#    while time.time() < (start_time + fill_line_clense_time) and continueTest == True:
-#        if valve1.state != True:
-#            valve1.enable()
-#        if valve2.state != False:
-#            valve2.disable()
-#        if valve3.state != True:
-#            valve3.enable()
-#        if valve4.state != False:
-#            valve4.disable()
-#        if valve5.state != False:
-#            valve5.disable()
-#        if valve6.state != False:
-#            valve6.disable()
-#        pass
+    start_time = time.time() #Methane and Hydrogen Fill Line Clensing
+    print("Cleansing Line \n V1:Y V2:N V3:Y V4:N V5:N V6:N")
+    while time.time() < (start_time + fill_line_clense_time) and continueTest == True:
+        if valve1.state != False:
+            valve1.disable()
+        if valve2.state != False:
+            valve2.disable()
+        if valve3.state != True:
+            valve3.enable()
+        if valve4.state != True:
+            valve4.enable()
+        if valve5.state != False:
+            valve5.disable()
+        if valve6.state != False:
+            valve6.disable()
+        pass
     # Filling the chamber
     start_time = time.time()
     print("Filling Chamber with methane \n V1:Y V2:N V3:N V4:Y V5:N V6:N")
@@ -484,12 +555,12 @@ def fill_chamber():
             valve2.disable()
         if valve3.state != False:
             valve3.disable()
-        if valve4.state != True:
-            valve4.enable()
+        if valve4.state != False:
+            valve4.disable()
         if valve5.state != False:
             valve5.disable()
-        if valve6.state != True:
-            valve6.enable()
+        if valve6.state != False:
+            valve6.disable()
         pass
     print("Done Filling Methane \n V1:N V2:N V3:N V4:N V5:N V6:N")
     if valve1.state != False:
@@ -525,36 +596,36 @@ def fill_chamber():
 #            valve6.disable()
 #        pass
     # Filling the chamber
-    start_time = time.time()
-    print("Filling Chamber with Hydrogen \n V1:N V2:Y V3:N V4:Y V5:N V6:N")
-    while time.time() < (start_time + fill_hydrogen_time[test_counter]) and continueTest == True:
-        if valve1.state != False:
-            valve1.disable()
-        if valve2.state != True:
-            valve2.enable()
-        if valve3.state != False:
-            valve3.disable()
-        if valve4.state != True:
-            valve4.enable()
-        if valve5.state != False:
-            valve5.disable()
-        if valve6.state != False:
-            valve6.disable() 
-        pass
-    print("Done Filling Hydrogen \n V1:N V2:N V3:N V4:N V5:N V6:N")
-    if valve1.state != False:
-        valve1.disable()
-    if valve2.state != False:
-        valve2.disable()
-    if valve3.state != False:
-        valve3.disable()
-    if valve4.state != False:
-        valve4.disable()
-    if valve5.state != False:
-        valve5.disable()
-    if valve6.state != False:
-        valve6.disable()
-    pass
+#    start_time = time.time()
+#    print("Filling Chamber with Hydrogen \n V1:N V2:Y V3:N V4:Y V5:N V6:N")
+#    while time.time() < (start_time + fill_hydrogen_time[test_counter]) and continueTest == True:
+#        if valve1.state != False:
+#            valve1.disable()
+#        if valve2.state != True:
+#            valve2.enable()
+#        if valve3.state != False:
+#            valve3.disable()
+#        if valve4.state != True:
+#            valve4.enable()
+#        if valve5.state != False:
+#            valve5.disable()
+#        if valve6.state != False:
+#            valve6.disable() 
+#        pass
+#    print("Done Filling Hydrogen \n V1:N V2:N V3:N V4:N V5:N V6:N")
+#    if valve1.state != False:
+#        valve1.disable()
+#    if valve2.state != False:
+#        valve2.disable()
+#    if valve3.state != False:
+#        valve3.disable()
+#    if valve4.state != False:
+#        valve4.disable()
+#    if valve5.state != False:
+#        valve5.disable()
+#    if valve6.state != False:
+#        valve6.disable()
+#    pass
 
 
 def collect_data(xVector,yVector):
