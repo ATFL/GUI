@@ -91,16 +91,19 @@ class Home(tk.Frame):
         control_btn.pack(side='left', expand= True, fill = 'both')
 
         for i in range(0,8):
-            self.graph[i] = AutoLiveGraph(self,timeVector[i],DataVector[i])
+            self.graph[i] = AutoLiveGraph(self,timeVector,DataVector)
             if i <4:
-                self.graph[i].pack(side = LEFT)
+                self.graph.pack(side = LEFT)
             else:
-                self.graph[i].pack(side= RIGHT)
+                self.graph.pack(side= RIGHT)
 
-class SensorPage(tk.Frame):
+class SensorPage(tk.Frame,title):
     def __init(self,parent,controller):
         tk.Frame.__init__(self,parent)
         control_btn = tk.Button(controller.tabBar, text='')
+        self.title = title
+
+
 app = Training_Bay()
 app.mainloop()
 # except keyboardinterrupt:
