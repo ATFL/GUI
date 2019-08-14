@@ -8,7 +8,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from sklearn.model_selection import train_test_split
 from numpy import genfromtxt
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-from sklearn.externals import joblib 
+from sklearn.externals import joblib
 from sklearn.model_selection import LeaveOneOut
 from sklearn.neighbors import NearestNeighbors, KNeighborsClassifier
 from keras.utils import np_utils
@@ -33,18 +33,18 @@ def initializeClassifier(algorithm, x_train, params):
 		activation = params[2]
 		dropout = params[3]
 		l2 = params[4]
-		
+
 		for j in range(len(layers)):
 			if j == 0:
 				classifier.add(Dense(layers[j], input_shape = (x_train.shape[1],), activation = activation, kernel_regularizer = regularizers.l2(l2)))
 			else:
 				classifier.add(Dense(layers[j],activation = activation, kernel_regularizer = regularizers.l2(l2)))
 		classifier.add(Dense(3, activation = 'softmax'))
-		
+
 		adam = Adam(lr=learnRate, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.001)
 		classifier.compile(loss = 'categorical_crossentropy', optimizer = adam, metrics = ['accuracy'])
-		
-	
+
+
 	if algorithm == 'SVM':
 		classifier = SVC( kernel='rbf', C = params[0], gamma = params[1] )
 
@@ -60,7 +60,7 @@ def initializeFCN(x_train, params):
 	activation = params[4]
 	dropout = params[5]
 	l2 = params[6]
-	
+
 	for j in range(n_layers):
 		if j == 0:
 			classifier.add(Conv1D( n_filters, filter_length, input_shape = (x_train.shape[1],1), activation = activation, kernel_regularizer = regularizers.l2(l2), padding = 'valid' ))
@@ -68,41 +68,63 @@ def initializeFCN(x_train, params):
 		else:
 			classifier.add(Conv1D( n_filters, int(filter_length/(2**j)), activation = activation, kernel_regularizer = regularizers.l2(l2), padding = 'valid' ))
 			classifier.add( MaxPooling1D(2) )
-	
+
 	classifier.add( Flatten() )
-	classifier.add(Dense(32, activation = 'relu'))		
+	classifier.add(Dense(32, activation = 'relu'))
 	classifier.add(Dense(3, activation = 'softmax'))
-	
+
 	adam = Adam(lr=learnRate, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.001)
 	classifier.compile(loss = 'categorical_crossentropy', optimizer = adam, metrics = ['accuracy'])
-		
+
 	return classifier
-	
+
 
 def featureProcessing(train, test):
 	scaler = preprocessing.StandardScaler().fit(train)
 	train = scaler.transform(train)
 	test = scaler.transform(test)
-	
+
 	return train, test
 
 
 # Load data
-x_train = np.transpose( genfromtxt('C:/Users/barr_mt/Desktop/Testing_algorithms_on_arbitrary_mix/data_and_targets/processed_train_data.csv', delimiter=','))
-x_test = np.transpose( genfromtxt('C:/Users/barr_mt/Desktop/Testing_algorithms_on_arbitrary_mix/data_and_targets/processed_test_data.csv', delimiter=','))
+X = genfromtxt('/home/adiravishankara/Documents/ATFL/gui/Hydrogen_GUI/ML/clf_data.csv', delimiter=',')
+Y = genfromtxt('/home/adiravishankara/Documents/ATFL/gui/Hydrogen_GUI/ML/clf_Y.csv', delimiter=',')
+
+X_test = np.column_stack((X[:,17],X[:,23],X[:,7],X[:,4],X[:,2]))
+X_train = np.delete(X,[17,23,7,4,2],1)
+Y_test = np.array([Y[17,],Y[23,],Y[7,],Y[4,],Y[2,]])
+#Y_test = np.column_stack((Y_test,Y_test))
+Y_train = np.delete(Y,[17,23,7,4,2],0)
+#Y_train = np.column_stack((Y_train,Y_train))
+
+x_train = np.transpose(X_train)
+x_test = np.transpose(X_test)
+
+
 
 # Concentration targets
-y_train = genfromtxt('C:/Users/barr_mt/Desktop/Testing_algorithms_on_arbitrary_mix/data_and_targets/targets_train_binary.csv', delimiter=',')
-y_test = genfromtxt('C:/Users/barr_mt/Desktop/Testing_algorithms_on_arbitrary_mix/data_and_targets/targets_test_binary.csv', delimiter=',')
+y_train = np.transpose(Y_train)
+y_test = np.transpose(Y_test)
+# y_train = Y_train
+# y_val = Y_test
+
+print('Original Shape X: ',X.shape, 'Original Shape Y: ', Y.shape)
+print('Modified Shape X_train: ',x_train.shape,' Modified Shape X_test: ',x_test.shape)
+print('Modified Shape Y_train: ',y_train.shape,' Modified Shape Y_test: ',y_test.shape)
+np.savetxt('X_test1.csv',X_test, fmt='%.10f', delimiter=',')
+np.savetxt('X_train1.csv',X_train, fmt='%.10f', delimiter=',')
+np.savetxt('Y_test1.csv',y_test, fmt='%.10f', delimiter=',')
+np.savetxt('Y_train1.csv',y_train, fmt='%.10f', delimiter=',')
 y_train_enc = np_utils.to_categorical(y_train)
-y_test_enc = np_utils.to_categorical(y_test)
+y_val_enc = np_utils.to_categorical(y_test)
 
 
 
 ##############################################
 # Test params
 post_p = False
-alg = 'CNN'
+alg = 'KNN'
 prep = 4
 
 
@@ -111,7 +133,7 @@ K = 1
 
 # RF
 n_trees = 800
-max_depth = 5
+max_depth = 3
 
 # SVM
 C = 10000
@@ -169,7 +191,7 @@ if alg == 'SVM':
 
 	clf = initializeClassifier('SVM', x_train, SVMparams)
 	clf.fit(x_train, y_train)
-	
+
 	y_pred = clf.predict(x_test)
 
 
@@ -178,14 +200,14 @@ if alg == 'ANN':
 	clf = initializeClassifier('ANN', x_train, ANNparams)
 	history = clf.fit(x_train, y_train_enc, epochs=ANNparams[5], verbose = 1, validation_data = (x_test, y_test_enc))
 	#history1 = clf.fit(x_train, y_train_enc, epochs=5000, verbose = 1, validation_data = (x_test, y_test_enc))
-	
+
 	plt.plot(history.history['val_loss'], 'k', label='Test loss')
 	plt.plot(history.history['val_acc'], 'k:', label='Test accuracy')
 	plt.xlabel('number of epochs')
 	legend = plt.legend(loc='upper center', fontsize='x-large')
 	plt.ylim(0,1.5)
 	plt.show()
-	
+
 	y_pred = clf.predict_classes(x_test)
 
 

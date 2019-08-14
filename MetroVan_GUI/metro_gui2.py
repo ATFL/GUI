@@ -42,6 +42,37 @@ import numpy as np
 # import sklearn
 # import pickle
 
+
+def createFolders(year, month, day):
+    ##  Get the path for the folders by year, month and day
+    year_path = '/home/pi/Documents/gui/MetroVan_GUI/tests_H2S/' + str(year)
+    year_folder = Path(year_path)
+    month_path = '/home/pi/Documents/gui/MetroVan_GUI/tests_H2S/' + str(year) + '/' + str(month)
+    month_folder = Path(month_path)
+    day_path = '/home/pi/Documents/gui/MetroVan_GUI/tests_H2S/' + str(year) + '/' + str(month) + '/' + str(day)
+    day_folder = Path(day_path)
+    ##  Start creating the folders, when the var complete == True, all the folders have been created
+    complete = False
+    while complete == False:
+        if year_folder.is_dir():
+            if month_folder.is_dir():
+                if day_folder.is_dir():
+                    complete = True
+                else:
+                    try:
+                        print(day_path)
+                        original_mask = os.umask(0x0000)
+##                        desired_permission = 0777
+                        os.makedirs(day_path, mode=0x0777)
+                        complete = True
+                    finally:
+                        os.umask(original_mask)
+            else:
+                os.makedirs(month_path)
+        else:
+            os.makedirs(year_path)
+    pass
+
 #################### Object Declaration ####################
 GPIO.setmode(GPIO.BCM)
 # Linear Actuator
@@ -173,11 +204,21 @@ hydrogen_injection_conc = [20,40] #whatever values you need
 # hydrogen_injection_conc=[20,40,60,80,100,120,140,160,180,200]
 ##############################################################
 ##############################################################
-
+def findDaBaseline():
+    global baseline
+    baseline_counter = 1
+    baseline_val = 0
+    while baseline_counter < 101:
+        baseline_val += mos.read()
+        baseline_counter +=1
+    baseline = baseline_val/baseline_counter
+    return baseline
 global test_counter
 test_counter = 0
 global num_tests
 num_tests = len(methane_injection_conc)
+global baseline
+baseline = findDaBaseline()
 
 ##############################################
 
@@ -344,12 +385,12 @@ class DataPage(tk.Frame):
 
         statusFrame = tk.LabelFrame(self, text ='Status')
         statusFrame.place(relx=0.8,rely=0.3,relheight=0.6,relwidth=0.2)
-        testLBL = tk.Label(statusFrame,text = 'Test: ')
+##        testLBL = tk.Label(statusFrame,text = 'Test: ')
 #        meConcLBL = tk.Label(statusFrame,text = 'Methane Concentration: ')
 #        H2ConcLBL = tk.Label(statusFrame,text = 'Hydrogen Concentration: ')
 #        meFillTime = tk.Label(statusFrame,text = 'Methane Fill Time: ')
 #        H2FillTime = tk.Label(statusFrame,text = 'Hydrogen Fill Time: ')
-        testLBL.place(relx = 0.1, rely = 0, relheight = 0.1, relwidth = 0.1)
+##        testLBL.place(relx = 0.1, rely = 0, relheight = 0.1, relwidth = 0.1)
 #        meConcLBL.place(relx = 0.1, rely = 0.1, relheight = 0.1, relwidth = 0.5)
 #        H2ConcLBL.place(relx = 0.1, rely = 0.2, relheight = 0.1, relwidth = 0.5)
 #        meFillTime.place(relx = 0.1, rely = 0.3, relheight = 0.1, relwidth = 0.4)
@@ -542,7 +583,7 @@ def fill_chamber():
     
     stepperMotorRT= 10  # Time it takes for the stepper motor to fully complete the retraction process
     stepperMotorET = 10 # Time it takes for the stepper motor to fully complete the extension process 
-    print("Filling Chamber with *****")
+    print("Filling Chamber")
     if valve1.state != True:
         valve1.enable()
     if valve2.state != True:
@@ -554,26 +595,23 @@ def fill_chamber():
     if valve5.state != True:
         valve5.enable()
     
-    for (x in range (3)):
+    for x in range (4):
         start_time = time.time()
         Stepper_Motor.retract()
         while (time.time() - start_time < stepperMotorRT) and continueTest == True:
             # wait patiently for the Stepper Motor to finish retracting 
             pass
-    for (x in range (3)):
+    if valve3.state != False: 
+        valve3.disable()
+    for x in range (4):
         start_time = time.time()
         Stepper_Motor.extend()
         while (time.time() - start_time < stepperMotorRT) and continueTest == True:
             # wait patiently fo  r the Stepper Motor to finish retracting 
             pass
     
-    if valve3.state != False: 
-        valve3.disable()
-    Stepper_Motor.extend()
-    start_time = time.time()
-    while (time.time() - start_time < stepperMotorET) and continueTest == True:
-       # wait patiently for the Stepper Motor to finish extending 
-       pass 
+   
+   
     ########END FILL########
 
 def cleanse_chamber(): 
@@ -594,7 +632,7 @@ def cleanse_chamber():
     if valve5.state != False: 
         valve5.disable() 
     Metro_Heater.heat()
-    cleanse_time = 5
+    cleanse_time = 15
     start_time = time.time()
     pump.enable()
     while (time.time() - start_time < cleanse_time):
@@ -633,7 +671,7 @@ def cleanse_chamber():
         pass
     pump.disable()
     start_time = time.time()
-    heat_time = 200
+    heat_time = 20
     while time.time() - start_time < heat_time:
         pass
     Metro_Heater.cool()
@@ -650,10 +688,11 @@ def collect_data(xVector,yVector):
     timeVector.clear()
     sampling_time_index = 1
     Metro_Heater.heat()
+    global baseline
     # Initial Heating Portion
-    while (time.time() - heat_start_time < 240): #Vaporization time
+    while (time.time() - heat_start_time < 300): #Vaporization time
         pass
-    Metro_Heater.cool() 
+   
     
     start_time = time.time() 
     print('Starting data capture.')
@@ -679,17 +718,30 @@ def collect_data(xVector,yVector):
         else:
             if linearActuator.state != 'retracted':
                 linearActuator.retract()
-
+                
+##    dataVector[:] = [x * (-1) for x in dataVector]
+##    dataVector[:] = [x + (2*baseline) for x in dataVector]
     combinedVector = np.column_stack((timeVector, dataVector))
-
-    # This section of code is used for generating the output file name. The file name will contain date/time of test, as well as concentration values present during test
-    filename = strftime("tests_H2S/%a%d%b%Y%H%M%S.csv",localtime())
+##    current_time = datetime.datetime.now()
+##    year = current_time.year
+##    month = current_time.month
+##    day = current_time.day
+##    createFolders(year, month, day)
+##    hour = current_time.hour
+##    minute = current_time.minute
+##    fileName = str(year) + '-' + str(month) + '-' + str(day) + '_' + str(hour) + ':' + str(minute) + 'H2S_Test.csv'
+##    #fileName = str(year) + '-' + str(month) + '-' + str(day) + '_' + str(hour) + ':' + str(minute) + '_bl.csv'
+##    np.savetxt(r'/home/pi/Documents/gui/MetroVan_GUI/tests_H2S/' + str(year) + '/' + str(month) + '/' + str(day) + '/' + str(fileName), combinedVector, fmt='%.10f', delimiter=',')
+##    pass
+##    print("Data has been saved!") 
+##    # This section of code is used for generating the output file name. The file name will contain date/time of test, as well as concentration values present during test
+    filename = strftime("/home/pi/Documents/gui/MetroVan_GUI/tests_H2S/%a%d%b%Y%H%M%S.csv",localtime())
     np.savetxt(filename,combinedVector, fmt='%.10f', delimiter=',')
     print("Test ",test_counter + 1," File Saved")
 
 
     pass
-
+    Metro_Heater.cool()
 def multi_test_run():
     global num_tests
     #num_tests = len(methane_injection_conc)
@@ -807,12 +859,13 @@ def end_testing():
 app = MVGUI()
 app.mainloop()
 
+linearActuator.endLinAc()
 GPIO.cleanup()
-#try:
-#    app = HetekGUI()
-#    app.mainloop()
-#except keyboardinterrupt:
-#    GPIO.cleanup()
-#finally:
-#    GPIO.cleanup()
+##try:
+##    app = MVGUI()
+##    app.mainloop()
+##except keyboardinterrupt:
+##    GPIO.cleanup()
+##finally:
+##    GPIO.cleanup()
 
