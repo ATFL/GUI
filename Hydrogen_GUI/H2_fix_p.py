@@ -77,15 +77,15 @@ class LinearActuator:
         GPIO.output(self.LinActRetract, GPIO.LOW)
         GPIO.output(self.LinActExtend, GPIO.LOW)
         self.state = 'default'
-        
-        
+
+
     def extend(self):
         print('Extending linear actuator.')
         global positionSensor
         while (positionSensor.read() < self.extended_state):
             GPIO.output(LinActRetract, GPIO.LOW)
             GPIO.output(LinActExtend, GPIO.HIGH)
-        self.state = 'extended'    
+        self.state = 'extended'
         GPIO.output(LinActRetract, GPIO.LOW)
         GPIO.output(LinActExtend, GPIO.LOW)
         time.sleep(2)
@@ -108,7 +108,7 @@ adc = ads.ADS1115(0x48)
 #################### Object Declaration ####################
 GPIO.setmode(GPIO.BOARD)
 # Linear Actuator
-#pinLA = 37 
+#pinLA = 37
 #pinEnable = 15
 #linearActuator = LinearActuator(pinLA,pinEnable)
 LinActRetract = 15
@@ -506,7 +506,7 @@ def purge_system():
             valve6.enable()
         if valve5.state != True:
             valve5.enable()
-       
+
     print("Done purging \n V1:N V2:N V3:N V4:N V5:N V6:N")
     if linearActuator.state != 'retracted':
         linearActuator.retract()
@@ -528,9 +528,9 @@ def fill_chamber():
     if linearActuator.state != 'retracted':
         linearActuator.retract()
     #########FILL METHANE and Hydrogen############
-    
+
     start_time = time.time() #Methane and Hydrogen Fill Line Clensing
-    print("Cleansing Line \n V1:Y V2:N V3:Y V4:N V5:N V6:N")
+    print("Cleansing Line \n V1:N V2:N V3:Y V4:Y V5:N V6:N")
     while time.time() < (start_time + fill_line_clense_time) and continueTest == True:
         if valve1.state != False:
             valve1.disable()
@@ -547,8 +547,23 @@ def fill_chamber():
         pass
     # Filling the chamber
     start_time = time.time()
-    print("Filling Chamber with methane \n V1:Y V2:N V3:N V4:Y V5:N V6:N")
-    while time.time() < (start_time + fill_methane_time[test_counter]) and continueTest == True:
+    print("Filling Chamber with Methane and Hydrogen\n V1:Y V2:N V3:N V4:Y V5:N V6:N")
+    while time.time() < ( start_time + fill_hydrogen_time[test_counter]) and continueTest == True:
+        if valve1.state != True:
+            valve1.enable()
+        if valve2.state != True:
+            valve2.enable()
+        if valve3.state != False:
+            valve3.disable()
+        if valve4.state != False:
+            valve4.disable()
+        if valve5.state != False:
+            valve5.disable()
+        if valve6.state != False:
+            valve6.disable()
+        pass
+    print("Hydrogen Closed, Methane Only\n V1:Y V2:N V3:N V4:Y V5:N V6:N")
+    while time.time() > (start_time + fill_hydrogen_time[test_counter]) and time.time() < ( start_time + fill_methane_time[test_counter]) and continueTest == True:
         if valve1.state != True:
             valve1.enable()
         if valve2.state != False:
@@ -562,7 +577,8 @@ def fill_chamber():
         if valve6.state != False:
             valve6.disable()
         pass
-    print("Done Filling Methane \n V1:N V2:N V3:N V4:N V5:N V6:N")
+
+    print("Done Filling Methane, both gases closed \n V1:N V2:N V3:N V4:N V5:N V6:N")
     if valve1.state != False:
         valve1.disable()
     if valve2.state != False:
@@ -576,56 +592,8 @@ def fill_chamber():
     if valve6.state != False:
         valve6.disable()
 
-    ########END METHANE FILL########
+    ########END GAS FILL########
 
-    #######FILL HYDROGEN ##############
-#    start_time = time.time() #Methane Fill Line Clensing
-#    print("Cleansing Hydrogen Line \n V1:N V2:Y V3:Y V4:N V5:N V6:N")
-#    while time.time() < (start_time + fill_line_clense_time) and continueTest == True:
-#        if valve1.state != False:
-#            valve1.disable()
-#        if valve2.state != True:
-#            valve2.enable()
-#        if valve3.state != True:
-#            valve3.enable()
-#        if valve4.state != False:
-#            valve4.disable()
-#        if valve5.state != False:
-#            valve5.disable()
-#        if valve6.state != False:
-#            valve6.disable()
-#        pass
-    # Filling the chamber
-#    start_time = time.time()
-#    print("Filling Chamber with Hydrogen \n V1:N V2:Y V3:N V4:Y V5:N V6:N")
-#    while time.time() < (start_time + fill_hydrogen_time[test_counter]) and continueTest == True:
-#        if valve1.state != False:
-#            valve1.disable()
-#        if valve2.state != True:
-#            valve2.enable()
-#        if valve3.state != False:
-#            valve3.disable()
-#        if valve4.state != True:
-#            valve4.enable()
-#        if valve5.state != False:
-#            valve5.disable()
-#        if valve6.state != False:
-#            valve6.disable() 
-#        pass
-#    print("Done Filling Hydrogen \n V1:N V2:N V3:N V4:N V5:N V6:N")
-#    if valve1.state != False:
-#        valve1.disable()
-#    if valve2.state != False:
-#        valve2.disable()
-#    if valve3.state != False:
-#        valve3.disable()
-#    if valve4.state != False:
-#        valve4.disable()
-#    if valve5.state != False:
-#        valve5.disable()
-#    if valve6.state != False:
-#        valve6.disable()
-#    pass
 
 
 def collect_data(xVector,yVector):
@@ -633,7 +601,7 @@ def collect_data(xVector,yVector):
     dataVector = yVector
     timeVector = xVector
     dataVector.clear()
-  
+
     timeVector.clear()
     sampling_time_index = 1
 
@@ -685,7 +653,7 @@ def collect_data(xVector,yVector):
     methConc_array = np.ndarray(shape=(time_len,1))
     methConc_array.fill(methane_injection_conc[test_counter])
     H2Conc_array = np.ndarray(shape=(time_len,1))
-    H2Conc_array.fill(hydrogen_injection_conc[test_counter]) 
+    H2Conc_array.fill(hydrogen_injection_conc[test_counter])
     combinedVector = np.column_stack((timeVector, dataVector,methConc_array,H2Conc_array))
 
     # This section of code is used for generating the output file name. The file name will contain date/time of test, as well as concentration values present during test
