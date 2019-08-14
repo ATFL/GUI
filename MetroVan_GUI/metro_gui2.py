@@ -98,11 +98,13 @@ pinvalve2 = 22
 pinvalve3 = 19
 pinvalve4 = 5
 pinvalve5 = 27
-valve1 = Valve('Valve1',pinvalve1) #Methane Tank to MFC
-valve2 = Valve('Valve2',pinvalve2) #H2 Tank to MFC
-valve3 = Valve('Valve3',pinvalve3) #Sample Gas into Chamber
-valve4 = Valve('Valve4',pinvalve4) #Air into Chamber
-valve5 = Valve('Valve5',pinvalve5) #Chamber Exhaust
+pinvalve6 = 7
+valve1 = Valve('Valve1',pinvalve1) 
+valve2 = Valve('Valve2',pinvalve2) 
+valve3 = Valve('Valve3',pinvalve3) 
+valve4 = Valve('Valve4',pinvalve4) 
+valve5 = Valve('Valve5',pinvalve5) 
+valve6 = Valve('Valve6',pinvalve6) 
 
 #Stepper Motor Information
 # Need to convert from BCM to BOARD 
@@ -110,7 +112,8 @@ DIR = 25   # Direction GPIO Pin
 STEP = 24  # Step GPIO Pin
 CW = 1     # Clockwise Rotation
 CCW = 0    # Counterclockwise Rotation
-SPR = 400   # Steps per Revolution (360 / 7.5)
+SPR = 1500   # Steps per Revolution (360 / 7.5) normally 1875
+SPR2 = 300
 MODE = (15, 18, 23)   # Microstep Resolution GPIO Pins
 RESOLUTION = {'Full': (0, 0, 0),
               'Half': (1, 0, 0),
@@ -119,7 +122,8 @@ RESOLUTION = {'Full': (0, 0, 0),
               '1/16': (0, 0, 1),
               '1/32': (1, 0, 1)}
 
-Stepper_Motor = StepperMotor(DIR, STEP, CW, CCW, SPR, MODE, RESOLUTION) 
+Stepper_Motor = StepperMotor(DIR, STEP, CW, CCW, SPR, MODE, RESOLUTION)
+Stepper_Motor2 = StepperMotor2(DIR, STEP, CW, CCW, SPR2, MODE, RESOLUTION) 
 
 
 #Max31855
@@ -204,56 +208,56 @@ hydrogen_injection_conc = [20,40] #whatever values you need
 # hydrogen_injection_conc=[20,40,60,80,100,120,140,160,180,200]
 ##############################################################
 ##############################################################
-def findDaBaseline():
-    global baseline
-    baseline_counter = 1
-    baseline_val = 0
-    while baseline_counter < 101:
-        baseline_val += mos.read()
-        baseline_counter +=1
-    baseline = baseline_val/baseline_counter
-    return baseline
+##def findDaBaseline():
+##    global baseline
+##    baseline_counter = 1
+##    baseline_val = 0
+##    while baseline_counter < 101:
+##        baseline_val += mos.read()
+##        baseline_counter +=1
+##    baseline = baseline_val/baseline_counter
+##    return baseline
 global test_counter
 test_counter = 0
 global num_tests
 num_tests = len(methane_injection_conc)
 global baseline
-baseline = findDaBaseline()
+baseline = 5.106
 
 ##############################################
 
-fill_methane_time = [0,0]
-#fill_methane_time = [0,0,0,0,0,0,0,0,0,0]
-
-methane_correction_factor = 0.72#found it on MKS website
-methane_flow_rate = 10#what the value on the MFC is set to
-methane_flow_factor = 60/(500*methane_correction_factor*methane_flow_rate)
-
-fill_hydrogen_time =  [0,0]
-#fill_hydrogen_time = [0,0,0,0,0,0,0,0,0,0]
-
-hydrogen_correction_factor = 1.01#found it on MKS website
-hydrogen_flow_rate = 10#what the value on the MFC is set to
-hydrogen_flow_factor = 60/(500*hydrogen_correction_factor*hydrogen_flow_rate)
-
-for i in range(0, len(hydrogen_injection_conc)-1):
-    fill_methane_time[i] = int(methane_injection_conc[i]*methane_flow_factor)
-    fill_hydrogen_time[i] = int(hydrogen_injection_conc[i]*hydrogen_flow_factor)
+##fill_methane_time = [0,0]
+###fill_methane_time = [0,0,0,0,0,0,0,0,0,0]
+##
+##methane_correction_factor = 0.72#found it on MKS website
+##methane_flow_rate = 10#what the value on the MFC is set to
+##methane_flow_factor = 60/(500*methane_correction_factor*methane_flow_rate)
+##
+##fill_hydrogen_time =  [0,0]
+###fill_hydrogen_time = [0,0,0,0,0,0,0,0,0,0]
+##
+##hydrogen_correction_factor = 1.01#found it on MKS website
+##hydrogen_flow_rate = 10#what the value on the MFC is set to
+##hydrogen_flow_factor = 60/(500*hydrogen_correction_factor*hydrogen_flow_rate)
+##
+##for i in range(0, len(hydrogen_injection_conc)-1):
+##    fill_methane_time[i] = int(methane_injection_conc[i]*methane_flow_factor)
+##    fill_hydrogen_time[i] = int(hydrogen_injection_conc[i]*hydrogen_flow_factor)
 #########################################################\
 
 # Testing Variables
 
 #PURGING VARIABLES
-chamber_purge_time = 30 #normally 30 #Time to purge chamber: experiment with it
+chamber_purge_time = 120 #normally 30 #Time to purge chamber: experiment with it
 
 #########FILLING CHAMBER WITH TARGET GAS #############
 # Filling Variables
 fill_line_clense_time = 20 #normally 20
-
+vaporization_time = 195 #normally 195
 sampling_time = 0.1 # DO NOT TOUCHtime between samples taken, determines sampling frequency
-sensing_delay_time = 1 # normall 1, time delay after beginning data acquisition till when the sensor is exposed to sample
+sensing_delay_time = 1 # normally 1, time delay after beginning data acquisition till when the sensor is exposed to sample
 sensing_retract_time = 43 # normally 43, time allowed before sensor is retracted, no longer exposed to sample
-duration_of_signal = 300 # normally 300, time allowed for data acquisition per test run
+duration_of_signal = 200 # normally 200, time allowed for data acquisition per test run
 
 #total_time = chamber_purge_time + fill_line_clense_time + max(fill_methane_time,fill_hydrogen_time) + duration_of_signal
 
@@ -308,7 +312,7 @@ class MVGUI(tk.Tk):
         valve3.disable()
         valve4.disable()
         valve5.disable()
-        #valve6.disable()
+        valve6.disable()
         print('System ready.')
 
     def show_frame(self, cont): #Control buttons will run this command for their corresponding pages.
@@ -442,9 +446,9 @@ class ManualControlPage(tk.Frame):
         self.btn_4.place(relx=0,rely=0.3,relheight=0.1,relwidth=buttonWidth)
         self.btn_17 = tk.Button(controlFrame, text = "Disable Pump", command=lambda:pump.disable())
         self.btn_17.place(relx=0, rely=0.4,relheight=0.1,relwidth = buttonWidth)
-        self.btn_18 = tk.Button(controlFrame, text = "Extend Stepper Motor", command=lambda:Stepper_Motor.extend())
+        self.btn_18 = tk.Button(controlFrame, text = "Extend Stepper Motor", command=lambda:Stepper_Motor2.extend())
         self.btn_18.place(relx=0, rely=0.5, relheight = 0.1, relwidth = buttonWidth) 
-        self.btn_19 = tk.Button(controlFrame, text = "Retract Stepper Motor", command = lambda:Stepper_Motor.retract())
+        self.btn_19 = tk.Button(controlFrame, text = "Retract Stepper Motor", command = lambda:Stepper_Motor2.retract())
         self.btn_19.place(relx=buttonWidth, rely = 0.5, relheight = 0.1, relwidth = buttonWidth)
         self.btn_20= tk.Button(controlFrame, text = "Turn on Heater", command=lambda:Metro_Heater.heat())
         self.btn_20.place(relx=0, rely = 0.6, relheight = 0.1, relwidth = buttonWidth) 
@@ -456,7 +460,12 @@ class ManualControlPage(tk.Frame):
         self.btn_23.place(relx=0, rely=0.8, relheight = 0.1, relwidth = buttonWidth) 
         self.btn_24 = tk.Button(controlFrame, text = "Cleanse Lines", command=lambda:cleanse_chamber())
         self.btn_24.place(relx=0,rely=0.9, relheight = 0.1, relwidth = buttonWidth)
-
+        
+        self.btn_25 = tk.Button(controlFrame, text = "Exhaust Enable", command=lambda:valve6.enable())
+        self.btn_25.place(relx=buttonWidth,rely=0.8, relheight = 0.1, relwidth = buttonWidth/2)
+        self.btn_26 = tk.Button(controlFrame, text = "Exhaust Disable", command=lambda:valve6.disable())
+        self.btn_26.place(relx=3*buttonWidth/2,rely=0.8, relheight = 0.1, relwidth = buttonWidth/2)
+    
         self.btn_5 = tk.Button(controlFrame, text='Valve 1 Enable', command=lambda:valve1.enable())
         self.btn_5.place(relx=buttonWidth,rely=0,relheight=0.1,relwidth=buttonWidth/2)
         self.btn_6 = tk.Button(controlFrame, text='Valve 2 Enable', command=lambda:valve2.enable())
@@ -506,6 +515,8 @@ def suppress_buttons():
     app.frames[ManualControlPage].btn_22.config(state='disabled')
     app.frames[ManualControlPage].btn_23.config(state='disabled')
     app.frames[ManualControlPage].btn_24.config(state='disabled')
+    app.frames[ManualControlPage].btn_25.config(state='disabled')
+    app.frames[ManualControlPage].btn_26.config(state='disabled')
     app.frames[HomePage].exitBtn.config(state='disabled')
     app.frames[HomePage].shutdownBtn.config(state='disabled')
 
@@ -534,6 +545,8 @@ def release_buttons():
     app.frames[ManualControlPage].btn_22.config(state='normal')
     app.frames[ManualControlPage].btn_23.config(state='normal')
     app.frames[ManualControlPage].btn_24.config(state='normal')
+    app.frames[ManualControlPage].btn_25.config(state='normal')
+    app.frames[ManualControlPage].btn_26.config(state='normal')
     app.frames[HomePage].exitBtn.config(state='normal')
     app.frames[HomePage].shutdownBtn.config(state='normal')
 
@@ -547,34 +560,59 @@ def purge_system():
 
     start_time = time.time()
     print("Purging System")
+    if valve1.state != True: 
+        valve1.enable()  
+    if valve2.state != True: 
+        valve2.enable()
     if valve5.state != True: 
         valve5.enable()
+    if valve6.state != True: 
+        valve6.enable()   
     linearActuator.purge()
     pump.enable() 
     while time.time() < (start_time + chamber_purge_time) and continueTest == True:
         # wait patiently for the purging to be finished
         pass 
     pump.disable()
+    if valve1.state != False: 
+        valve1.disable()  
+    if valve2.state != False: 
+        valve2.disable()
     if valve5.state != False: 
-        valve5.disable() 
+        valve5.disable()
+    if valve6.state != False: 
+        valve6.disable()
     print("Done purging")
 
 def purge_system_raw():
     start_time = time.time()
     print("Purging System")
+    if valve1.state != True: 
+        valve1.enable()  
+    if valve2.state != True: 
+        valve2.enable()
     if valve5.state != True: 
         valve5.enable()
+    if valve6.state != True: 
+        valve6.enable()
     linearActuator.purge()
     pump.enable() 
     while time.time() < (start_time + chamber_purge_time):
         # wait patiently for the purging to be finished
         pass 
     pump.disable()
+    if valve1.state != False: 
+        valve1.disable()  
+    if valve2.state != False: 
+        valve2.disable()
     if valve5.state != False: 
-        valve5.disable() 
+        valve5.disable()
+    if valve6.state != True: 
+        valve6.enable()
     print("Done purging")
     
 def fill_chamber():
+    Metro_Heater.heat()
     if linearActuator.state != 'retracted':
         linearActuator.retract()
     #########FILL H2S ############
@@ -595,21 +633,20 @@ def fill_chamber():
     if valve5.state != True:
         valve5.enable()
     
-    for x in range (4):
-        start_time = time.time()
-        Stepper_Motor.retract()
-        while (time.time() - start_time < stepperMotorRT) and continueTest == True:
+    start_time = time.time()
+    Stepper_Motor.retract()
+    while (time.time() - start_time < stepperMotorRT):
             # wait patiently for the Stepper Motor to finish retracting 
-            pass
+        pass 
     if valve3.state != False: 
         valve3.disable()
-    for x in range (4):
-        start_time = time.time()
-        Stepper_Motor.extend()
-        while (time.time() - start_time < stepperMotorRT) and continueTest == True:
-            # wait patiently fo  r the Stepper Motor to finish retracting 
-            pass
     
+    start_time = time.time()
+    Stepper_Motor.extend()
+    while (time.time() - start_time < stepperMotorRT): 
+            # wait patiently fo  r the Stepper Motor to finish retracting
+        pass
+           
    
    
     ########END FILL########
@@ -617,8 +654,8 @@ def fill_chamber():
 def cleanse_chamber(): 
     start_time = time.time()
     Metro_Heater.heat()
-    stepperMotorRT= 10  # Time it takes for the stepper motor to fully complete the retraction process
-    stepperMotorET = 10 # Time it takes for the stepper motor to fully complete the extension process 
+    stepperMotorRT= 7  # Time it takes for the stepper motor to fully complete the retraction process
+    stepperMotorET = 7 # Time it takes for the stepper motor to fully complete the extension process 
     print("Cleansing lines") 
     CCT = 3 # The number of times you repeat the stepper motor cycle 
     if valve1.state != False: 
@@ -632,7 +669,7 @@ def cleanse_chamber():
     if valve5.state != False: 
         valve5.disable() 
     Metro_Heater.heat()
-    cleanse_time = 15
+    cleanse_time = 5
     start_time = time.time()
     pump.enable()
     while (time.time() - start_time < cleanse_time):
@@ -640,6 +677,7 @@ def cleanse_chamber():
     if valve4.state != False:
         valve4.disable()
     start_time = time.time()
+    cleanse_time = 1
     while(time.time() - start_time < cleanse_time):
         pass
     if valve4.state != True:
@@ -650,16 +688,16 @@ def cleanse_chamber():
     if valve2.state!= True:
         valve2.enable()
       
-    Stepper_Motor.retract()
     start_time = time.time()
+    Stepper_Motor2.retract()
     while (time.time() - start_time < stepperMotorRT):
         # wait patiently for the Stepper Motor to finish retracting
         pass
     
     if valve3.state !=False:
         valve3.disable()
-    Stepper_Motor.extend()
     start_time = time.time()
+    Stepper_Motor2.extend()
     while (time.time() - start_time < stepperMotorET):
             # wait patiently for the Stepper Motor to finish extending
         pass
@@ -667,6 +705,7 @@ def cleanse_chamber():
         valve2.disable()
     pump.enable()
     start_time = time.time()
+    cleanse_time = 2
     while(time.time() - start_time < cleanse_time):
         pass
     pump.disable()
@@ -688,9 +727,11 @@ def collect_data(xVector,yVector):
     timeVector.clear()
     sampling_time_index = 1
     Metro_Heater.heat()
+    if linearActuator.state != 'retracted':
+        linearActuator.retract()
     global baseline
     # Initial Heating Portion
-    while (time.time() - heat_start_time < 300): #Vaporization time
+    while (time.time() - heat_start_time < vaporization_time): #Vaporization time
         pass
    
     
@@ -720,7 +761,7 @@ def collect_data(xVector,yVector):
                 linearActuator.retract()
                 
 ##    dataVector[:] = [x * (-1) for x in dataVector]
-##    dataVector[:] = [x + (2*baseline) for x in dataVector]
+    dataVector[:] = [baseline - x  for x in dataVector]
     combinedVector = np.column_stack((timeVector, dataVector))
 ##    current_time = datetime.datetime.now()
 ##    year = current_time.year

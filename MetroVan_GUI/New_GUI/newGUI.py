@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-import numpy
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -8,15 +7,400 @@ import pyqtgraph as pg
 import random
 import sys
 import time
+import datetime
 from Metrovan_components import *
 import RPi.GPIO as GPIO
 import Adafruit_ADS1x15 as ads
 import busio
 import adafruit_bme280
 import digitalio
-import Adafruit_MAX31855
+import adafruit_max31855
 import board
+import numpy as np
 
+dataVector = []
+timeVector = []
+fill_line_clense_time = 20 #normally 20
+global H2s_detected
+global H2s_notdetected
+global H2s_undefined
+global are_maching_learning
+are_machine_learning = "NO"
+global app 
+global v1
+global v2
+global cb
+global purgeB
+global v3
+global v4
+global v5
+global v6
+global pumpB 
+global heaterB
+global printing
+global linearAc
+global stepperB
+global liveGraph
+global mos 
+global progress
+global emergencyStop
+global totalTime
+global veryStartTime
+veryStartTime = time.time() 
+totalTime = 300
+emergencyStop = "RUN"
+
+def update_Graph(xList,yList):
+    global liveGraph
+    global emergencyStop
+    global app
+    global veryStartTime
+    global totalTime
+    
+    progress.setValue((time.time() - veryStartTime)/totalTime*100)
+    liveGraph.plot(xList,yList)
+    app.processEvents()
+        
+def purge_system_raw():
+    start_time = time.time()
+    global printing
+    printing.setText("Purging System")
+    print("Purging System")
+    global v1
+    global v2
+    global v3
+    global v4
+    global v5
+    global v6
+    global pumpB
+    global linearAc
+    global veryStartTime
+    global progress
+    global app
+    global emergencyStop
+    
+    if v1.valve.state != True: 
+        v1.enable()  
+    if v2.valve.state != True: 
+        v2.enable()
+    if v5.valve.state != True: 
+        v5.enable()
+    if v6.valve.state != True: 
+        v6.enable()
+    linearAc.linearAc.purge()
+    pumpB.enable()
+    app.processEvents()
+    if emergencyStop == "STOP":
+        return
+    while time.time() < (start_time + chamber_purge_time):
+        progress.setValue((time.time()- veryStartTime)/totalTime*100)
+        app.processEvents()
+        if emergencyStop == "STOP":
+            break
+        # wait patiently for the purging to be finished
+    app.processEvents()
+    if emergencyStop == "STOP":
+            return 
+    pumpB.disable()
+    if v1.valve.state != False: 
+        v1.disable()  
+    if v2.valve.state != False: 
+        v2.disable()
+    if v5.valve.state != False: 
+        v5.disable()
+    if v6.valve.state != True: 
+        v6.enable()
+    printing.setText("Done Purging") 
+    print("Done purging")
+    
+def fill_chamber():
+    global heaterB
+    global linearAc
+    global v1
+    global v2
+    global v3
+    global v4
+    global v5
+    global v6
+    global stepperB
+    global progress
+    global app
+    global veryStartTime
+    global totalTime
+    global printing
+    printing.setText("Filling Chamber") 
+    print("filling chamber")
+    global heaterB
+    heaterB.heat()
+    if linearAc.linearAc.state != 'retracted':
+        linearAc.linearAc.retract()
+    #########FILL H2S ############
+   
+    # Filling the chamber
+    app.processEvents()
+    if emergencyStop == "STOP":
+            return
+    stepperMotorRT= 10  # Time it takes for the stepper motor to fully complete the retraction process
+    stepperMotorET = 10 # Time it takes for the stepper motor to fully complete the extension process 
+    print("Filling Chamber")
+    if v1.valve.state != True:
+        v1.enable()
+    if v2.valve.state != True:
+        v2.enable()
+    if v3.valve.state != True:
+        v3.enable()
+    if v4.valve.state != False:
+        v4.disable()
+    if v5.valve.state != True:
+        v5.enable()
+    app.processEvents()
+    if emergencyStop =="STOP":
+            return
+    start_time = time.time()
+    stepperB.syringePump.retract()
+   # print("Everything is not fine") 
+    while (time.time() - start_time < stepperMotorRT):
+        global progress
+        global veryStartTime
+        global totalTime
+        progress.setValue((time.time()-veryStartTime)/totalTime*100)
+       # print("Some things are fine") 
+        app.processEvents()
+        if emergencyStop == "STOP":
+            break
+            # wait patiently for the Stepper Motor to finish retracting 
+    if emergencyStop == "STOP":
+         return
+   # print("Everything is fine") 
+    if v3.valve.state != False: 
+        v3.disable()
+    
+    start_time = time.time()
+    stepperB.syringePump.extend()
+    while (time.time() - start_time < stepperMotorRT):
+     #   print("I am lost") 
+        global progress
+        global veryStartTime
+        global totalTime
+        global app
+        progress.setValue((time.time()- veryStartTime)/totalTime*100)
+        app.processEvents()
+        if emergencyStop == "STOP":
+            break
+            # wait patiently fo  r the Stepper Motor to finish retracting
+       # print("End of fill")
+    if emergencyStop == "STOP":
+        return
+def cleanse_chamber():
+    print("Beginning of cleanse") 
+    global heaterB
+    global v1
+    global v2
+    global v3
+    global v4
+    global v5
+    global v6
+    global pumpB
+    global linearAc
+    global progress
+    global app
+    global emergencyStop
+    start_time = time.time()
+    app.processEvents()
+    if emergencyStop =="STOP":
+        return
+    heaterB.heat()
+    stepperMotorRT= 7  # Time it takes for the stepper motor to fully complete the retraction process
+    stepperMotorET = 7 # Time it takes for the stepper motor to fully complete the extension process 
+    global printing
+    printing.setText("Cleansing lines") 
+    print("Cleansing lines") 
+    CCT = 3 # The number of times you repeat the stepper motor cycle 
+    if v1.valve.state != False: 
+        v1.disable()
+    if v2.valve.state != False: 
+        v2.disable() 
+    if v3.valve.state != False: 
+        v3.disable() 
+    if v4.valve.state != True: 
+        v4.enable() 
+    if v5.valve.state != False: 
+        v5.disable() 
+    heaterB.heat()
+    cleanse_time = 5
+    start_time = time.time()
+    pumpB.enable()
+    while (time.time() - start_time < cleanse_time):
+        progress.setValue((time.time()- veryStartTime)/totalTime*100)
+        app.processEvents()
+        if emergencyStop == "STOP":
+            break
+    if emergencyStop == "STOP":
+        return
+    if v4.valve.state != False:
+        v4.disable()
+    start_time = time.time()
+    cleanse_time = 1
+    while(time.time() - start_time < cleanse_time):
+        progress.setValue((time.time()- veryStartTime)/totalTime*100)
+        app.processEvents()
+        if emergencyStop == "STOP":
+            break
+    if emergencyStop == "STOP":
+        return
+    if v4.valve.state != True:
+        v4.enable()
+    pumpB.disable()
+    if v3.valve.state!= True:
+        v3.enable()
+    if v2.valve.state!= True:
+        v2.enable()
+      
+    start_time = time.time()
+    stepperB.syringePump.retract()
+    while (time.time() - start_time < stepperMotorRT):
+    
+        progress.setValue((time.time()- veryStartTime)/totalTime*100)
+        app.processEvents()
+        # wait patiently for the Stepper Motor to finish retracting
+        if emergencystop == "STOP":
+            break
+    if emergencyStop == "STOP":
+        return
+    
+    if v3.valve.state !=False:
+        v3.disable()
+    start_time = time.time()
+    stepperB.syringePump.extend()
+    while (time.time() - start_time < stepperMotorET):
+        progress.setValue((time.time()- veryStartTime)/totalTime*100)
+        app.processEvents()
+        if emergencyStop == "STOP":
+            break
+            # wait patiently for the Stepper Motor to finish extending
+    if emergencyStop == "STOP":
+        return
+    if v2.valve.state != False:
+        v2.disable()
+    pumpB.enable()
+    start_time = time.time()
+    cleanse_time = 2
+    while(time.time() - start_time < cleanse_time):
+        progress.setValue((time.time()- veryStartTime)/totalTime*100)
+        app.processEvents()
+        if emergencyStop == "STOP":
+            break
+    if emergencyStop == "STOP":
+        return
+    pumpB.disable()
+    start_time = time.time()
+    ## EMILY CHANGED HEAT TIME (normally 20)
+    heat_time = 2
+    while time.time() - start_time < heat_time:
+        progress.setValue((time.time()- veryStartTime)/totalTime*100)
+        app.processEvents()
+        if emergencyStop == "STOP":
+            break
+    if emergencyStop == "STOP":
+        return
+    heaterB.cool()
+    if v1.valve.state != True:
+        v1.enable()
+
+def collect_data(xVector,yVector):
+    global heaterB
+    global linearAc
+    global progress
+    global app
+    global emergencyStop
+    global mos
+    vaporization_time = 10 #normally 195
+    sampling_time = 0.1 # DO NOT TOUCHtime between samples taken, determines sampling frequency
+    sensing_delay_time = 1 # normally 1, time delay after beginning data acquisition till when the sensor is exposed to sample
+    sensing_retract_time = 10 # normally 43, time allowed before sensor is retracted, no longer exposed to sample
+    duration_of_signal = 20 # normally 200, time allowed for data acquisition per test run 
+
+    global printing
+    baseline = mos.mos.read()
+    printing.setText("Heating up Sample") 
+    print("Data collection begins") 
+    heat_start_time = time.time()  # Local value. Capture the time at which the test began. All time values can use start_time as a reference
+    dataVector = yVector
+    timeVector = xVector
+    dataVector.clear()
+    timeVector.clear()
+    sampling_time_index = 1
+    app.processEvents()
+    if emergencyStop == "STOP":
+        return
+    heaterB.heat()
+    if linearAc.linearAc.state != 'retracted':
+        linearAc.linearAc.retract()
+    
+    # Initial Heating Portion
+    while (time.time() - heat_start_time < vaporization_time):#Vaporization time
+        progress.setValue((time.time()- veryStartTime)/totalTime*100)
+        app.processEvents()
+        if emergencyStop == "STOP":
+            break
+    if emergencyStop == "STOP":
+       return
+    
+    start_time = time.time()
+    printing.setText("Starting Data Capture") 
+    print('Starting data capture.')
+    while (time.time() < (start_time + duration_of_signal)) and (emergencyStop != "STOP"):# While time is less than duration of logged file
+        #print("We are inside the while loop")
+        progress.setValue((time.time()- veryStartTime)/totalTime*100)
+        app.processEvents()
+        if emergencyStop == "STOP":
+            break
+        if (time.time() > (start_time + (sampling_time * sampling_time_index)) and (emergencyStop != "STOP")):  # if time since last sample is more than the sampling time, take another sample
+           # print("Inside the graphing part...")
+            dataVector.append(mos.mos.read())  # Perform analog to digital function, reading voltage from first sensor channel
+            timeVector.append(time.time() - start_time)
+           # print(*dataVector)
+           # print("Before calling update Graph") 
+            update_Graph(timeVector,dataVector)
+            sampling_time_index += 1
+
+        # If time is between 10-50 seconds and the Linear Actuator position sensor signal from the ADC indicates a retracted state, extend the sensor
+        elif (time.time() >= (start_time + sensing_delay_time) and time.time() <= (
+                sensing_retract_time + start_time) and (emergencyStop != "STOP")):
+            print("we are in the 10-50 seconds loop") 
+            if linearAc.linearAc.state != 'extended':
+                linearAc.linearAc.extend()
+
+        # If time is less than 10 seconds or greater than 50 seconds and linear actuator position sensor signal from the ADC indicates an extended state, retract the sensor
+        elif (((time.time() < (sensing_delay_time + start_time)) or (
+                time.time() > (sensing_retract_time + start_time)))) and (emergencyStop != "STOP"):
+            print("Inside the first 10 seconds loop or last loop")
+            if linearAc.linearAc.state != 'retracted':
+                linearAc.linearAc.retract()
+
+        # Otherwise, keep outputs off
+        else:
+            if linearAc.linearAc.state != 'retracted':
+                linearAc.linearAc.retract()
+                
+##    dataVector[:] = [x * (-1) for x in dataVector]
+    #dataVector[:] = [baseline - x  for x in dataVector]
+    if emergencyStop == "STOP":
+        return
+    print("Before the stack")
+    dataVector[:] = [baseline - x  for x in dataVector]
+    combinedVector = np.column_stack((timeVector, dataVector))
+    print("Right before save") 
+##    # This section of code is used for generating the output file name. The file name will contain date/time of test, as well as concentration values present during test
+    filename = time.strftime("/home/pi/Documents/gui/MetroVan_GUI/tests_H2S/%a%d%b%Y%H%M%S.csv",time.localtime())
+    #filename = "/home/pi/Documents/gui/MetroVan_GUI/tests_H2S/EmilyTest.csv"
+    print("after filename") 
+    np.savetxt(filename,combinedVector, fmt='%.10f', delimiter=',')
+    print("File Saved")
+    printing.setText("File Saved")
+
+    pass
+    heaterB.cool()
 
 
 
@@ -33,35 +417,19 @@ pg.setConfigOption('foreground', 'k')
 ## GUI Functions
 
 ## Global Variable Initialization 
-global app 
-global v1
-global v2
-global v3
-global v4
-global v5
-global v6
-global pumpB 
-global heaterB
-global printing
-global linearAc
-global stepperB
-global liveGraph
-global mos 
-global progress
-global emergencyStop 
-emergencyStop = "RUN"
 
 
 class heater_Button(QPushButton):
     def __init__(self, heater, parent=None):
         super(heater_Button, self).__init__()
         self.heater = heater
+        self.heater.cool()
         self.setIconSize(QSize(15,15))
         self.setStyleSheet("QPushButton {font: 13px; max-height: 20px}")
         # Must be changed if working on Raspberry Pi or personal Laptop
-        self.green = QtGui.QIcon("/Users/EmilyEarl/Documents/ATFL/GUI/GUI/MetroVan_GUI/New_GUI/on.svg")
+        self.green = QtGui.QIcon("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/on.svg")
         # Must be changed if working on Raspberry Pi or personal laptop
-        self.red = QtGui.QIcon("/Users/EmilyEarl/Documents/ATFL/GUI/GUI/MetroVan_GUI/New_GUI/off.svg")
+        self.red = QtGui.QIcon("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/off.svg")
         self.setIcon(self.red)
         self.setText("Heater Off")
         self.state = "off"
@@ -72,14 +440,34 @@ class heater_Button(QPushButton):
             self.setIcon(self.green)
             self.setText("Heater On")
             self.state = "on"
+            self.heater.heat()
         elif self.state == "on":
             self.setIcon(self.red)
             self.setText("Heater Off")
             self.state = "off"
+            self.heater.cool()
+    def heat(self):
+        if self.state != "on":
+            self.heater.heat()
+            self.setIcon(self.green)
+            self.setText("Heater On")
+            self.state = "on"
+            global app
+            app.processEvents()
+    def cool(self):
+        if self.state != "off":
+            self.heater.cool()
+            self.setIcon(self.red)
+            self.setText("Heater Off")
+            self.state = "off"
+            global app
+            app.processEvents()
 
 class valve_Button(QPushButton):
-    def __init__(self, num,schematic, parent=None):
+    def __init__(self, num,schematic,valve, parent=None):
         super(valve_Button, self).__init__()
+        self.valve = valve
+        self.valve.disable()
         self.setText("Valve "+ str(num) + " Mode")
         self.state = "A"
         self.schematic = schematic
@@ -87,47 +475,73 @@ class valve_Button(QPushButton):
         self.setStyleSheet("QPushButton {font: 13px}")
         # Must be changed if working on Raspberry Pi or personal Laptop
         # Must be changed if working on Raspberry Pi or personal laptop
-        self.A = QtGui.QIcon("/Users/EmilyEarl/Documents/ATFL/GUI/GUI/MetroVan_GUI/New_GUI/A.svg")
-        self.B = QtGui.QIcon("/Users/EmilyEarl/Documents/ATFL/GUI/GUI/MetroVan_GUI/New_GUI/B.svg")
+        self.A = QtGui.QIcon("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/A.svg")
+        self.B = QtGui.QIcon("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/B.svg")
         self.setIcon(self.A)
         self.clicked.connect(lambda: self.valve_Switch())
     def valve_Switch(self):
         if self.state == "A":
             self.setIcon(self.B)
+            self.valve.enable()
             self.state = "B"
             self.schematic.valve_Flip()
         elif self.state == "B":
             self.setIcon(self.A)
+            self.valve.disable()
             self.state = "A"
             self.schematic.valve_Flip()
+    def enable(self):
+        self.state = "B"
+        self.setIcon(self.B)
+        self.valve.enable()
+        self.schematic.valve_Flip()
+    def disable(self):
+        self.state = "A"
+        self.setIcon(self.A)
+        self.valve.disable()
+        self.schematic.valve_Flip()
     
 class pump_Button(QPushButton):
-    def __init__(self, parent=None):
+    def __init__(self, pump, parent=None):
         super(pump_Button, self).__init__()
         self.setIconSize(QSize(15,15))
+        self.pump = pump
         self.setStyleSheet("QPushButton {font: 13px}")
         self.setText("Pump Off")
         self.state = "off"
         # Must be changed if working on Raspberry pi or personal laptop
         # Must be changed if working on Raspberry Pi or personal laptop
-        self.green = QtGui.QIcon("/Users/EmilyEarl/Documents/ATFL/GUI/GUI/MetroVan_GUI/New_GUI/on.svg")
-        self.red = QtGui.QIcon("/Users/EmilyEarl/Documents/ATFL/GUI/GUI/MetroVan_GUI/New_GUI/off.svg")
+        self.green = QtGui.QIcon("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/on.svg")
+        self.red = QtGui.QIcon("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/off.svg")
         self.setIcon(self.red)
         self.clicked.connect(lambda: self.pump_Switch())
     def pump_Switch(self):
         if self.state == "off":
+            self.pump.enable()
             self.setIcon(self.green)
             self.setText("Pump On")
             self.state = "on"
         elif self.state == "on":
+            self.pump.disable()
             self.setIcon(self.red)
             self.setText("Pump Off")
             self.state = "off"
-            
+    def enable(self):
+        if self.state == "off":
+            self.pump.enable()
+            self.setText("Pump On")
+            self.setIcon(self.green)
+            self.state = "on"
+    def disable(self):
+        if self.state == "on":
+            self.pump.disable()
+            self.setText("Pump Off")
+            self.setIcon(self.red)
+            self.state = "off"
 class linAc_Button(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, linearAc, parent=None):
         super(linAc_Button, self).__init__(parent)
-        
+        self.linearAc = linearAc
         self.layout = QVBoxLayout()
         self.title = QLabel("Linear Actuator")
         self.title.setStyleSheet("QLabel {font: 13px}")
@@ -146,7 +560,8 @@ class linAc_Button(QWidget):
         self.setLayout(self.layout)
     def move_Actuator(self):
         self.number = self.slider.value()
-        print(self.number) 
+        print(self.number)
+        self.linearAc.variableMove(self.number)
 
 class schematic(QLabel):
     def __init__(self, firstIm, secondIm, parent=None):
@@ -169,16 +584,19 @@ class schematic(QLabel):
             self.state = "A"
 
 class stepper_Button(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self,syringePump, parent=None):
         super(stepper_Button, self).__init__()
+        self.syringePump = syringePump
         self.layout = QVBoxLayout()
         self.title = QLabel("Syringe Pump")
         self.title.setStyleSheet("QLabel {font: 13px}")
         self.setStyleSheet("QSlider{max-height: 7px}")
         self.layout.addWidget(self.title)
         self.slider = QSlider(Qt.Horizontal)
+        
         self.slider.setMinimum(0)
         self.slider.setMaximum(5)
+        self.prevVal = 0
         self.slider.setTickPosition(QSlider.TicksBelow)
         self.slider.setTickInterval(0.5)
         #self.setText("Linear Actuator")
@@ -188,16 +606,31 @@ class stepper_Button(QWidget):
         self.setLayout(self.layout)
     def move_Stepper(self):
         self.number = self.slider.value()
-        print(self.number) 
+        print(self.number)
+        if self.prevVal < self.slider.value():
+            i = self.slider.value() - self.prevVal
+            while i > 0:
+                self.syringePump.retract()
+                i = i -1
+            self.prevVal = self.slider.value()
+        if self.prevVal > self.slider.value():
+            i = self.prevVal - self.slider.value()
+            while i > 0:
+                self.syringePump.extend()
+                i = i - 1
+            self.prevVal = self.slider.value() 
+        
 
 class mos_Button(QPushButton):
-    def __init__(self,parent=None):
+    def __init__(self,mos,parent=None):
         super(mos_Button, self).__init__()
+        self.mos = mos
         self.setStyleSheet("QPushButton {font: 13px}")
         self.setText("Read MOS")
         self.clicked.connect(lambda: self.read_MOS()) 
     def read_MOS(self):
-        print("MOS Value: ")
+        #print("MOS Value: ")
+        self.mos.print()
         
 class cleanse_Button(QPushButton):
     def __init__(self, parent=None):
@@ -216,6 +649,7 @@ class purge_Button(QPushButton):
         self.clicked.connect(lambda: self.purge_Chamber())
     def purge_Chamber(self):
         print("Purging Chamber")
+        purge_system_raw()
         
 class live_Graph(pg.PlotWidget):
     def __init__(self,parent=None):
@@ -232,17 +666,100 @@ class start_Button(QPushButton):
         self.setText("Start")
         self.clicked.connect(lambda: self.start_Procedure())
     def start_Procedure(self):
+        global H2s_undefined
+        H2s_undefined.setStyleSheet("QLabel {font:13px; border: 2px solid light gray; color: gray}")
         global emergencyStop 
         emergencyStop = "RUN"
-        self.setEnabled(False) 
+        global liveGraph
+        liveGraph.clear()
+        self.setEnabled(False)
+        global cb
+        cb.setEnabled(False)
+        global purgeB
+        purgeB.setEnabled(False)
+        global v1
+        v1.setEnabled(False)
+        global v2
+        v2.setEnabled(False)
+        global v3
+        v3.setEnabled(False)
+        global v4
+        v4.setEnabled(False)
+        global v5
+        v5.setEnabled(False)
+        global v6
+        v6.setEnabled(False)
+        global app 
+        global pumpB
+        pumpB.setEnabled(False)
+        global heaterB
+        heaterB.setEnabled(False)
+        global printing
+        global linearAc
+        
+        global stepperB
+        
+        global liveGraph
+        global mos
+        mos.setEnabled(False)
+        global progress
+        progress.setValue(0)
+        
         print("Starting Test...")
         
         global liveGraph
-        liveGraph.clear()
-        plot_Random(liveGraph)
+        while emergencyStop != "STOP":
+            fill_chamber()
+            print("Filling is done")
+            app.processEvents()
+            if emergencyStop == "STOP":
+                break
+            collect_data(timeVector, dataVector)
+            app.processEvents()
+            if emergencyStop == "STOP":
+                break
+            cleanse_chamber()
+            app.processEvents()
+            if emergencyStop == "STOP":
+                break
+            purge_system_raw()
+            break
         
-        
+        global are_machine_learning
+        if are_machine_learning == "NO":
+            global H2s_undefined
+            H2s_undefined.setStyleSheet("QLabel {font:13px; border: 2px solid black; background-color: orange}")
         self.setEnabled(True) 
+        global v1
+        v1.setEnabled(True)
+        global v2
+        v2.setEnabled(True)
+        global v3
+        v3.setEnabled(True)
+        global v4
+        v4.setEnabled(True)
+        global v5
+        v5.setEnabled(True)
+        global v6
+        v6.setEnabled(True)
+        cb.setEnabled(True)
+        purgeB.setEnabled(True) 
+        global app 
+        global pumpB
+        pumpB.setEnabled(True)
+        global heaterB
+        heaterB.setEnabled(True)
+        global printing
+        global linearAc
+        
+        global stepperB
+        
+        global liveGraph
+        global mos
+        mos.setEnabled(True)
+        global progress
+        global printing
+        printing.setText("Ready for testing") 
         
         
         
@@ -256,6 +773,39 @@ class stop_Button(QPushButton):
         global emergencyStop
         emergencyStop = "STOP" 
         print("Stopping Test...")
+        global v1
+        v1.setEnabled(True)
+        v1.disable()
+        global v2
+        v2.setEnabled(True)
+        v2.disable()
+        global v3
+        v3.setEnabled(True)
+        v3.disable()
+        global v4
+        v4.setEnabled(True)
+        v4.disable()
+        global v5
+        v5.setEnabled(True)
+        v5.disable()
+        global v6
+        v6.setEnabled(True)
+        v6.valve.disable()
+        global app 
+        global pumpB
+        pumpB.setEnabled(True)
+        pumpB.disable()
+        global heaterB
+        heaterB.setEnabled(True)
+        heaterB.cool()
+        global printing
+        global linearAc
+        
+        global stepperB
+        
+        global liveGraph
+        global mos
+        mos.setEnabled(True) 
         
         
         
@@ -296,10 +846,9 @@ class plot_Random(): # This is designed to test the success of the multithreadin
             app.processEvents()
             
             
-class update_Graph():
-    def __init__(self, xlist, ylist):
-        xData = pyqtSignal(list)
-        yData = pyqtSignal(list)
+
+        
+        
     
         #################### Object Declaration ####################
 GPIO.setmode(GPIO.BCM)
@@ -313,7 +862,7 @@ GAIN = 2/3
 # 
 # MOS Sensor
 MOS_adc_channel = 1
-mos = MOS(adc, MOS_adc_channel)
+mos1 = MOS(adc, MOS_adc_channel)
 # Heater
 heater = 26
 Metro_Heater = Heater(heater) 
@@ -327,13 +876,21 @@ pinvalve3 = 19
 pinvalve4 = 5
 pinvalve5 = 27
 ##Valve 6 was never actually created, reconfiguring this value will be necessary 
-pinvalve6 = 28
+pinvalve6 = 7
 valve1 = Valve('Valve1',pinvalve1) #Methane Tank to MFC
 valve2 = Valve('Valve2',pinvalve2) #H2 Tank to MFC
 valve3 = Valve('Valve3',pinvalve3) #Sample Gas into Chamber
 valve4 = Valve('Valve4',pinvalve4) #Air into Chamber
 valve5 = Valve('Valve5',pinvalve5) #Chamber Exhaust
 valve6 = Valve('Valve6',pinvalve6)
+
+chamber_purge_time = 6 #normally 30 #Time to purge chamber: experiment with it
+
+#########FILLING CHAMBER WITH TARGET GAS #############
+# Filling Variables
+
+
+
 
 #Stepper Motor Information
 # Need to convert from BCM to BOARD 
@@ -357,6 +914,8 @@ Stepper_Motor = StepperMotor(DIR, STEP, CW, CCW, SPR, MODE, RESOLUTION)
 spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
 cs = digitalio.DigitalInOut(board.D21)
 max31855 = adafruit_max31855.MAX31855(spi, cs)
+
+
 
 # Bme280 (I2C Network)
 # First BME 
@@ -385,11 +944,23 @@ startB = start_Button()
 stopB = stop_Button()
 printing = print_Data()
 progress = QtGui.QProgressBar()
-fpLayout.addWidget(startB,3,1)
-fpLayout.addWidget(stopB,3,2)
-fpLayout.addWidget(printing,5,1,1,2)
-fpLayout.addWidget(liveGraph,1,1,2,2)
-fpLayout.addWidget(progress, 4,1,1,2)
+H2s_detected = QLabel()
+H2s_detected.setText("H2S Detected")
+H2s_detected.setStyleSheet("QLabel {font: 13px; border: 2px solid light gray; color: gray}")
+H2s_notdetected = QLabel()
+H2s_notdetected.setText("H2S Not Detected")
+H2s_notdetected.setStyleSheet("QLabel {font: 13px; border: 2px solid light gray; color: gray}")
+H2s_undefined = QLabel()
+H2s_undefined.setText("H2S Data Unavailable") 
+H2s_undefined.setStyleSheet("QLabel {font:13px; border: 2px solid light gray; color: gray}") 
+fpLayout.addWidget(startB,4,1,1,2)
+fpLayout.addWidget(stopB,4,3,1,2)
+fpLayout.addWidget(printing,6,1,1,4)
+fpLayout.addWidget(liveGraph,1,1,3,3)
+fpLayout.addWidget(progress, 5,1,1,4)
+fpLayout.addWidget(H2s_detected, 1,4,1,1)
+fpLayout.addWidget(H2s_notdetected,2,4,1,1)
+fpLayout.addWidget(H2s_undefined,3,4,1,1) 
 firstPage.setLayout(fpLayout)
 
 ## Manual Controls Page Initiation 
@@ -397,18 +968,18 @@ secondPage = QWidget()
 spLayout = QGridLayout()
 spLayout.setVerticalSpacing(0)
 # Must be changed if working on raspberry pi or personal laptop
-schem1 = schematic("/Users/EmilyEarl/Documents/ATFL/GUI/GUI/MetroVan_GUI/New_GUI/on.svg","/Users/EmilyEarl/Documents/ATFL/GUI/GUI/MetroVan_GUI/New_GUI/off.svg")
-v1 = valve_Button(1,schem1)
-v2 = valve_Button(2, schem1)
-v3 = valve_Button(3, schem1)
-v4 = valve_Button(4, schem1)
-v5 = valve_Button(5, schem1)
-v6 = valve_Button(6, schem1)
+schem1 = schematic("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/on.svg","/home/pi/Documents/gui/MetroVan_GUI/New_GUI/off.svg")
+v1 = valve_Button(1,schem1,valve1)
+v2 = valve_Button(2, schem1,valve2)
+v3 = valve_Button(3, schem1,valve3)
+v4 = valve_Button(4, schem1,valve4)
+v5 = valve_Button(5, schem1,valve5)
+v6 = valve_Button(6, schem1,valve6)
 heaterB = heater_Button(Metro_Heater)
-pumpB = pump_Button()
-linearAc = linAc_Button()
-steppB = stepper_Button()
-mos = mos_Button()
+pumpB = pump_Button(pump)
+linearAc = linAc_Button(linearActuator)
+stepperB = stepper_Button(Stepper_Motor)
+mos = mos_Button(mos1)
 cb = cleanse_Button()
 purgeB = purge_Button()
 spLayout.addWidget(v1, 1,1)
@@ -420,7 +991,7 @@ spLayout.addWidget(v6, 6,1)
 spLayout.addWidget(heaterB, 6,2)
 spLayout.addWidget(pumpB,7,2)
 spLayout.addWidget(linearAc,1,2)
-spLayout.addWidget(steppB, 2,2)
+spLayout.addWidget(stepperB, 2,2)
 spLayout.addWidget(mos,3,2)
 spLayout.addWidget(cb, 4,2)
 spLayout.addWidget(purgeB,5,2)

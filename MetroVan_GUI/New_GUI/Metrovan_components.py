@@ -58,6 +58,13 @@ class LinearActuator:
         self.state = 'purge'
     def endLinAc(self):
         self.pwm.stop()
+    def variableMove(self,num):
+        GPIO.output(self.pinEnable, GPIO.HIGH)
+        self.pwm.ChangeDutyCycle(num)
+        time.sleep(1.5)
+        GPIO.output(self.pinEnable, GPIO.LOW)
+        self.state = 'variable'
+    
 class Valve:
     def __init__(self, name, pin):
         self.name = name

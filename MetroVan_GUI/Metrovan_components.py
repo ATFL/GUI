@@ -20,7 +20,7 @@ class LinearActuator:
         GPIO.setup(self.pinEnable, GPIO.OUT)
         GPIO.output(self.pinEnable, GPIO.HIGH)
         self.pwm = GPIO.PWM(pinLA, 50)
-        self.pwm.start(7)
+        self.pwm.start(10.4)
         time.sleep(1.5)
         GPIO.output(self.pinEnable, GPIO.LOW)
         self.state = 'default'
@@ -36,7 +36,7 @@ class LinearActuator:
     def retract(self):
         print('Retracting linear actuator.')
         GPIO.output(self.pinEnable, GPIO.HIGH)
-        self.pwm.ChangeDutyCycle(10.2)
+        self.pwm.ChangeDutyCycle(10.4)
         time.sleep(2)
         GPIO.output(self.pinEnable, GPIO.LOW)
         self.state = 'retracted'
@@ -44,7 +44,7 @@ class LinearActuator:
     def default(self):
         print('Moving linear actuator to default(center) position.')
         GPIO.output(self.pinEnable, GPIO.HIGH)
-        self.pwm.ChangeDutyCycle(7)
+        self.pwm.ChangeDutyCycle(10.4)
         time.sleep(1.5)
         GPIO.output(self.pinEnable, GPIO.LOW)
         self.state = 'default'
@@ -52,7 +52,7 @@ class LinearActuator:
     def purge(self):
         print('Moving linear actuator to purging position.')
         GPIO.output(self.pinEnable, GPIO.HIGH)
-        self.pwm.ChangeDutyCycle(7)
+        self.pwm.ChangeDutyCycle(10.4)
         time.sleep(1.5)
         GPIO.output(self.pinEnable, GPIO.LOW)
         self.state = 'purge'
@@ -238,18 +238,56 @@ class StepperMotor():
             time.sleep(self.delay) 
             GPIO.output(self.step, GPIO.LOW) 
             time.sleep(self.delay) 
+
+class StepperMotor2():
+    def __init__(self, direction, step, cw, ccw, spr2, mode, res):
+        self.direction = direction
+        self.step = step
+        self.cw = cw
+        self.ccw = ccw
+        self.spr2 = spr2
+        self.mode = mode
+        self.res = res
+        self.step_count = self.spr2*8
+        self.delay = .0208/16
+        GPIO.setup(self.mode, GPIO.OUT)
+        GPIO.setup(self.direction, GPIO.OUT)
+        GPIO.setup(self.step, GPIO.OUT)
+        GPIO.output(self.mode, self.res['1/16'])
+        
+    
+    def retract(self):
+        GPIO.output(self.direction, self.cw)
+        print("Retracting Stepper Motor")
+        for x in range(self.step_count):
+            GPIO.output(self.step, GPIO.HIGH)
+            time.sleep(self.delay)
+            GPIO.output(self.step, GPIO.LOW)
+            time.sleep(self.delay)
             
+    def extend(self): 
+        GPIO.output(self.direction, self.ccw) 
+        print("Extending Stepper Motor") 
+        for x in range(self.step_count): 
+            GPIO.output(self.step, GPIO.HIGH) 
+            time.sleep(self.delay) 
+            GPIO.output(self.step, GPIO.LOW) 
+            time.sleep(self.delay)  
+ 
 class Heater(): 
     def __init__(self, heatPin) :
         self.heatPin= heatPin 
         GPIO.setup(self.heatPin, GPIO.OUT) 
-        GPIO.output(self.heatPin, GPIO.LOW) 
+        GPIO.output(self.heatPin, GPIO.LOW)
+        self.state = "OFF"
     def heat(self): 
         print("Heater on") 
-        GPIO.output(self.heatPin, GPIO.HIGH) 
+        GPIO.output(self.heatPin, GPIO.HIGH)
+        self.state = "ON"
     def cool(self): 
         print("Heater off") 
-        GPIO.output(self.heatPin, GPIO.LOW) 
+        GPIO.output(self.heatPin, GPIO.LOW)
+        self.state = "OFF"
 
 
     

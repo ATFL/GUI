@@ -138,6 +138,7 @@ class AutoLiveGraph(tk.Frame):
 
         self.fig = Figure(figsize=(5, 4), dpi=100)
         self.subplot = self.fig.add_subplot(111)
+        
 
         self.canvas = FigureCanvasTkAgg(self.fig, master=self)  # A tk.DrawingArea.
         self.canvas.draw()
