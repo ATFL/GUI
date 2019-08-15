@@ -26,9 +26,8 @@ global H2s_notdetected
 global H2s_undefined
 global are_maching_learning
 are_machine_learning = "NO"
-global app 
-global v1
-global v2
+global app
+global stepperB2
 global cb
 global purgeB
 global v3
@@ -47,7 +46,7 @@ global emergencyStop
 global totalTime
 global veryStartTime
 veryStartTime = time.time() 
-totalTime = 300
+totalTime = 600
 emergencyStop = "RUN"
 
 def update_Graph(xList,yList):
@@ -87,7 +86,7 @@ def purge_system_raw():
         v5.enable()
     if v6.valve.state != True: 
         v6.enable()
-    linearAc.linearAc.purge()
+    linearAc.linearAc.retract()
     pumpB.enable()
     app.processEvents()
     if emergencyStop == "STOP":
@@ -257,13 +256,14 @@ def cleanse_chamber():
         v2.enable()
       
     start_time = time.time()
-    stepperB.syringePump.retract()
+    global stepperB2
+    stepperB2.syringePump.retract()
     while (time.time() - start_time < stepperMotorRT):
     
         progress.setValue((time.time()- veryStartTime)/totalTime*100)
         app.processEvents()
         # wait patiently for the Stepper Motor to finish retracting
-        if emergencystop == "STOP":
+        if emergencyStop == "STOP":
             break
     if emergencyStop == "STOP":
         return
@@ -271,7 +271,7 @@ def cleanse_chamber():
     if v3.valve.state !=False:
         v3.disable()
     start_time = time.time()
-    stepperB.syringePump.extend()
+    stepperB2.syringePump.extend()
     while (time.time() - start_time < stepperMotorET):
         progress.setValue((time.time()- veryStartTime)/totalTime*100)
         app.processEvents()
@@ -295,7 +295,7 @@ def cleanse_chamber():
     pumpB.disable()
     start_time = time.time()
     ## EMILY CHANGED HEAT TIME (normally 20)
-    heat_time = 2
+    heat_time = 20
     while time.time() - start_time < heat_time:
         progress.setValue((time.time()- veryStartTime)/totalTime*100)
         app.processEvents()
@@ -314,14 +314,14 @@ def collect_data(xVector,yVector):
     global app
     global emergencyStop
     global mos
-    vaporization_time = 10 #normally 195
+    vaporization_time = 195 #normally 195
     sampling_time = 0.1 # DO NOT TOUCHtime between samples taken, determines sampling frequency
     sensing_delay_time = 1 # normally 1, time delay after beginning data acquisition till when the sensor is exposed to sample
-    sensing_retract_time = 10 # normally 43, time allowed before sensor is retracted, no longer exposed to sample
-    duration_of_signal = 20 # normally 200, time allowed for data acquisition per test run 
+    sensing_retract_time = 43 # normally 43, time allowed before sensor is retracted, no longer exposed to sample
+    duration_of_signal = 200 # normally 200, time allowed for data acquisition per test run 
 
     global printing
-    baseline = mos.mos.read()
+    baseline = 5.106
     printing.setText("Heating up Sample") 
     print("Data collection begins") 
     heat_start_time = time.time()  # Local value. Capture the time at which the test began. All time values can use start_time as a reference
@@ -639,8 +639,9 @@ class cleanse_Button(QPushButton):
         self.setText("Cleanse Lines")
         self.clicked.connect(lambda: self.cleanse_Lines())
     def cleanse_Lines(self):
+        global emergencyStop
         print("Cleaning Lines") 
-
+        cleanse_chamber()
 class purge_Button(QPushButton):
     def __init__(self,parent=None):
         super(purge_Button, self).__init__()
@@ -648,6 +649,7 @@ class purge_Button(QPushButton):
         self.setText("Purge Chamber")
         self.clicked.connect(lambda: self.purge_Chamber())
     def purge_Chamber(self):
+        global emergencyStop
         print("Purging Chamber")
         purge_system_raw()
         
@@ -655,7 +657,8 @@ class live_Graph(pg.PlotWidget):
     def __init__(self,parent=None):
         super(live_Graph,self).__init__()
         #self.setBackgroundColor(None)
-        self.setRange(xRange=(0,300),yRange=(0,5),disableAutoRange=True)
+        self.setRange(xRange=(0,200),yRange=(0,5),disableAutoRange=False)
+        self.enableAutoScale()
         self.setTitle("Live Graph")
         self.setStyleSheet("pg.PlotWidget {border-style: outset; max-height: 50}")
         
@@ -884,7 +887,7 @@ valve4 = Valve('Valve4',pinvalve4) #Air into Chamber
 valve5 = Valve('Valve5',pinvalve5) #Chamber Exhaust
 valve6 = Valve('Valve6',pinvalve6)
 
-chamber_purge_time = 6 #normally 30 #Time to purge chamber: experiment with it
+chamber_purge_time = 120 #normally 30 #Time to purge chamber: experiment with it
 
 #########FILLING CHAMBER WITH TARGET GAS #############
 # Filling Variables
@@ -898,7 +901,8 @@ DIR = 25   # Direction GPIO Pin
 STEP = 24  # Step GPIO Pin
 CW = 1     # Clockwise Rotation
 CCW = 0    # Counterclockwise Rotation
-SPR = 400   # Steps per Revolution (360 / 7.5)
+SPR = 1500   # Steps per Revolution (360 / 7.5)
+SPR2 = 300
 MODE = (15, 18, 23)   # Microstep Resolution GPIO Pins
 RESOLUTION = {'Full': (0, 0, 0),
               'Half': (1, 0, 0),
@@ -908,7 +912,7 @@ RESOLUTION = {'Full': (0, 0, 0),
               '1/32': (1, 0, 1)}
 
 Stepper_Motor = StepperMotor(DIR, STEP, CW, CCW, SPR, MODE, RESOLUTION) 
-
+Stepper_Motor2 = StepperMotor2(DIR,STEP,CW,CCW,SPR2,MODE,RESOLUTION)
 
 #Max31855
 spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
@@ -968,17 +972,24 @@ secondPage = QWidget()
 spLayout = QGridLayout()
 spLayout.setVerticalSpacing(0)
 # Must be changed if working on raspberry pi or personal laptop
-schem1 = schematic("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/on.svg","/home/pi/Documents/gui/MetroVan_GUI/New_GUI/off.svg")
+schem1 = schematic("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/v1b.png","/home/pi/Documents/gui/MetroVan_GUI/New_GUI/v1a.png")
+schem2 = schematic("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/v2b-2.png", "/home/pi/Documents/gui/MetroVan_GUI/New_GUI/v2a-2.png")
+schem3 = schematic("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/v3b.png", "/home/pi/Documents/gui/MetroVan_GUI/New_GUI/v3a.png")
+schem4 = schematic("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/v4b.png","/home/pi/Documents/gui/MetroVan_GUI/New_GUI/v4a.png")
+schem5 = schematic("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/v5dis.png","/home/pi/Documents/gui/MetroVan_GUI/New_GUI/v5en.png")
+schem6 = schematic("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/v6dis.png","/home/pi/Documents/gui/MetroVan_GUI/New_GUI/v6en.png")
+
 v1 = valve_Button(1,schem1,valve1)
-v2 = valve_Button(2, schem1,valve2)
-v3 = valve_Button(3, schem1,valve3)
-v4 = valve_Button(4, schem1,valve4)
-v5 = valve_Button(5, schem1,valve5)
-v6 = valve_Button(6, schem1,valve6)
+v2 = valve_Button(2, schem2,valve2)
+v3 = valve_Button(3, schem3,valve3)
+v4 = valve_Button(4, schem4,valve4)
+v5 = valve_Button(5, schem5,valve5)
+v6 = valve_Button(6, schem6,valve6)
 heaterB = heater_Button(Metro_Heater)
 pumpB = pump_Button(pump)
 linearAc = linAc_Button(linearActuator)
 stepperB = stepper_Button(Stepper_Motor)
+stepperB2 = stepper_Button(Stepper_Motor2)
 mos = mos_Button(mos1)
 cb = cleanse_Button()
 purgeB = purge_Button()
@@ -991,11 +1002,18 @@ spLayout.addWidget(v6, 6,1)
 spLayout.addWidget(heaterB, 6,2)
 spLayout.addWidget(pumpB,7,2)
 spLayout.addWidget(linearAc,1,2)
-spLayout.addWidget(stepperB, 2,2)
+spLayout.addWidget(stepperB2, 2,2)
 spLayout.addWidget(mos,3,2)
 spLayout.addWidget(cb, 4,2)
 spLayout.addWidget(purgeB,5,2)
 spLayout.addWidget(schem1, 1,3, 7,2)
+spLayout.addWidget(schem2, 1,3, 7,2)
+spLayout.addWidget(schem3, 1,3, 7,2)
+spLayout.addWidget(schem4, 1,3, 7,2)
+spLayout.addWidget(schem5, 1,3, 7,2)
+spLayout.addWidget(schem6, 1,3, 7,2)
+
+
 
 
 secondPage.setLayout(spLayout)

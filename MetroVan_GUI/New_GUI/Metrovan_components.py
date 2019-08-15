@@ -65,6 +65,41 @@ class LinearActuator:
         GPIO.output(self.pinEnable, GPIO.LOW)
         self.state = 'variable'
     
+class StepperMotor2():
+    def __init__(self, direction, step, cw, ccw, spr2, mode, res):
+        self.direction = direction
+        self.step = step
+        self.cw = cw
+        self.ccw = ccw
+        self.spr2 = spr2
+        self.mode = mode
+        self.res = res
+        self.step_count = self.spr2*8
+        self.delay = .0208/16
+        GPIO.setup(self.mode, GPIO.OUT)
+        GPIO.setup(self.direction, GPIO.OUT)
+        GPIO.setup(self.step, GPIO.OUT)
+        GPIO.output(self.mode, self.res['1/16'])
+        
+    
+    def retract(self):
+        GPIO.output(self.direction, self.cw)
+        print("Retracting Stepper Motor")
+        for x in range(self.step_count):
+            GPIO.output(self.step, GPIO.HIGH)
+            time.sleep(self.delay)
+            GPIO.output(self.step, GPIO.LOW)
+            time.sleep(self.delay)
+            
+    def extend(self): 
+        GPIO.output(self.direction, self.ccw) 
+        print("Extending Stepper Motor") 
+        for x in range(self.step_count): 
+            GPIO.output(self.step, GPIO.HIGH) 
+            time.sleep(self.delay) 
+            GPIO.output(self.step, GPIO.LOW) 
+            time.sleep(self.delay)  
+ 
 class Valve:
     def __init__(self, name, pin):
         self.name = name
