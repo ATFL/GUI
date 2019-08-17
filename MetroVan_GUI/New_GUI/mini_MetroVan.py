@@ -74,6 +74,8 @@ def update_Graph(xList,yList):
 #overall 40 seconds on sample, 20 on clean 
 # valve 1 open when purging dirty side 
 # close valve 1 when purging clean side 
+    # valve 1 is normally closed without power 
+
     
 def purge_system_raw(): 
     start_time = time.time() 
@@ -155,7 +157,6 @@ class servo_Button(QWidget):
         self.slider.setMaximum(2)
         self.slider.setTickPosition(QSlider.TicksBelow)
         self.slider.setTickInterval(1)
-        #self.setText("Linear Actuator")
         self.slider.setValue(1)
         self.slider.sliderReleased.connect(self.move_Servo)
         self.layout.addWidget(self.slider)
