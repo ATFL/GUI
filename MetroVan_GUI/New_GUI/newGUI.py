@@ -30,6 +30,8 @@ global app
 global stepperB2
 global cb
 global purgeB
+global v1
+global v2
 global v3
 global v4
 global v5
