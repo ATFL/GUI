@@ -294,7 +294,75 @@ class Heater():
         GPIO.output(self.heatPin, GPIO.LOW) 
 
 
+class Peristaltic_Pump(): 
+    def __init__(self, pin1, pin2, enable) : 
+        self.pin1 = pin1 
+        self.pin2 = pin2
+        self.move_time = 7
+        self.enable = enable
+        GPIO.setup(self.pin1, GPIO.OUT) 
+        GPIO.setup(self.pin2, GPIO.OUT) 
+        GPIO.setup(self.enable, GPIO.OUT) 
+        GPIO.output(self.enable, GPIO.LOW) 
+        
+    def forwards(self): 
+        GPIO.output(self.pin1, GPIO.HIGH) 
+        GPIO.output(self.pin2, GPIO.LOW) 
+        GPIO.output(self.enable, GPIO.HIGH) 
+        start_time = time.time() 
+        while time.time() - start_time < self.move_time: 
+            pass
+        GPIO.output(self.enable, GPIO.LOW) 
     
+    def backwards(self): 
+        GPIO.output(self.pin1, GPIO.LOW) 
+        GPIO.output(self.pin2, GPIO.HIGH) 
+        GPIO.output(self.enable, GPIO.HIGH) 
+        start_time = time.time() 
+        while time.time() - start_time < self.move_time:
+            pass 
+        GPIO.output(self.enable, GPIO.LOW) 
+        
+class servo():
+    def __init__(self, pin, enable):
+        self.pin = pin
+        self.enable = enable 
+        GPIO.setup(self.enable, GPIO.OUT) 
+        GPIO.setup(self.pin, GPIO.OUT) 
+        GPIO.output(self.enable, GPIO.HIGH) 
+        self.pwm = GPIO.PWM(self.pin, 50) 
+        self.pwm.start(7) 
+        time.sleep(0.5) 
+        GPIO.output(self.enable, GPIO.LOW) 
+        self.state = 'default'
+    
+    def sample_chamber(self): 
+        GPIO.output(self.enable, GPIO.HIGH) 
+        self.pwm.ChangeDutyCycle(4.8)
+        time.sleep(0.5) 
+        GPIO.output(self.enable, GPIO.LOW) 
+        self.state = 'sample'
+        
+    def clean_chamber(self): 
+        GPIO.output(self.enable, GPIO.HIGH) 
+        self.pwm.ChangeDutyCycle(10)
+        time.sleep(0.5) 
+        GPIO.output(self.enable, GPIO.LOW) 
+        self.state = 'clean'
+        
+    def default(self): 
+        GPIO.output(self.enable, GPIO.HIGH) 
+        self.pwm.ChangeDutyCycle(7)
+        time.sleep(0.5) 
+        GPIO.output(self.enable, GPIO.LOW) 
+        self.state= 'default'
+        
+        
+    
+    
+        
+    
+     
     
         
     
