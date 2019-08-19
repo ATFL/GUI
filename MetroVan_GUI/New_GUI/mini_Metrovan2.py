@@ -23,7 +23,6 @@ import Adafruit_ADS1x15 as ads
 import busio
 import adafruit_bme280
 import digitalio
-import adafruit_max31855
 import board
 import numpy as np
 

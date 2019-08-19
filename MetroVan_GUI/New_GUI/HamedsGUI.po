@@ -1,0 +1,50 @@
+import numpy
+from PyQt5 import QtWidgets, QtGui, QtCore
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton
+from PyQt5.QtCore import *
+from PyQt5.QtGui import QIcon
+import pyqtgraph as pg
+import random
+import sys
+import time
+from Metrovan_components import *
+import RPi.GPIO as GPIO
+import Adafruit_ADS1x15 as ads
+
+app = QApplication([])
+window = QWidget()
+b1= QLabel(window)
+b2 = QLabel(window)
+b3 = QLabel(window)
+b4 = QLabel(window)
+b5 = QLabel(window)
+b6 = QLabel(window)
+b7 = QLabel(window)
+b8 = QLabel(window)
+b9 = QPushButton(window)
+b10 = QPushButton(window)
+window.setGeometry(400,400,200,200)
+b1.setText('Sensor 1:')
+b1.move(400,20)
+b2.setText('Sensor 2: ')
+b2.move(400,40)
+b3.setText('Sensor 3: ')
+b3.move(400,60)
+b4.setText('Sensor 4: ')
+b4.move(400,80)
+b5.setText('Sensor 5: ')
+b5.move(400,100)
+b6.setText('Sensor 6: ')
+b6.move(400, 120)
+b7.setText('Sensor 7: ')
+b7.move(400,140)
+b8.setText('File Name: ')
+b8.move(20,200)
+b9.setText('Stop')
+b9.move(500,200)
+b10.setText('Start')
+b10.move(400, 200)
+window.setWindowTitle('Python thingie')
+window.show()
+app.exec_()
+
