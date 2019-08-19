@@ -687,7 +687,7 @@ class start_Button(QPushButton):
     def msgPress(self,i):
         if i.text() == "Yes":
             global stepperB
-            stepperB.syringePump.spr = 1800
+            stepperB.syringePump.spr = 1778
             stepperB.syringePump.step_count = stepperB.syringePump.spr*8
         elif i.text() == "No":
             global stepperB
@@ -706,7 +706,7 @@ class start_Button(QPushButton):
         retval = msg.exec_()
         if retval == QtGui.QMessageBox.Yes:
             global stepperB
-            stepperB.syringePump.spr = 1800
+            stepperB.syringePump.spr = 1778
             stepperB.syringePump.step_count = stepperB.syringePump.spr*8
         elif retval == QtGui.QMessageBox.No:
             global stepperB

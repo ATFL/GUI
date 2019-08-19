@@ -727,8 +727,8 @@ secondPage = QWidget()
 spLayout = QGridLayout()
 spLayout.setVerticalSpacing(0)
 # Must be changed if working on raspberry pi or personal laptop
-schem1 = schematic("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/v1b.png","/home/pi/Documents/gui/MetroVan_GUI/New_GUI/v1a.png")
-schem2 = schematic("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/v2b-2.png", "/home/pi/Documents/gui/MetroVan_GUI/New_GUI/v2a-2.png")
+schem1 = schematic("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/v1dismini.png","/home/pi/Documents/gui/MetroVan_GUI/New_GUI/v1enmini.png")
+schem2 = schematic("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/v2bmini.png", "/home/pi/Documents/gui/MetroVan_GUI/New_GUI/v2enmini.png")
 
 v1 = valve_Button(1,schem1,valve1)
 v2 = valve_Button(2, schem2,valve2)
