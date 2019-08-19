@@ -338,14 +338,14 @@ class servo():
     
     def sample_chamber(self): 
         GPIO.output(self.enable, GPIO.HIGH) 
-        self.pwm.ChangeDutyCycle(4.8)
+        self.pwm.ChangeDutyCycle(7.8)
         time.sleep(0.5) 
         GPIO.output(self.enable, GPIO.LOW) 
         self.state = 'sample'
         
     def clean_chamber(self): 
         GPIO.output(self.enable, GPIO.HIGH) 
-        self.pwm.ChangeDutyCycle(10)
+        self.pwm.ChangeDutyCycle(6.2)
         time.sleep(0.5) 
         GPIO.output(self.enable, GPIO.LOW) 
         self.state = 'clean'
