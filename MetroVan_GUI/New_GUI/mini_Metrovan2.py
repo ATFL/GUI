@@ -662,15 +662,15 @@ class plot_Random(): # This is designed to test the success of the multithreadin
             
 ## Now the variables
 GPIO.setmode(GPIO.BCM) 
-peri_pumpH = 15
-peri_pumpL = 16
-peri_pumpE = 1
-servo_pin = 11
-servo_enable = 31
-heater_pin = 4
-valve1_pin = 5
-valve2_pin = 6
-pump_pin = 10
+peri_pumpH = 16
+peri_pumpL = 12
+peri_pumpE = 20
+servo_pin = 8
+servo_enable = 7
+heater_pin = 26
+valve1_pin = 19
+valve2_pin = 14
+pump_pin = 21
 mos_channel = 1
 
 adc = ads.ADS1115(0x48)
