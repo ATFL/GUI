@@ -13,7 +13,7 @@ import Adafruit_MAX31855
 import board
 
 class LinearActuator:
-    def __init__(self, pinLA,pinEnable):
+    def __init__(self, pinLA, pinEnable):
         self.pinLA = pinLA
         self.pinEnable = pinEnable
         GPIO.setup(self.pinLA, GPIO.OUT)
@@ -64,7 +64,7 @@ class LinearActuator:
         time.sleep(1.5)
         GPIO.output(self.pinEnable, GPIO.LOW)
         self.state = 'variable'
-    
+
 class StepperMotor2():
     def __init__(self, direction, step, cw, ccw, spr2, mode, res):
         self.direction = direction
@@ -80,8 +80,8 @@ class StepperMotor2():
         GPIO.setup(self.direction, GPIO.OUT)
         GPIO.setup(self.step, GPIO.OUT)
         GPIO.output(self.mode, self.res['1/16'])
-        
-    
+
+
     def retract(self):
         GPIO.output(self.direction, self.cw)
         print("Retracting Stepper Motor")
@@ -90,16 +90,16 @@ class StepperMotor2():
             time.sleep(self.delay)
             GPIO.output(self.step, GPIO.LOW)
             time.sleep(self.delay)
-            
-    def extend(self): 
-        GPIO.output(self.direction, self.ccw) 
-        print("Extending Stepper Motor") 
-        for x in range(self.step_count): 
-            GPIO.output(self.step, GPIO.HIGH) 
-            time.sleep(self.delay) 
-            GPIO.output(self.step, GPIO.LOW) 
-            time.sleep(self.delay)  
- 
+
+    def extend(self):
+        GPIO.output(self.direction, self.ccw)
+        print("Extending Stepper Motor")
+        for x in range(self.step_count):
+            GPIO.output(self.step, GPIO.HIGH)
+            time.sleep(self.delay)
+            GPIO.output(self.step, GPIO.LOW)
+            time.sleep(self.delay)
+
 class Valve:
     def __init__(self, name, pin):
         self.name = name
@@ -241,7 +241,7 @@ def read_BME(init_name):
    print("\nTemperature: %0.1f C" % init_name.temperature)
    print("Humidity: %0.1f %%" % init_name.humidity)
    print("Pressure: %0.1f hPa" % init_name.pressure)
-    
+
 def read_MAX31855(init_name):
     tempC = init_name.temperature
     print("Temperature from MAX31855 Thermocouple Amplifier: %0.1f C" %tempC)
@@ -261,8 +261,8 @@ class StepperMotor():
         GPIO.setup(self.direction, GPIO.OUT)
         GPIO.setup(self.step, GPIO.OUT)
         GPIO.output(self.mode, self.res['1/16'])
-        
-    
+
+
     def retract(self):
         GPIO.output(self.direction, self.cw)
         print("Retracting Stepper Motor")
@@ -271,99 +271,98 @@ class StepperMotor():
             time.sleep(self.delay)
             GPIO.output(self.step, GPIO.LOW)
             time.sleep(self.delay)
-            
-    def extend(self): 
-        GPIO.output(self.direction, self.ccw) 
-        print("Extending Stepper Motor") 
-        for x in range(self.step_count): 
-            GPIO.output(self.step, GPIO.HIGH) 
-            time.sleep(self.delay) 
-            GPIO.output(self.step, GPIO.LOW) 
-            time.sleep(self.delay) 
-            
-class Heater(): 
+
+    def extend(self):
+        GPIO.output(self.direction, self.ccw)
+        print("Extending Stepper Motor")
+        for x in range(self.step_count):
+            GPIO.output(self.step, GPIO.HIGH)
+            time.sleep(self.delay)
+            GPIO.output(self.step, GPIO.LOW)
+            time.sleep(self.delay)
+
+class Heater():
     def __init__(self, heatPin) :
-        self.heatPin= heatPin 
-        GPIO.setup(self.heatPin, GPIO.OUT) 
-        GPIO.output(self.heatPin, GPIO.LOW) 
-    def heat(self): 
-        print("Heater on") 
-        GPIO.output(self.heatPin, GPIO.HIGH) 
-    def cool(self): 
-        print("Heater off") 
-        GPIO.output(self.heatPin, GPIO.LOW) 
+        self.heatPin= heatPin
+        GPIO.setup(self.heatPin, GPIO.OUT)
+        GPIO.output(self.heatPin, GPIO.LOW)
+    def heat(self):
+        print("Heater on")
+        GPIO.output(self.heatPin, GPIO.HIGH)
+    def cool(self):
+        print("Heater off")
+        GPIO.output(self.heatPin, GPIO.LOW)
 
 
-class Peristaltic_Pump(): 
-    def __init__(self, pin1, pin2, enable) : 
-        self.pin1 = pin1 
+class Peristaltic_Pump():
+    def __init__(self, pin1, pin2, enable) :
+        self.pin1 = pin1
         self.pin2 = pin2
         self.move_time = 7
         self.enable = enable
-        GPIO.setup(self.pin1, GPIO.OUT) 
-        GPIO.setup(self.pin2, GPIO.OUT) 
-        GPIO.setup(self.enable, GPIO.OUT) 
-        GPIO.output(self.enable, GPIO.LOW) 
-        
-    def forwards(self): 
-        GPIO.output(self.pin1, GPIO.HIGH) 
-        GPIO.output(self.pin2, GPIO.LOW) 
-        GPIO.output(self.enable, GPIO.HIGH) 
-        start_time = time.time() 
-        while time.time() - start_time < self.move_time: 
-            pass
-        GPIO.output(self.enable, GPIO.LOW) 
-    
-    def backwards(self): 
-        GPIO.output(self.pin1, GPIO.LOW) 
-        GPIO.output(self.pin2, GPIO.HIGH) 
-        GPIO.output(self.enable, GPIO.HIGH) 
-        start_time = time.time() 
+        GPIO.setup(self.pin1, GPIO.OUT)
+        GPIO.setup(self.pin2, GPIO.OUT)
+        GPIO.setup(self.enable, GPIO.OUT)
+        GPIO.output(self.enable, GPIO.LOW)
+
+    def forwards(self):
+        GPIO.output(self.pin1, GPIO.HIGH)
+        GPIO.output(self.pin2, GPIO.LOW)
+        GPIO.output(self.enable, GPIO.HIGH)
+        start_time = time.time()
         while time.time() - start_time < self.move_time:
-            pass 
-        GPIO.output(self.enable, GPIO.LOW) 
-        
+            pass
+        GPIO.output(self.enable, GPIO.LOW)
+
+    def backwards(self):
+        GPIO.output(self.pin1, GPIO.LOW)
+        GPIO.output(self.pin2, GPIO.HIGH)
+        GPIO.output(self.enable, GPIO.HIGH)
+        start_time = time.time()
+        while time.time() - start_time < self.move_time:
+            pass
+        GPIO.output(self.enable, GPIO.LOW)
+
 class servo():
     def __init__(self, pin, enable):
         self.pin = pin
-        self.enable = enable 
-        GPIO.setup(self.enable, GPIO.OUT) 
-        GPIO.setup(self.pin, GPIO.OUT) 
-        GPIO.output(self.enable, GPIO.HIGH) 
-        self.pwm = GPIO.PWM(self.pin, 50) 
-        self.pwm.start(7) 
-        time.sleep(0.5) 
-        GPIO.output(self.enable, GPIO.LOW) 
+        self.enable = enable
+        GPIO.setup(self.enable, GPIO.OUT)
+        GPIO.setup(self.pin, GPIO.OUT)
+        GPIO.output(self.enable, GPIO.HIGH)
+        self.pwm = GPIO.PWM(self.pin, 50)
+        self.pwm.start(7)
+        time.sleep(0.5)
+        GPIO.output(self.enable, GPIO.LOW)
         self.state = 'default'
-    
-    def sample_chamber(self): 
-        GPIO.output(self.enable, GPIO.HIGH) 
+
+    def sample_chamber(self):
+        GPIO.output(self.enable, GPIO.HIGH)
         self.pwm.ChangeDutyCycle(7.8)
-        time.sleep(0.5) 
-        GPIO.output(self.enable, GPIO.LOW) 
+        time.sleep(0.5)
+        GPIO.output(self.enable, GPIO.LOW)
         self.state = 'sample'
-        
-    def clean_chamber(self): 
-        GPIO.output(self.enable, GPIO.HIGH) 
+
+    def clean_chamber(self):
+        GPIO.output(self.enable, GPIO.HIGH)
         self.pwm.ChangeDutyCycle(6.2)
-        time.sleep(0.5) 
-        GPIO.output(self.enable, GPIO.LOW) 
+        time.sleep(0.5)
+        GPIO.output(self.enable, GPIO.LOW)
         self.state = 'clean'
-        
-    def default(self): 
-        GPIO.output(self.enable, GPIO.HIGH) 
+
+    def default(self):
+        GPIO.output(self.enable, GPIO.HIGH)
         self.pwm.ChangeDutyCycle(7)
-        time.sleep(0.5) 
-        GPIO.output(self.enable, GPIO.LOW) 
+        time.sleep(0.5)
+        GPIO.output(self.enable, GPIO.LOW)
         self.state= 'default'
-        
-        
-    
-    
-        
-    
-     
-    
-        
-    
-     
+
+
+
+
+
+
+
+
+
+
