@@ -313,8 +313,7 @@ def cleanse_chamber():
         v1.enable()
 
 def collect_data(xVector,yVector):
-    global heaterB
-    global linearAc
+
     global progress
     global app
     global emergencyStop
