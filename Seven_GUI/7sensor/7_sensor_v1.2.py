@@ -216,6 +216,13 @@ class start_Button(QPushButton):
 class resetButton(QPushButton):
     def __init__(self,parent=None):
         super(resetButton,self).__init__()
+
+
+        self.setStyleSheet("QPushButton {font: 13px}")
+        self.setText("Reset")
+        self.clicked.connect(lambda: self.reset_test())
+
+    def reset_test():
         global timeVector
         global x1
         global x2
@@ -224,12 +231,6 @@ class resetButton(QPushButton):
         global x5
         global x6
         global monitor_sens
-
-        self.setStyleSheet("QPushButton {font: 13px}")
-        self.setText("Reset")
-        self.clicked.connect(lambda: self.reset_test())
-
-    def reset_test():
         x1 = []
         x2 = []
         x3 = []
