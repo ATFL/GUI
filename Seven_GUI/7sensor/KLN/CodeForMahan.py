@@ -25,7 +25,8 @@ global app
 global startTime
 startTime = time.time()
 global mos 
-
+global run_test
+run_test = False
 class MOS:
     def __init__(self, adc, channel):
         # Choose a gain of 1 for reading voltages from 0 to 4.09V.
@@ -78,7 +79,8 @@ class start_Button(QPushButton):
       
     def start_Procedure(self):
         timeCheck = time.time()
-        runForever = True 
+        runForever = True
+        run_test = True
         while run_test: 
             if time.time() - timeCheck > 0.1:
                 update_Graph()
