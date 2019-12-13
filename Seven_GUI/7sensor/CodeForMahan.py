@@ -85,9 +85,27 @@ class start_Button(QPushButton):
                 timeCheck = time.time() 
             else:
                 pass
-            
+
+class save_Button(QPushButton):
+    def __init__(self,parent=None):
+        super(save_Button,self).__init__()
+        self.setStyleSheet("QPushButton {font: 13px}")
+        self.setText("Save")
+        self.clicked.connect(lambda: self.save())
+      
+    def save(self):
+        global timeVector
+        global dataVector
+        combinedVector = np.column_stack((timeVector,dataVector))
+        filename = time.strftime('%a%d%b%Y%H%M',time.localtime())
+        np.savetxt(filename,combinedVector,fmt='%.10f',delimiter=',')
+        print("file saved")
+        timeVector = []
+        dataVector = []
+        combinedVector = []
         
-mos = MOS(adc, 0)
+        
+mos = MOS(adc, 3)
 app = QApplication([])
 app.setStyle('Fusion')
 
@@ -95,10 +113,12 @@ mainPage = QWidget()
 mainPage.setWindowTitle("Mahan's Program") 
 mainPage.resize(800, 600)
 liveGraph = live_Graph()
-startB = start_Button() 
+startB = start_Button()
+saveB = save_Button()
 pageLayout = QGridLayout()
 pageLayout.addWidget(liveGraph)
-pageLayout.addWidget(startB) 
+pageLayout.addWidget(startB)
+pageLayout.addWidget(saveB)
 mainPage.setLayout(pageLayout)
 mainPage.show()
 app.exec() 
