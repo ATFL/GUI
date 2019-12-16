@@ -18,13 +18,22 @@ import Adafruit_ADS1x15 as ads
 adc = ads.ADS1115(0x48)
 global timeVector
 timeVector = []
-global dataVector 
-dataVector = []
+global x1
+global x2
+global x3
+global x4
+x1 = []
+x2 = []
+x3 = []
+x4 = []
 global livegraph
 global app
 global startTime
 startTime = time.time()
-global mos 
+global sens1
+global sens2
+global sens3
+global sens4
 global run_test
 run_test = False
 class MOS:
@@ -62,12 +71,21 @@ def update_Graph():
     global liveGraph
     global app
     global timeVector
-    global dataVector
+    global x1
+    global x2
+    global x3
+    global x4
     global startTime 
     liveGraph.clear()
     timeVector.append(time.time() - startTime)
-    dataVector.append(mos.read()) 
-    liveGraph.plot(timeVector, dataVector) 
+    x1.append(sens1.read())
+    x2.append(sens2.read())
+    x3.append(sens3.read())
+    x4.append(sens4.read())
+    liveGraph.plot(timeVector, x1,pen='r')
+    liveGraph.plot(timeVector, x2,pen='g')
+    liveGraph.plot(timeVector, x3,pen='b')
+    liveGraph.plot(timeVector, x4) 
     app.processEvents()
 
 class start_Button(QPushButton):
@@ -98,22 +116,31 @@ class save_Button(QPushButton):
     def save(self):
         run_test = False
         global timeVector
-        global dataVector
-        combinedVector = np.column_stack((timeVector,dataVector))
-        filename = time.strftime('%a%d%b%Y%H%M',time.localtime())
+        global x1
+        global x2
+        global x3
+        global x4
+        combinedVector = np.column_stack((timeVector,x1,x2,x3,x4))
+        filename = time.strftime('quad_sens_%a%d%b%Y%H%M',time.localtime())
         np.savetxt(filename,combinedVector,fmt='%.10f',delimiter=',')
-        print("file saved")
+        print("file saved" + filename)
         timeVector = []
-        dataVector = []
+        x1 = []
+        x2 = []
+        x3 = []
+        x4 = []
         combinedVector = []
         
         
-mos = MOS(adc, 3)
+sens1 = MOS(adc, 0)
+sens2 = MOS(adc, 1)
+sens3 = MOS(adc, 2)
+sens4 = MOS(adc, 3)
 app = QApplication([])
 app.setStyle('Fusion')
 
 mainPage = QWidget()
-mainPage.setWindowTitle("Emily is a Poop") 
+mainPage.setWindowTitle("Emily is a Poop 4 Sensor") 
 mainPage.resize(800, 600)
 liveGraph = live_Graph()
 startB = start_Button()
@@ -125,3 +152,4 @@ pageLayout.addWidget(saveB)
 mainPage.setLayout(pageLayout)
 mainPage.show()
 app.exec() 
+
