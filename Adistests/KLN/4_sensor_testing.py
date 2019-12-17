@@ -121,7 +121,7 @@ class save_Button(QPushButton):
         global x3
         global x4
         combinedVector = np.column_stack((timeVector,x1,x2,x3,x4))
-        filename = time.strftime('quad_sens_%a%d%b%Y%H%M',time.localtime())
+        filename = time.strftime('quad_sens_%a%d%b%Y%H%M.csv',time.localtime())
         np.savetxt(filename,combinedVector,fmt='%.10f',delimiter=',')
         print("file saved" + filename)
         timeVector = []
