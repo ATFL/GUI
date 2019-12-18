@@ -165,8 +165,8 @@ def collect_data():
 
     combinedVector = np.column_stack((timeVector,x1,x2,x3,x4,x5,x6,monitor_sens))
     ## File Saving Parameters ##
-    filePath = ''
-    testName = time.strftime('test_files/%a%d%b%Y%H%M.csv',time.localtime())
+    filePath = 'test_files/'
+    testName = time.strftime('%a%d%b%Y%H%M',time.localtime())
     file_extension = '.csv'
     file_name = filePath + testName + file_extension
     np.savetxt(filename,combinedVector,fmt='10.f',delimiter=',')
@@ -278,6 +278,33 @@ class linAc_recoverB(QPushButton):
             self.linearActuator.state = 'recovery'
 
 class baseline_measure(QPushButton):
+    def __init__(self,sens1,sens2,sens3,sens4,sens5,sens6, parent = None):
+        super(baseline_measure,self).init__()
+        self.sens1 = sens1
+        self.sens2 = sens2
+        self.sens3 = sens3
+        self.sens4 = sens4
+        self.sens5 = sens5
+        self.sens6 = sens6
+        self.setStyleSheet("QPushButton {font: 13px}")
+        self.setText("Check Baseline")
+        self.clicked.connect(lambda: self.baseline())
+
+    def baseline(self):
+        time_start = time.time()
+        s1 = []
+        s2 = []
+        s3 = []
+        s4 = []
+        s5 = []
+        s6 = []
+
+        while time.time() < time_start + 10):
+
+
+
+
+class baseline_measure(QPushButton):
     def __init__(self,sens1,sens2,sens3,sens4,sens5,sens6, parent=None):
         super(baseline_measure,self).__init__()
         self.sens1 = sens1
@@ -300,7 +327,14 @@ class baseline_measure(QPushButton):
         s6 = []
         while(time.time() < time_start+10):
             # Oh hey emily was here
-            if(time.time() > )
+            s1.append(sens1.read())
+            s2.append(sens2.read())
+            s3.append(sens3.read())
+            s4.append(sens4.read())
+            s5.append(sens5.read())
+            s6.append(sens6.read())
+
+            
 
 # Initializing the MOS and Linear Actuator
 # TODO: ADD the BME and MAX
