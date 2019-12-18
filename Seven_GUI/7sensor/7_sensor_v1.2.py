@@ -16,7 +16,7 @@ import sys
 import time
 import datetime
 import Adafruit_ADS1x15 as ads
-from parameters_7sensor import *
+#from parameters_7sensor import *
 # TODO: ADD BME and MAX Code
 
 ########SETUP##########
@@ -51,6 +51,7 @@ GPIO.setmode(GPIO.BCM)
 #Setup of the Linear Actuator
 class linearActuator():
     def __init__(self,pinNum):
+        self.pinNum = pinNum
         GPIO.setup(self.pinNum,GPIO.OUT)
         self.pwm = GPIO.PWM(self.pinNum,50)
         self.pwm.start(9)
@@ -115,7 +116,7 @@ class live_Graph(pg.PlotWidget):
         super(live_Graph,self).__init__()
         #self.setAutoFillBackground(True)
         ## gets the total test time from parameter
-        self.setRange(xRange=(0,max_test_time),yRange=(0,5),disableAutoRange=False)
+        self.setRange(xRange=(0,250),yRange=(0,5),disableAutoRange=False)
         self.setTitle("Live Graph")
         self.setStyleSheet("pg.PlotWidget {border-style: outset; max-height: 50}")
 
@@ -125,10 +126,10 @@ def collect_data():
     global timeVector
     global run_test
     t1 = time.time() #start time
-    t2 = sampling_time_index #imported from parameters
-    t3 = sampling_time #imported from parameters
-    t4 = sensor_expose_time #sensing delay time imported from parameters
-    t5 = sensor_retract_time #imported from parameters
+    #t2 = sampling_time_index #imported from parameters
+    #t3 = sampling_time #imported from parameters
+    #t4 = sensor_expose_time #sensing delay time imported from parameters
+    #t5 = sensor_retract_time #imported from parameters
 
     t2 = 1
     t3 = 0.1
@@ -346,7 +347,9 @@ sens3 = MOS(adc1,2)
 sens4 = MOS(adc2,3)
 sens5 = MOS(adc2,0)
 sens6 = MOS(adc2,1)
-monitor_sensor = MOS(adc,2)
+monitor_sensor = MOS(adc2,2)
+
+
 
 app = QApplication([])
 app.setStyle('Fusion')
