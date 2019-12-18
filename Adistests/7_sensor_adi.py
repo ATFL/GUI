@@ -205,7 +205,7 @@ class linAc_recoverButton(QPushButton):
     def recover(self):
         if self.linearActuator.state == 'exposure':
             self.linearActuator.recover()
-            self.setText("Click to Expose")
+            #self.setText("Recover")
             #self.setIcon(self.red)
             self.linearActuator.state = 'recovery'
 
@@ -221,14 +221,14 @@ mainPage.setWindowTitle("7 Sensor Adi")
 mainPage.resize(800, 600)
 liveGraph = live_Graph()
 startB = start_Button()
-#linAc_exposeB = linAc_exposeButton(linAc)
-#linAc_recoverB = linAc_recoverButton(linAc)
+linAc_exposeB = linAc_exposeButton(linAc)
+linAc_recoverB = linAc_recoverButton(linAc)
 save_button = save_Button()
 pageLayout = QGridLayout()
 pageLayout.addWidget(liveGraph)
 pageLayout.addWidget(startB)
-#pageLayout.addWidget(linAc_exposeB)
-#pageLayout.addWidget(linAc_recoverB)
+pageLayout.addWidget(linAc_exposeB)
+pageLayout.addWidget(linAc_recoverB)
 pageLayout.addWidget(save_button)
 mainPage.setLayout(pageLayout)
 mainPage.show()
