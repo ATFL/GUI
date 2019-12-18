@@ -50,7 +50,7 @@ GPIO.setmode(GPIO.BCM)
 ###### COMPONENT SETUP ##############
 #Setup of the Linear Actuator
 class linearActuator():
-    def__init__(self,pinNum):
+    def __init__(self,pinNum):
         GPIO.setup(self.pinNum,GPIO.OUT)
         self.pwm = GPIO.PWM(self.pinNum,50)
         self.pwm.start(9)

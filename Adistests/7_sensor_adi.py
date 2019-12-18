@@ -137,8 +137,8 @@ def collect_data():
             linAc.recover()
         if(time.time() > start_time+sensing_delay_time and time.time() < startTime + exposure_time and linAc.state !='exposure'):
             linAc.expose()
-        if(time.time() > start_time + exposure_time and linAc.state != 'recovery')
-
+        if(time.time() > start_time + exposure_time and linAc.state != 'recovery'):
+            linAc.recover()
 
     combinedVector = np.column_stack((timeVector,x1,x2))
     filename = time.strftime("/home/pi/Desktop/%a%d%b%Y%H%M%S.csv",time.localtime())
