@@ -130,13 +130,17 @@ def collect_data():
     t4 = sensor_expose_time #sensing delay time imported from parameters
     t5 = sensor_retract_time #imported from parameters
 
+    t2 = 1
+    t3 = 0.1
+    t4 = 5
+    t5 = 42
     #Pre-test Settings
     if(linAc.state != 'recovery'):
         linAc.recover()
 
     while (run_test == True):
         app.processEvents()
-        if(time.time() > t1+t3):
+        if(time.time() > t1+t3*t2):
             global x1
             global x2
             global x3
@@ -162,7 +166,7 @@ def collect_data():
     combinedVector = np.column_stack((timeVector,x1,x2,x3,x4,x5,x6,monitor_sens))
     ## File Saving Parameters ##
     filePath = ''
-    testName = time.strftime('%a%d%b%Y%H%M',time.localtime())
+    testName = time.strftime('test_files/%a%d%b%Y%H%M.csv',time.localtime())
     file_extension = '.csv'
     file_name = filePath + testName + file_extension
     np.savetxt(filename,combinedVector,fmt='10.f',delimiter=',')
@@ -239,6 +243,7 @@ class resetButton(QPushButton):
         x6 = []
         monitor_sens = []
         timeVector = []
+        liveGraph.clear()
 
 class linAc_exposeB(QPushButton):
     def __init__(self,linAc, parent=None):
@@ -295,7 +300,7 @@ class baseline_measure(QPushButton):
         s6 = []
         while(time.time() < time_start+10):
             # Oh hey emily was here
-
+            if(time.time() > )
 
 # Initializing the MOS and Linear Actuator
 # TODO: ADD the BME and MAX
