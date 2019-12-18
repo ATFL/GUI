@@ -340,6 +340,63 @@ class linAc_recoverB(QPushButton):
 # Initializing the MOS and Linear Actuator
 # TODO: ADD the BME and MAX
 
+class start_Button(QPushButton):
+    def __init__(self,parent=None):
+        super(start_Button,self).__init__()
+        self.setStyleSheet("QPushButton {font: 13px}")
+        self.setText("Start")
+        self.clicked.connect(lambda: self.start_Procedure())
+
+    def start_Procedure(self):
+        timeCheck = time.time()
+        print("Starting Test")
+        collect_data()
+
+
+class save_Button(QPushButton):
+    def __init__(self,parent=None):
+        super(save_Button,self).__init__()
+        self.setStyleSheet("QPushButton {font: 13px}")
+        self.setText("Save")
+        self.clicked.connect(lambda: self.save())
+
+    def save(self):
+        global run_test
+        run_test = False
+
+
+class linAc_exposeButton(QPushButton):
+    def __init__(self,linAc, parent=None):
+        super(linAc_exposeButton,self).__init__()
+        self.linearActuator = linAc
+        self.setStyleSheet("QPushButton {font: 13px}")
+        self.setText("Expose")
+        self.state = "recovery"
+        self.clicked.connect(lambda: self.expose())
+
+    def expose(self):
+        if self.linearActuator.state == 'recovery':
+            self.linearActuator.expose()
+            #self.setText("Click to Recover")
+            #self.setIcon(self.green)
+            self.linearActuator.state = 'exposure'
+
+class linAc_recoverButton(QPushButton):
+    def __init__(self,linAc, parent=None):
+        super(linAc_recoverButton,self).__init__()
+        self.linearActuator = linAc
+        self.setStyleSheet("QPushButton {font: 13px}")
+        self.setText("Recover")
+        self.state = "expose"
+        self.clicked.connect(lambda: self.recover())
+
+    def recover(self):
+        if self.linearActuator.state == 'exposure':
+            self.linearActuator.recover()
+            #self.setText("Recover")
+            #self.setIcon(self.red)
+            self.linearActuator.state = 'recovery'
+
 linAc = linearActuator(12)
 sens1 = MOS(adc1,0)
 sens2 = MOS(adc1,1)
@@ -357,7 +414,16 @@ mainPage = QWidget()
 mainPage.setWindowTitle("7 Sensor Setup")
 mainPage.resize(800, 600)
 liveGraph = live_Graph()
+startB = start_Button()
+linAc_exposeB = linAc_exposeButton(linAc)
+linAc_recoverB = linAc_recoverButton(linAc)
+save_button = save_Button()
 pageLayout = QGridLayout()
+pageLayout.addWidget(liveGraph)
+pageLayout.addWidget(startB)
+pageLayout.addWidget(linAc_exposeB)
+pageLayout.addWidget(linAc_recoverB)
+pageLayout.addWidget(save_button)
 mainPage.setLayout(pageLayout)
 mainPage.show()
 app.exec()
