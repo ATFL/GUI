@@ -108,7 +108,7 @@ class save_Button(QPushButton):
         combinedVector = []
         
         
-mos = MOS(adc, 3)
+mos = MOS(adc, 0)
 app = QApplication([])
 app.setStyle('Fusion')
 
