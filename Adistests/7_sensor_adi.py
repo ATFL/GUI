@@ -26,11 +26,10 @@ global startTime
 startTime = time.time()
 global mos
 global x1
-x1 = []#np.zeros((2500,))
+x1 = []
 global x2
 x2 = []
-#global data_counter
-#datacounter = 0
+
 global run_test
 run_test = True
 
@@ -116,24 +115,33 @@ def collect_data():
 
 
     start_time = time.time()
-    data_counter = 0
+
     print('Starting Data Capture')
     while (run_test == True):
         app.processEvents()
         if (time.time() > (start_time + (sampling_time * sampling_time_index))):
             global x1
-            global dataVector
+            #global dataVector
             global x2
+            global x3
+            global x4
+            global x5
+            global x6
+            global x7
             x1.append(mos.read())
             x2.append(mos2.read())
             timeVector.append(time.time() - start_time)
             update_Graph()
 
-
-
+        if (time.time() < start_time+sensing_delay_time and linAc.state !='recovery'):
+            linAc.recover()
+        if(time.time() > start_time+sensing_delay_time and time.time() < startTime + exposure_time and linAc.state !='exposure'):
+            linAc.expose()
+        if(time.time() > start_time + exposure_time and linAc.state != 'recovery'):
+            linAc.recover()
 
     combinedVector = np.column_stack((timeVector,x1,x2))
-    filename = time.strftime("/home/pi/Desktop/flowin/%a%d%b%Y%H%M%S.csv",time.localtime())
+    filename = time.strftime("/home/pi/Desktop/%a%d%b%Y%H%M%S.csv",time.localtime())
     np.savetxt(filename, combinedVector,fmt='%.10f',delimiter=',')
     print('File Saved')
     return
@@ -205,7 +213,7 @@ class linAc_recoverButton(QPushButton):
     def recover(self):
         if self.linearActuator.state == 'exposure':
             self.linearActuator.recover()
-            self.setText("Click to Expose")
+            #self.setText("Recover")
             #self.setIcon(self.red)
             self.linearActuator.state = 'recovery'
 
@@ -221,14 +229,14 @@ mainPage.setWindowTitle("7 Sensor Adi")
 mainPage.resize(800, 600)
 liveGraph = live_Graph()
 startB = start_Button()
-#linAc_exposeB = linAc_exposeButton(linAc)
-#linAc_recoverB = linAc_recoverButton(linAc)
+linAc_exposeB = linAc_exposeButton(linAc)
+linAc_recoverB = linAc_recoverButton(linAc)
 save_button = save_Button()
 pageLayout = QGridLayout()
 pageLayout.addWidget(liveGraph)
 pageLayout.addWidget(startB)
-#pageLayout.addWidget(linAc_exposeB)
-#pageLayout.addWidget(linAc_recoverB)
+pageLayout.addWidget(linAc_exposeB)
+pageLayout.addWidget(linAc_recoverB)
 pageLayout.addWidget(save_button)
 mainPage.setLayout(pageLayout)
 mainPage.show()

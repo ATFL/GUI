@@ -16,7 +16,7 @@ import sys
 import time
 import datetime
 import Adafruit_ADS1x15 as ads
-from parameters_7sensor import *
+#from parameters_7sensor import *
 # TODO: ADD BME and MAX Code
 
 ########SETUP##########
@@ -50,7 +50,8 @@ GPIO.setmode(GPIO.BCM)
 ###### COMPONENT SETUP ##############
 #Setup of the Linear Actuator
 class linearActuator():
-    def__init__(self,pinNum):
+    def __init__(self,pinNum):
+        self.pinNum = pinNum
         GPIO.setup(self.pinNum,GPIO.OUT)
         self.pwm = GPIO.PWM(self.pinNum,50)
         self.pwm.start(9)
@@ -115,7 +116,7 @@ class live_Graph(pg.PlotWidget):
         super(live_Graph,self).__init__()
         #self.setAutoFillBackground(True)
         ## gets the total test time from parameter
-        self.setRange(xRange=(0,max_test_time),yRange=(0,5),disableAutoRange=False)
+        self.setRange(xRange=(0,250),yRange=(0,5),disableAutoRange=False)
         self.setTitle("Live Graph")
         self.setStyleSheet("pg.PlotWidget {border-style: outset; max-height: 50}")
 
@@ -125,18 +126,22 @@ def collect_data():
     global timeVector
     global run_test
     t1 = time.time() #start time
-    t2 = sampling_time_index #imported from parameters
-    t3 = sampling_time #imported from parameters
-    t4 = sensor_expose_time #sensing delay time imported from parameters
-    t5 = sensor_retract_time #imported from parameters
+    #t2 = sampling_time_index #imported from parameters
+    #t3 = sampling_time #imported from parameters
+    #t4 = sensor_expose_time #sensing delay time imported from parameters
+    #t5 = sensor_retract_time #imported from parameters
 
+    t2 = 1
+    t3 = 0.1
+    t4 = 5
+    t5 = 42
     #Pre-test Settings
     if(linAc.state != 'recovery'):
         linAc.recover()
 
     while (run_test == True):
         app.processEvents()
-        if(time.time() > t1+t3):
+        if(time.time() > t1+t3*t2):
             global x1
             global x2
             global x3
@@ -161,7 +166,7 @@ def collect_data():
 
     combinedVector = np.column_stack((timeVector,x1,x2,x3,x4,x5,x6,monitor_sens))
     ## File Saving Parameters ##
-    filePath = ''
+    filePath = 'test_files/'
     testName = time.strftime('%a%d%b%Y%H%M',time.localtime())
     file_extension = '.csv'
     file_name = filePath + testName + file_extension
@@ -239,6 +244,7 @@ class resetButton(QPushButton):
         x6 = []
         monitor_sens = []
         timeVector = []
+        liveGraph.clear()
 
 class linAc_exposeB(QPushButton):
     def __init__(self,linAc, parent=None):
@@ -272,33 +278,124 @@ class linAc_recoverB(QPushButton):
             #self.setIcon(self.red)
             self.linearActuator.state = 'recovery'
 
-class baseline_measure(QPushButton):
-    def __init__(self,sens1,sens2,sens3,sens4,sens5,sens6, parent=None):
-        super(baseline_measure,self).__init__()
-        self.sens1 = sens1
-        self.sens2 = sens2
-        self.sens3 = sens3
-        self.sens4 = sens4
-        self.sens5 = sens5
-        self.sens6 = sens6
-        self.setStyleSheet("QPushButton {font: 13px}")
-        self.setText("Check Baseline")
-        self.clicked.connect(lambda: self.baseline())
-
-    def baseline(self):
-        time_start = time.time()
-        s1 = []
-        s2 = []
-        s3 = []
-        s4 = []
-        s5 = []
-        s6 = []
-        while(time.time() < time_start+10):
-            # Oh hey emily was here
-
+# class baseline_measure(QPushButton):
+#     def __init__(self,sens1,sens2,sens3,sens4,sens5,sens6, parent = None):
+#         super(baseline_measure,self).init__()
+#         self.sens1 = sens1
+#         self.sens2 = sens2
+#         self.sens3 = sens3
+#         self.sens4 = sens4
+#         self.sens5 = sens5
+#         self.sens6 = sens6
+#         self.setStyleSheet("QPushButton {font: 13px}")
+#         self.setText("Check Baseline")
+#         self.clicked.connect(lambda: self.baseline())
+#
+#     def baseline(self):
+#         time_start = time.time()
+#         s1 = []
+#         s2 = []
+#         s3 = []
+#         s4 = []
+#         s5 = []
+#         s6 = []
+#
+#         while time.time() < time_start + 10):
+#
+#
+#
+#
+# class baseline_measure(QPushButton):
+#     def __init__(self,sens1,sens2,sens3,sens4,sens5,sens6, parent=None):
+#         super(baseline_measure,self).__init__()
+#         self.sens1 = sens1
+#         self.sens2 = sens2
+#         self.sens3 = sens3
+#         self.sens4 = sens4
+#         self.sens5 = sens5
+#         self.sens6 = sens6
+#         self.setStyleSheet("QPushButton {font: 13px}")
+#         self.setText("Check Baseline")
+#         self.clicked.connect(lambda: self.baseline())
+#
+#     def baseline(self):
+#         time_start = time.time()
+#         s1 = []
+#         s2 = []
+#         s3 = []
+#         s4 = []
+#         s5 = []
+#         s6 = []
+#         while(time.time() < time_start+10):
+#             # Oh hey emily was here
+#             s1.append(sens1.read())
+#             s2.append(sens2.read())
+#             s3.append(sens3.read())
+#             s4.append(sens4.read())
+#             s5.append(sens5.read())
+#             s6.append(sens6.read())
+#
+#
 
 # Initializing the MOS and Linear Actuator
 # TODO: ADD the BME and MAX
+
+class start_Button(QPushButton):
+    def __init__(self,parent=None):
+        super(start_Button,self).__init__()
+        self.setStyleSheet("QPushButton {font: 13px}")
+        self.setText("Start")
+        self.clicked.connect(lambda: self.start_Procedure())
+
+    def start_Procedure(self):
+        timeCheck = time.time()
+        print("Starting Test")
+        collect_data()
+
+
+class save_Button(QPushButton):
+    def __init__(self,parent=None):
+        super(save_Button,self).__init__()
+        self.setStyleSheet("QPushButton {font: 13px}")
+        self.setText("Save")
+        self.clicked.connect(lambda: self.save())
+
+    def save(self):
+        global run_test
+        run_test = False
+
+
+class linAc_exposeButton(QPushButton):
+    def __init__(self,linAc, parent=None):
+        super(linAc_exposeButton,self).__init__()
+        self.linearActuator = linAc
+        self.setStyleSheet("QPushButton {font: 13px}")
+        self.setText("Expose")
+        self.state = "recovery"
+        self.clicked.connect(lambda: self.expose())
+
+    def expose(self):
+        if self.linearActuator.state == 'recovery':
+            self.linearActuator.expose()
+            #self.setText("Click to Recover")
+            #self.setIcon(self.green)
+            self.linearActuator.state = 'exposure'
+
+class linAc_recoverButton(QPushButton):
+    def __init__(self,linAc, parent=None):
+        super(linAc_recoverButton,self).__init__()
+        self.linearActuator = linAc
+        self.setStyleSheet("QPushButton {font: 13px}")
+        self.setText("Recover")
+        self.state = "expose"
+        self.clicked.connect(lambda: self.recover())
+
+    def recover(self):
+        if self.linearActuator.state == 'exposure':
+            self.linearActuator.recover()
+            #self.setText("Recover")
+            #self.setIcon(self.red)
+            self.linearActuator.state = 'recovery'
 
 linAc = linearActuator(12)
 sens1 = MOS(adc1,0)
@@ -307,7 +404,9 @@ sens3 = MOS(adc1,2)
 sens4 = MOS(adc2,3)
 sens5 = MOS(adc2,0)
 sens6 = MOS(adc2,1)
-monitor_sensor = MOS(adc,2)
+monitor_sensor = MOS(adc2,2)
+
+
 
 app = QApplication([])
 app.setStyle('Fusion')
@@ -315,7 +414,16 @@ mainPage = QWidget()
 mainPage.setWindowTitle("7 Sensor Setup")
 mainPage.resize(800, 600)
 liveGraph = live_Graph()
+startB = start_Button()
+linAc_exposeB = linAc_exposeButton(linAc)
+linAc_recoverB = linAc_recoverButton(linAc)
+save_button = save_Button()
 pageLayout = QGridLayout()
+pageLayout.addWidget(liveGraph)
+pageLayout.addWidget(startB)
+pageLayout.addWidget(linAc_exposeB)
+pageLayout.addWidget(linAc_recoverB)
+pageLayout.addWidget(save_button)
 mainPage.setLayout(pageLayout)
 mainPage.show()
 app.exec()
