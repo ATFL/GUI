@@ -140,7 +140,7 @@ app = QApplication([])
 app.setStyle('Fusion')
 
 mainPage = QWidget()
-mainPage.setWindowTitle("Emily is a Poop 4 Sensor") 
+mainPage.setWindowTitle("4 Sensor") 
 mainPage.resize(800, 600)
 liveGraph = live_Graph()
 startB = start_Button()
