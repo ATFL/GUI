@@ -62,7 +62,7 @@ class linearActuator():
         if self.state != 'recovery':
             print("Moving to Recovery")
             self.pwm.ChangeDutyCycle(9)
-            time.sleep(2)
+            time.sleep(3)
             print("At Recovery")
             self.state = 'recovery'
 
@@ -72,7 +72,7 @@ class linearActuator():
     def expose(self):
         if self.state != 'exposure':
             print("Moving to Exposure")
-            self.pwm.ChangeDutyCycle(5.5)
+            self.pwm.ChangeDutyCycle(5.36)
             time.sleep(2)
             print("At Exposure")
             self.state = 'exposure'
@@ -161,8 +161,8 @@ def collect_data():
             monitor_sens.append(monitor_sensor.read())
             timeVector.append(time.time() - t1)
             # TODO: ADD BME and MAX Code
-            if(time.time() % 5 == 0):
-                update_Graph()
+            #if(time.time() % 5 == 0):
+            update_Graph()
 
     combinedVector = np.column_stack((timeVector,x1,x2,x3,x4,x5,x6,monitor_sens))
     ## File Saving Parameters ##
@@ -170,7 +170,7 @@ def collect_data():
     testName = time.strftime('%a%d%b%Y%H%M',time.localtime())
     file_extension = '.csv'
     file_name = filePath + testName + file_extension
-    np.savetxt(filename,combinedVector,fmt='10.f',delimiter=',')
+    np.savetxt(file_name,combinedVector,fmt='%.10f',delimiter=',')
     #File is Saved
     print('File ' + testName + ' saved')
 
