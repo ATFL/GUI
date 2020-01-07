@@ -388,45 +388,45 @@ class linAc_recoverB(QPushButton):
             #self.setIcon(self.red)
             self.linearActuator.state = 'recovery'
 
-#class linAc_Button(QPushButton):
-#    def __init__(self, linAc, parent=None):
-#        super(linAc_Button, self).__init__()
-#        #self.setIconSize(QSize(15,15))
-#        self.linearActuator = linAc
-#        self.setStyleSheet("QPushButton {font: 13px}")
-#        self.setText("Click to Expose")
-#        self.state = "recovery"
-#        # Must be changed if working on Raspberry pi or personal laptop
-#        # Must be changed if working on Raspberry Pi or personal laptop
-#        #self.green = QtGui.QIcon("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/on.svg")
-#        #self.red = QtGui.QIcon("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/off.svg")
-#        #self.setIcon(self.red)
-#        self.clicked.connect(lambda: self.linAc_Switch())
-#    def linAc_Switch(self):
-#        print(self.linearActuator.state)
-#        print(self.linearActuator.state == 'recovery')
-#        if self.linearActuator.state == 'recovery':
-#            self.linearActuator.expose()
-#            #self.setIcon(self.green)
-#            self.setText("Click to Recover")
-#            self.linearActuator.state = 'exposure'
-#        elif self.linearActuator.state == 'exposure':
-#            self.linearActuator.recover()
-#            #self.setIcon(self.red)
-#            self.setText("Click to Expose")
-#            self.linearActuator.state = 'recovery'
-#    def expose(self):
-#        if self.linearActuator.state == 'recovery':
-#            self.linearActuator.expose()
-#            self.setText("Click to Recover")
-#            #self.setIcon(self.green)
-#            self.linearActuator.state = 'exposure'
-#    def recover(self):
-#        if self.linearActuator.state == 'exposure':
-#            self.linearActuator.recover()
-#            self.setText("Click to Expose")
-#            #self.setIcon(self.red)
-#            self.linearActuator.state = 'recovery'
+class linAc_Button(QPushButton):
+   def __init__(self, linAc, parent=None):
+       super(linAc_Button, self).__init__()
+       #self.setIconSize(QSize(15,15))
+       self.linearActuator = linAc
+       self.setStyleSheet("QPushButton {font: 13px}")
+       self.setText("Click to Expose")
+       self.state = "recovery"
+       # Must be changed if working on Raspberry pi or personal laptop
+       # Must be changed if working on Raspberry Pi or personal laptop
+       #self.green = QtGui.QIcon("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/on.svg")
+       #self.red = QtGui.QIcon("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/off.svg")
+       #self.setIcon(self.red)
+       self.clicked.connect(lambda: self.linAc_Switch())
+   def linAc_Switch(self):
+       print(self.linearActuator.state)
+       print(self.linearActuator.state == 'recovery')
+       if self.linearActuator.state == 'recovery':
+           self.linearActuator.expose()
+           #self.setIcon(self.green)
+           self.setText("Click to Recover")
+           self.linearActuator.state = 'exposure'
+       elif self.linearActuator.state == 'exposure':
+           self.linearActuator.recover()
+           #self.setIcon(self.red)
+           self.setText("Click to Expose")
+           self.linearActuator.state = 'recovery'
+   def expose(self):
+       if self.linearActuator.state == 'recovery':
+           self.linearActuator.expose()
+           self.setText("Click to Recover")
+           #self.setIcon(self.green)
+           self.linearActuator.state = 'exposure'
+   def recover(self):
+       if self.linearActuator.state == 'exposure':
+           self.linearActuator.recover()
+           self.setText("Click to Expose")
+           #self.setIcon(self.red)
+           self.linearActuator.state = 'recovery'
 
 class start_Button(QPushButton):
     def __init__(self,parent=None):
