@@ -497,8 +497,8 @@ class update_button(QPushButton):
     def __init__(self,parent=None):
         super(update_button,self).__init__()
         self.setStyleSheet("QPushButton {font: 13px}")
-        self.setText("Stop")
-        self.setEnabled(False)
+        self.setText("Update")
+        #self.setEnabled(False)
         self.clicked.connect(lambda:self.update())
 
     def update(self):
@@ -559,7 +559,7 @@ pageLayout.addWidget(liveGraph,1,1, 3,6)
 #pageLayout.addWidget(progress, 4,1,1,6)
 pageLayout.addWidget(startB, 5,1,1,1)
 pageLayout.addWidget(stopB, 5,2,1,1)
-pageLayout.addWidget(updateB5,4,1,1)
+pageLayout.addWidget(updateB,5,4,1,1)
 pageLayout.addWidget(linearAc,5,3,1,1)
 pageLayout.addWidget(printing,6,1,1,3)
 #pageLayout.addWidget(bmeBox1, 1,7,1,1)
