@@ -502,7 +502,8 @@ class update_button(QPushButton):
         self.clicked.connect(lambda:self.update())
 
     def update(self):
-        update_Graph()
+        global bmeBox2
+        bmeBox2.update()
 ## --- Initialize Main Variables --- ##
     # Linear Actuator
 linAc = linearActuator(12)
