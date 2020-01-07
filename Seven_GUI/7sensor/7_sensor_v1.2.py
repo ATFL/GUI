@@ -16,6 +16,7 @@ import sys
 import time
 import datetime
 import Adafruit_ADS1x15 as ads
+from Adafruit_BME280 import *
 import busio
 import board
 #from parameters_7sensor import *
