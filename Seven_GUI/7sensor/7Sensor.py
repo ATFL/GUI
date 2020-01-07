@@ -218,15 +218,15 @@ def collect_data():
             global x5
             global x6
             global x7
-           global bme1_T
-           global bme1_H
-           global bme1_P
-           global bme2_T
-           global bme2_H
-           global bme2_P
+            global bme1_T
+            global bme1_H
+            global bme1_P
+            global bme2_T
+            global bme2_H
+            global bme2_P
 #            global max_T
-           global bmeBox1
-           global bmeBox2
+            global bmeBox1
+            global bmeBox2
             #global maxxyBox
             x1.append(mos1.read())  # Perform analog to digital function, reading voltage from first sensor channel
             x2.append(mos2.read())
@@ -235,9 +235,9 @@ def collect_data():
             x5.append(mos5.read())
             x6.append(mos6.read())
             x7.append(mos7.read())
-            bme1_T.append(bmeBox1.bme.read_temperature())
-            bme1_H.append(bmeBox1.bme.read_humidity())
-            bme1_P.append(bmeBox1.bme.read_pressure())
+#            bme1_T.append(bmeBox1.bme.read_temperature())
+#            bme1_H.append(bmeBox1.bme.read_humidity())
+#            bme1_P.append(bmeBox1.bme.read_pressure())
             bme2_T.append(bmeBox2.bme.read_temperature())
             bme2_H.append(bmeBox2.bme.read_humidity())
             bme2_P.append(bmeBox2.bme.read_pressure())
@@ -323,7 +323,7 @@ def update_Graph():
     legend.removeItem('Sensor 5')
     legend.removeItem('Sensor 6')
     legend.removeItem('Sensor 7')
-    bmeBox1.update()
+#    bmeBox1.update()
     bmeBox2.update()
     #maxxyBox.update()
 
@@ -513,8 +513,8 @@ mos1 = MOS(adc1, 0)
     #BME280
     # First BME
 i2c = busio.I2C(board.SCL, board.SDA)
-BME2801 = BME280(t_mode=BME280_OSAMPLE_8, p_mode=BME280_OSAMPLE_8, h_mode=BME280_OSAMPLE_8)
-print(BME2802.read_temperature())
+#BME2801 = BME280_2(t_mode=BME280_OSAMPLE_8, p_mode=BME280_OSAMPLE_8, h_mode=BME280_OSAMPLE_8)
+#print(BME2801.read_temperature())
 #    # Second BME
 BME2802 = BME280_2(t_mode=BME280_OSAMPLE_8, p_mode=BME280_OSAMPLE_8, h_mode=BME280_OSAMPLE_8)
 print(BME2802.read_temperature())
@@ -528,7 +528,7 @@ mainPage = QWidget()
 mainPage.setWindowTitle("Seven Sensor Setup")
 mainPage.resize(800, 600)
 liveGraph = live_Graph()
-bmeBox1 = bmeBox(BME2802, "BME1")
+#bmeBox1 = bmeBox(BME2801, "BME1")
 bmeBox2 = bmeBox(BME2802, "BME2")
 #maxxyBox = maxBox(max31855)
 progress = QtGui.QProgressBar()
