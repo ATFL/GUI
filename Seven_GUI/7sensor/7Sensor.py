@@ -90,7 +90,7 @@ class linearActuator():
         ## Make sure to change the starting pwm values for this linear actuator.
         self.pwm = GPIO.PWM(self.pinNum, 50)
         self.pwm.start(9)
-        time.sleep(13)
+        time.sleep(3)
         #GPIO.output(self.enable, GPIO.LOW)
         self.state = 'recovery'
         print(self.state)
@@ -114,7 +114,7 @@ class linearActuator():
         if self.state != 'exposure':
 #            GPIO.output(self.enable, GPIO.HIGH)
             # Make sure to change pwm values
-            self.pwm.ChangeDutyCycle(5.4)
+            self.pwm.ChangeDutyCycle(5.36)
             print("moving")
             counter = 14
             i = 0
@@ -251,7 +251,7 @@ def collect_data():
         # If time is between 10-50 seconds and the Linear Actuator position sensor signal from the ADC indicates a retracted state, extend the sensor
         if (time.time() >= (start_time + sensing_delay_time) and time.time() <= (
                 sensing_retract_time + start_time) and (emergencyStop != "STOP")):
-            print("we are in the 10-50 seconds loop")
+            #print("we are in the 10-50 seconds loop")
             if linearAc.linearActuator.state != 'exposure':
                 linearAc.expose()
 
@@ -533,7 +533,7 @@ bmeBox2 = bmeBox(BME2802, "BME2")
 #maxxyBox = maxBox(max31855)
 progress = QtGui.QProgressBar()
 linearAc = linAc_Button(linAc)
-linAc
+
 startB = start_Button()
 stopB = stop_Button()
 printing = QLabel()
