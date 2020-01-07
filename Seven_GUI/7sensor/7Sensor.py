@@ -516,7 +516,7 @@ i2c = busio.I2C(board.SCL, board.SDA)
 #BME2801 = BME280_2(t_mode=BME280_OSAMPLE_8, p_mode=BME280_OSAMPLE_8, h_mode=BME280_OSAMPLE_8)
 #print(BME2801.read_temperature())
 #    # Second BME
-BME2802 = BME280_2(t_mode=BME280_OSAMPLE_8, p_mode=BME280_OSAMPLE_8, h_mode=BME280_OSAMPLE_8)
+BME2802 = BME280(t_mode=BME280_OSAMPLE_8, p_mode=BME280_OSAMPLE_8, h_mode=BME280_OSAMPLE_8)
 print(BME2802.read_temperature())
 ##
 
