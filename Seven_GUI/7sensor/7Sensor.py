@@ -498,12 +498,12 @@ class stop_Button(QPushButton):
 linAc = linearActuator(12)
     # Mos sensors
 mos1 = MOS(adc1, 0)
-#mos2 = MOS(adc1, 1)
-#mos3 = MOS(adc1, 2)
-#mos4 = MOS(adc1, 3)
-#mos5 = MOS(adc2, 0)
-#mos6 = MOS(adc2, 1)
-#mos7 = MOS(adc2, 2)
+mos2 = MOS(adc1, 1)
+mos3 = MOS(adc1, 2)
+mos4 = MOS(adc1, 3)
+mos5 = MOS(adc2, 0)
+mos6 = MOS(adc2, 1)
+mos7 = MOS(adc2, 2)
 
     #Max31855
 #spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
