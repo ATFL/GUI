@@ -1,4 +1,4 @@
-## Code for Mahan
+#########REQUIRED IMPORTS############################
 
 import numpy as np
 import RPi.GPIO as GPIO
@@ -16,24 +16,21 @@ import datetime
 import Adafruit_ADS1x15 as ads
 
 adc = ads.ADS1115(0x48)
+####################### RESET VALUES #####################
+
 global timeVector
-timeVector = []#np.zeros((2500,))
-global dataVector
-dataVector = []
-global livegraph
+global x1
+global live_Graph
 global app
 global startTime
-startTime = time.time()
 global mos
-global x1
-x1 = []#np.zeros((2500,))
-global x2
-x2 = []
-#global data_counter
-#datacounter = 0
 global run_test
+
+timeVector = []
+x1 = []
 run_test = True
 
+#################### COMPONENT SETUP ##########################
 GPIO.setmode(GPIO.BCM)
 
 class linearActuator():
@@ -66,7 +63,7 @@ class linearActuator():
 
         else:
             print("LA at Exposure")
-            pass
+            pass #Change to stepper motor
 
 class MOS:
     def __init__(self, adc, channel):
@@ -210,14 +207,14 @@ class linAc_recoverButton(QPushButton):
             self.linearActuator.state = 'recovery'
 
 
-linAc = linearActuator(12)
+linAc = linearActuator(12) #change with stepper
 mos = MOS(adc, 0)
-mos2 = MOS(adc,1)
+#mos2 = MOS(adc,1)
 app = QApplication([])
 app.setStyle('Fusion')
 
 mainPage = QWidget()
-mainPage.setWindowTitle("7 Sensor Adi")
+mainPage.setWindowTitle("Mini Chamber Testing")
 mainPage.resize(800, 600)
 liveGraph = live_Graph()
 startB = start_Button()
