@@ -11,7 +11,7 @@ GPIO.setup(12,GPIO.OUT)
 pwm = GPIO.PWM(12,50)
 pwm.start(5)
 time.sleep(3)
-pwm.ChangeDutyCycle(10)
+pwm.ChangeDutyCycle(9)
 time.sleep(3)
 pwm.stop()
 

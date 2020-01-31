@@ -33,7 +33,8 @@ datacounter = 0
 GPIO.setmode(GPIO.BCM)
 
 class linearActuator():
-    def__init__(self,pinNum):
+    def __init__(self,pinNum):
+        self.pinNum = pinNum
         GPIO.setup(self.pinNum,GPIO.OUT)
         self.pwm = GPIO.PWM(self.pinNum,50)
         self.pwm.start(9)
@@ -104,7 +105,7 @@ def collect_data():
     sampling_time_index = 1
     sampling_time = 0.1
     exposure_time = 42
-    duration of signal = 250
+    duration_of_signal = 250
     start_time = time.time()
 
     print('Starting Data Capture')
@@ -122,7 +123,7 @@ def collect_data():
         if (time.time() < (start_time + sensing_delay_time)):
             print("Pre Exposure Period")
             linAc.recover()
-        if (time.time() > (start_time + sensing_delay_time) && time.time() < (start_time + sensing_delay_time + exposure_time)):
+        if (time.time() > (start_time + sensing_delay_time) and time.time() < (start_time + sensing_delay_time + exposure_time)):
             print("Exposing System")
             linAc.expose()
         if(time.time() > (start_time + sensing_delay_time + exposure_time)):

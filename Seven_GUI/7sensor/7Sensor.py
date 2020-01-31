@@ -20,9 +20,9 @@ import datetime
 import Adafruit_ADS1x15 as ads
 #import Adafruit_MAX31855.MAX31855 as MAX31855
 #i2c 76
-#from Adafruit_BME280 import *
+from Adafruit_BME280 import *
 #i2c 77
-#from Adafruit_BME280_2 import *
+from Adafruit_BME280_2 import *
 import busio
 import board
 import digitalio
@@ -31,8 +31,8 @@ adc1 = ads.ADS1115(0x48)
 adc2 = ads.ADS1115(0x49)
 ## --- Global Variable Initialization --- ##
 global liveGraph
-#global bme1Box
-#global bme2Box
+global bme1Box
+global bme2Box
 #global max31855Box
 global emergencyStop
 global app
@@ -59,22 +59,22 @@ global x7
 x7 = []
 global timeVector
 timeVector = []
-#global bme1_T
-#bme1_T = []
-#global bme1_H
-#bme1_H = []
-#global bme1_P
-#bme1_P = []
-#global bme2_T
-#bme2_T = []
-#global bme2_H
-#bme2_H = []
-#global bme2_P
-#bme2_P = []
-#global max_T
-#max_T = []
-#global bmeBox1
-#global bmeBox2
+global bme1_T
+bme1_T = []
+global bme1_H
+bme1_H = []
+global bme1_P
+bme1_P = []
+global bme2_T
+bme2_T = []
+global bme2_H
+bme2_H = []
+global bme2_P
+bme2_P = []
+# global max_T
+# max_T = []
+global bmeBox1
+global bmeBox2
 #global maxxyBox
 
 GPIO.setmode(GPIO.BCM)
@@ -90,7 +90,7 @@ class linearActuator():
         ## Make sure to change the starting pwm values for this linear actuator.
         self.pwm = GPIO.PWM(self.pinNum, 50)
         self.pwm.start(9)
-        time.sleep(13)
+        time.sleep(3)
         #GPIO.output(self.enable, GPIO.LOW)
         self.state = 'recovery'
         print(self.state)
@@ -114,7 +114,7 @@ class linearActuator():
         if self.state != 'exposure':
 #            GPIO.output(self.enable, GPIO.HIGH)
             # Make sure to change pwm values
-            self.pwm.ChangeDutyCycle(5.4)
+            self.pwm.ChangeDutyCycle(5.36)
             print("moving")
             counter = 14
             i = 0
@@ -218,15 +218,15 @@ def collect_data():
             global x5
             global x6
             global x7
-#            global bme1_T
-#            global bme1_H
-#            global bme1_P
-#            global bme2_T
-#            global bme2_H
-#            global bme2_P
-##            global max_T
-#            global bmeBox1
-#            global bmeBox2
+            global bme1_T
+            global bme1_H
+            global bme1_P
+            global bme2_T
+            global bme2_H
+            global bme2_P
+#            global max_T
+            global bmeBox1
+            global bmeBox2
             #global maxxyBox
             x1.append(mos1.read())  # Perform analog to digital function, reading voltage from first sensor channel
             x2.append(mos2.read())
@@ -238,9 +238,9 @@ def collect_data():
 #            bme1_T.append(bmeBox1.bme.read_temperature())
 #            bme1_H.append(bmeBox1.bme.read_humidity())
 #            bme1_P.append(bmeBox1.bme.read_pressure())
-#            bme2_T.append(bmeBox2.bme.read_temperature())
-#            bme2_H.append(bmeBox2.bme.read_humidity())
-#            bme2_P.append(bmeBox2.bme.read_pressure())
+            bme2_T.append(bmeBox2.bme.read_temperature())
+            bme2_H.append(bmeBox2.bme.read_humidity())
+            bme2_P.append(bmeBox2.bme.read_pressure())
             #max_T.append(maxxyBox.maxSensor.readTempC())
             timeVector.append(time.time() - start_time)
            # print(*dataVector)
@@ -251,7 +251,7 @@ def collect_data():
         # If time is between 10-50 seconds and the Linear Actuator position sensor signal from the ADC indicates a retracted state, extend the sensor
         if (time.time() >= (start_time + sensing_delay_time) and time.time() <= (
                 sensing_retract_time + start_time) and (emergencyStop != "STOP")):
-            print("we are in the 10-50 seconds loop")
+            #print("we are in the 10-50 seconds loop")
             if linearAc.linearActuator.state != 'exposure':
                 linearAc.expose()
 
@@ -301,8 +301,8 @@ def update_Graph():
     global x6
     global x7
     global timeVector
-#    global bmeBox1
-#    global bmeBox2
+    global bmeBox1
+    global bmeBox2
     #global maxxyBox
 
 
@@ -324,7 +324,7 @@ def update_Graph():
     legend.removeItem('Sensor 6')
     legend.removeItem('Sensor 7')
 #    bmeBox1.update()
-#    bmeBox2.update()
+    bmeBox2.update()
     #maxxyBox.update()
 
     app.processEvents()
@@ -334,26 +334,26 @@ def test():
     liveGraph.plot([1,2,3,4,5,6,7,8],[2,2,2,2,2,2,2,2], pen = 'b', name = 'Sensor 1')
     liveGraph.plot([2,3,4,5,6,7,8,9],[3,3,3,3,3,3,3,3], pen = 'r', name = 'Sensor 2')
 
-class plot_Random(): # This is designed to test the success of the multithreading functionality
-    def __init__(self,live_Graph, parent=None):
-        super(plot_Random,self).__init__()
-        x1 =[]
-        y1 = []
-        myXCounter = 0
-        myYCounter = 0
-        global emergencyStop
-        global app
-        global progress
-        totalVal = 300
-        while (myYCounter < 301) & (emergencyStop != "STOP"):
-
-            myXCounter = myXCounter + 1
-            progress.setValue(myXCounter/totalVal * 100)
-            myListX.append(myXCounter)
-            myYCounter = myYCounter + 1
-            myListY.append(random.randint(0,5))
-            live_Graph.plot(myListX,myListY)
-            app.processEvents()
+# class plot_Random(): # This is designed to test the success of the multithreading functionality
+#     def __init__(self,live_Graph, parent=None):
+#         super(plot_Random,self).__init__()
+#         x1 =[]
+#         y1 = []
+#         myXCounter = 0
+#         myYCounter = 0
+#         global emergencyStop
+#         global app
+#         global progress
+#         totalVal = 300
+#         while (myYCounter < 301) & (emergencyStop != "STOP"):
+#
+#             myXCounter = myXCounter + 1
+#             progress.setValue(myXCounter/totalVal * 100)
+#             myListX.append(myXCounter)
+#             myYCounter = myYCounter + 1
+#             myListY.append(random.randint(0,5))
+#             live_Graph.plot(myListX,myListY)
+#             app.processEvents()
 
 ## --- Button Classes --- ##
 class linAc_exposeB(QPushButton):
@@ -388,45 +388,45 @@ class linAc_recoverB(QPushButton):
             #self.setIcon(self.red)
             self.linearActuator.state = 'recovery'
 
-#class linAc_Button(QPushButton):
-#    def __init__(self, linAc, parent=None):
-#        super(linAc_Button, self).__init__()
-#        #self.setIconSize(QSize(15,15))
-#        self.linearActuator = linAc
-#        self.setStyleSheet("QPushButton {font: 13px}")
-#        self.setText("Click to Expose")
-#        self.state = "recovery"
-#        # Must be changed if working on Raspberry pi or personal laptop
-#        # Must be changed if working on Raspberry Pi or personal laptop
-#        #self.green = QtGui.QIcon("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/on.svg")
-#        #self.red = QtGui.QIcon("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/off.svg")
-#        #self.setIcon(self.red)
-#        self.clicked.connect(lambda: self.linAc_Switch())
-#    def linAc_Switch(self):
-#        print(self.linearActuator.state)
-#        print(self.linearActuator.state == 'recovery')
-#        if self.linearActuator.state == 'recovery':
-#            self.linearActuator.expose()
-#            #self.setIcon(self.green)
-#            self.setText("Click to Recover")
-#            self.linearActuator.state = 'exposure'
-#        elif self.linearActuator.state == 'exposure':
-#            self.linearActuator.recover()
-#            #self.setIcon(self.red)
-#            self.setText("Click to Expose")
-#            self.linearActuator.state = 'recovery'
-#    def expose(self):
-#        if self.linearActuator.state == 'recovery':
-#            self.linearActuator.expose()
-#            self.setText("Click to Recover")
-#            #self.setIcon(self.green)
-#            self.linearActuator.state = 'exposure'
-#    def recover(self):
-#        if self.linearActuator.state == 'exposure':
-#            self.linearActuator.recover()
-#            self.setText("Click to Expose")
-#            #self.setIcon(self.red)
-#            self.linearActuator.state = 'recovery'
+class linAc_Button(QPushButton):
+   def __init__(self, linAc, parent=None):
+       super(linAc_Button, self).__init__()
+       #self.setIconSize(QSize(15,15))
+       self.linearActuator = linAc
+       self.setStyleSheet("QPushButton {font: 13px}")
+       self.setText("Click to Expose")
+       self.state = "recovery"
+       # Must be changed if working on Raspberry pi or personal laptop
+       # Must be changed if working on Raspberry Pi or personal laptop
+       #self.green = QtGui.QIcon("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/on.svg")
+       #self.red = QtGui.QIcon("/home/pi/Documents/gui/MetroVan_GUI/New_GUI/off.svg")
+       #self.setIcon(self.red)
+       self.clicked.connect(lambda: self.linAc_Switch())
+   def linAc_Switch(self):
+       print(self.linearActuator.state)
+       print(self.linearActuator.state == 'recovery')
+       if self.linearActuator.state == 'recovery':
+           self.linearActuator.expose()
+           #self.setIcon(self.green)
+           self.setText("Click to Recover")
+           self.linearActuator.state = 'exposure'
+       elif self.linearActuator.state == 'exposure':
+           self.linearActuator.recover()
+           #self.setIcon(self.red)
+           self.setText("Click to Expose")
+           self.linearActuator.state = 'recovery'
+   def expose(self):
+       if self.linearActuator.state == 'recovery':
+           self.linearActuator.expose()
+           self.setText("Click to Recover")
+           #self.setIcon(self.green)
+           self.linearActuator.state = 'exposure'
+   def recover(self):
+       if self.linearActuator.state == 'exposure':
+           self.linearActuator.recover()
+           self.setText("Click to Expose")
+           #self.setIcon(self.red)
+           self.linearActuator.state = 'recovery'
 
 class start_Button(QPushButton):
     def __init__(self,parent=None):
@@ -493,17 +493,28 @@ class stop_Button(QPushButton):
         global startB
         startB.setEnabled(True)
 
+class update_button(QPushButton):
+    def __init__(self,parent=None):
+        super(update_button,self).__init__()
+        self.setStyleSheet("QPushButton {font: 13px}")
+        self.setText("Update")
+        #self.setEnabled(False)
+        self.clicked.connect(lambda:self.update())
+
+    def update(self):
+        global bmeBox2
+        bmeBox2.update()
 ## --- Initialize Main Variables --- ##
     # Linear Actuator
 linAc = linearActuator(12)
     # Mos sensors
 mos1 = MOS(adc1, 0)
-#mos2 = MOS(adc1, 1)
-#mos3 = MOS(adc1, 2)
-#mos4 = MOS(adc1, 3)
-#mos5 = MOS(adc2, 0)
-#mos6 = MOS(adc2, 1)
-#mos7 = MOS(adc2, 2)
+mos2 = MOS(adc1, 1)
+mos3 = MOS(adc1, 2)
+mos4 = MOS(adc1, 3)
+mos5 = MOS(adc2, 0)
+mos6 = MOS(adc2, 1)
+mos7 = MOS(adc2, 2)
 
     #Max31855
 #spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
@@ -512,13 +523,12 @@ mos1 = MOS(adc1, 0)
 
     #BME280
     # First BME
-##i2c = busio.I2C(board.SCL, board.SDA)
-#BME2801 = BME280(t_mode=BME280_OSAMPLE_8, p_mode=BME280_OSAMPLE_8, h_mode=BME280_OSAMPLE_8)
+i2c = busio.I2C(board.SCL, board.SDA)
+#BME2801 = BME280_2(t_mode=BME280_OSAMPLE_8, p_mode=BME280_OSAMPLE_8, h_mode=BME280_OSAMPLE_8)
 #print(BME2801.read_temperature())
-##    # Second BME
-#BME2802 = BME280_2(t_mode=BME280_OSAMPLE_8, p_mode=BME280_OSAMPLE_8, h_mode=BME280_OSAMPLE_8)
-#print(2802.read_temper
-#      ature())
+#    # Second BME
+BME2802 = BME280(t_mode=BME280_OSAMPLE_8, p_mode=BME280_OSAMPLE_8, h_mode=BME280_OSAMPLE_8)
+print(BME2802.read_temperature())
 ##
 
 ## --- Page Widgets --- ##
@@ -530,13 +540,14 @@ mainPage.setWindowTitle("Seven Sensor Setup")
 mainPage.resize(800, 600)
 liveGraph = live_Graph()
 #bmeBox1 = bmeBox(BME2801, "BME1")
-#bmeBox2 = bmeBox(BME2802, "BME2")
+bmeBox2 = bmeBox(BME2802, "BME2")
 #maxxyBox = maxBox(max31855)
 progress = QtGui.QProgressBar()
 linearAc = linAc_Button(linAc)
-linAc
+
 startB = start_Button()
 stopB = stop_Button()
+updateB = update_button()
 printing = QLabel()
 printing.setText("Ready for Testing")
 
@@ -546,13 +557,14 @@ printing.setText("Ready for Testing")
 
 pageLayout = QGridLayout()
 pageLayout.addWidget(liveGraph,1,1, 3,6)
-pageLayout.addWidget(progress, 4,1,1,6)
+#pageLayout.addWidget(progress, 4,1,1,6)
 pageLayout.addWidget(startB, 5,1,1,1)
 pageLayout.addWidget(stopB, 5,2,1,1)
+pageLayout.addWidget(updateB,5,4,1,1)
 pageLayout.addWidget(linearAc,5,3,1,1)
 pageLayout.addWidget(printing,6,1,1,3)
 #pageLayout.addWidget(bmeBox1, 1,7,1,1)
-#pageLayout.addWidget(bmeBox2, 2,7,1,1)
+pageLayout.addWidget(bmeBox2, 2,7,1,1)
 #pageLayout.addWidget(maxxyBox, 3,7,2,1)
 mainPage.setLayout(pageLayout)
 mainPage.show()
