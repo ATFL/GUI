@@ -42,7 +42,7 @@ class LinearActuator:
     def __init__(self, LinActRetract,LinActExtend):
         self.LinActRetract = LinActRetract
         self.LinActExtend = LinActExtend
-        self.extended_state = 4
+        self.extended_state = 3.8
         self.retracted_state = 1.2
         GPIO.setup(self.LinActRetract, GPIO.OUT)
         GPIO.setup(self.LinActExtend, GPIO.OUT)

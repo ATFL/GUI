@@ -10,13 +10,6 @@ import os
 import Adafruit_ADS1x15
 
 
-#    def default(self):
-#        print('Moving linear actuator to default(center) position.')
-#        GPIO.output(self.pinEnable, GPIO.HIGH)
-#        self.pwm.ChangeDutyCycle(7)
-#        time.sleep(2)
-#        GPIO.output(self.pinEnable, GPIO.LOW)
-#        self.state = 'default'
 
 
 class Valve:
@@ -83,8 +76,7 @@ class MOS:
         self.GAIN = 2 / 3
         self.adc = adc
         self.channel = channel
-        self.conversion_value = (self.adc.read_adc(self.channel,gain=self.GAIN))
-                                 #/pow(2, 15))*6.144
+        self.conversion_value = (self.adc.read_adc(self.channel,gain=self.GAIN)/pow(2, 15))*6.144
 
     def read(self):
         self.conversion_value = (self.adc.read_adc(self.channel,gain=self.GAIN)/pow(2, 15))*6.144
@@ -118,30 +110,6 @@ class TemperatureSensor():
         self.read()
         print("\nReading from Temperature Sensor: {}".format(self.conversion_value))
 
-class PositionSensor():
-    def __init__(self, adc, channel):
-        # Choose a gain of 1 for reading voltages from 0 to 4.09V.
-        # Or pick a different gain to change the range of voltages that are read:
-        #  - 2/3 = +/-6.144V
-        #  -   1 = +/-4.096V
-        #  -   2 = +/-2.048V
-        #  -   4 = +/-1.024V
-        #  -   8 = +/-0.512V
-        #  -  16 = +/-0.256V
-        # See table 3 in the ADS1015/ADS1115 datasheet for more info on gain.
-        self.GAIN = 2 / 3
-        self.adc = adc
-        self.channel = channel
-        self.conversion_value = ((self.adc.read_adc(self.channel,gain=self.GAIN))/pow(2, 15))*6.144
-
-    def read(self):
-        self.conversion_value = ((self.adc.read_adc(self.channel,gain=self.GAIN))/pow(2, 15))*6.144
-        return self.conversion_value
-
-    def print(self):
-        self.read()
-        print("\nReading from Linear Actuator Position Sensor: {}".format(self.conversion_value))
-        
 class Pump:
     def __init__(self, pin):
         self.pin = pin
