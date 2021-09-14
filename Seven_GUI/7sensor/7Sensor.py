@@ -90,7 +90,7 @@ class linearActuator():
         ## Make sure to change the starting pwm values for this linear actuator.
         self.pwm = GPIO.PWM(self.pinNum, 50)
         self.pwm.start(9)
-        time.sleep(3)
+        #time.sleep(3)
         #GPIO.output(self.enable, GPIO.LOW)
         self.state = 'recovery'
         print(self.state)
@@ -102,7 +102,7 @@ class linearActuator():
             print("moving")
             self.pwm.ChangeDutyCycle(9)
             print("done moving")
-            time.sleep(3)
+            #time.sleep(3)
             print("done moving 2")
 #            GPIO.output(self.enable, GPIO.LOW)
             self.state = 'recovery'
@@ -116,12 +116,12 @@ class linearActuator():
             # Make sure to change pwm values
             self.pwm.ChangeDutyCycle(5.36)
             print("moving")
-            counter = 14
-            i = 0
-            while(i < counter):
-                app.processEvents()
-                time.sleep(1)
-                i +=1
+#            counter = 14
+#            i = 0
+#            while(i < counter):
+#                app.processEvents()
+#                time.sleep(1)
+#                i +=1
 
 #            GPIO.output(self.enable, GPIO.LOW)
             self.state = 'exposure'
@@ -179,7 +179,7 @@ class live_Graph(pg.PlotWidget):
     def __init__(self,parent=None):
         super(live_Graph,self).__init__()
         #self.setAutoFillBackground(True)
-        self.setRange(xRange=(0,200),yRange=(0,5),disableAutoRange=False)
+        self.setRange(xRange=(0,500),yRange=(0,5),disableAutoRange=False)
         self.addLegend()
         self.setTitle("Live Graph")
         self.setStyleSheet("pg.PlotWidget {border-style: outset; max-height: 50}")
@@ -197,7 +197,7 @@ def collect_data():
     sampling_time = 0.1 #Do not change
     sensing_delay_time = 1 # Time after data recording begins for the sensor to be exposed
     sensing_retract_time = 43 # Number of seconds until the sensor is recovered
-    duration_of_signal = 200 # The total number of seconds for the whole process
+    duration_of_signal = 500 # The total number of seconds for the whole process
     start_time = time.time()
     global veryStartTime
     printing.setText("Starting Data Capture")
@@ -235,7 +235,7 @@ def collect_data():
             x5.append(mos5.read())
             x6.append(mos6.read())
             x7.append(mos7.read())
-#            bme1_T.append(bmeBox1.bme.read_temperature())
+ #          bme1_T.append(bmeBox1.bme.read_temperature())
 #            bme1_H.append(bmeBox1.bme.read_humidity())
 #            bme1_P.append(bmeBox1.bme.read_pressure())
             bme2_T.append(bmeBox2.bme.read_temperature())
@@ -258,7 +258,7 @@ def collect_data():
         # If time is less than 10 seconds or greater than 50 seconds and linear actuator position sensor signal from the ADC indicates an extended state, retract the sensor
         if (((time.time() < (sensing_delay_time + start_time)) or (
                 time.time() > (sensing_retract_time + start_time)))) and (emergencyStop != "STOP"):
-            print("Inside the first 10 seconds loop or last loop")
+            #print("Inside the first 10 seconds loop or last loop")
             if linearAc.linearActuator.state != 'recovery':
                 linearAc.recover()
 
@@ -275,10 +275,10 @@ def collect_data():
     ## The file saves the data in the following order: time, then MOS sensors, then
     ## temperature, humidity and pressure of BME1, then temperature, humidity, and
     ## pressure of BME2, then the temperature reported from the MAX31855
-    combinedVector = np.column_stack((timeVector, x1, x2, x3, x4, x5, x6, x7))
+    combinedVector = np.column_stack((timeVector, x1, x2, x3, x4, x5, x6, x7,bme2_T,bme2_H,bme2_P))
     print("Right before save")
 ##    # This section of code is used for generating the output file name. The file name will contain date/time of test, as well as concentration values present during test
-    filename = time.strftime("/home/pi/Documents/GUI/Seven_GUI/%a%d%b%Y%H%M%S.csv",time.localtime())
+    filename = time.strftime("/home/pi/Documents/GUI/Seven_GUI/mahan_test/%a%d%b%Y%H%M%S.csv",time.localtime())
     #filename = "/home/pi/Documents/gui/MetroVan_GUI/tests_H2S/EmilyTest.csv"
     print("after filename")
     np.savetxt(filename,combinedVector, fmt='%.10f', delimiter=',')
@@ -308,20 +308,20 @@ def update_Graph():
 
     liveGraph.clear()
     progress.setValue((time.time() - veryStartTime)/totalTime*100)
-    liveGraph.plot(timeVector,x1, pen = (156,95,247), name = 'Sensor 1')
-    liveGraph.plot(timeVector,x2, pen = (64,134,50), name = 'Sensor 2')
-    liveGraph.plot(timeVector, x3, pen = (218,42,42), name = 'Sensor 3')
-    liveGraph.plot(timeVector, x4, pen = 'k', name = 'Sensor 4')
-    liveGraph.plot(timeVector, x5, pen  = 'm', name = 'Sensor 5')
-    liveGraph.plot(timeVector, x6, pen = (247,120,95), name = 'Sensor 6')
+    #liveGraph.plot(timeVector, x1, pen = (156,95,247), name = 'Sensor 1')
+   # liveGraph.plot(timeVector, x2, pen = (64,134,50), name = 'Sensor 2')
+   # liveGraph.plot(timeVector, x3, pen = (218,42,42), name = 'Sensor 3')
+   # liveGraph.plot(timeVector, x4, pen = 'k', name = 'Sensor 4')
+    #liveGraph.plot(timeVector, x5, pen  = 'm', name = 'Sensor 5')
+   # liveGraph.plot(timeVector, x6, pen = (247,120,95), name = 'Sensor 6')
     liveGraph.plot(timeVector, x7, pen = (34,174,160), name = 'Sensor 7')
     legend = liveGraph.addLegend()
-    legend.removeItem('Sensor 1')
-    legend.removeItem('Sensor 2')
-    legend.removeItem('Sensor 3')
-    legend.removeItem('Sensor 4')
-    legend.removeItem('Sensor 5')
-    legend.removeItem('Sensor 6')
+   # legend.removeItem('Sensor 1')
+#    legend.removeItem('Sensor 2')
+   # legend.removeItem('Sensor 3')
+   # legend.removeItem('Sensor 4')
+#    legend.removeItem('Sensor 5')
+#    legend.removeItem('Sensor 6')
     legend.removeItem('Sensor 7')
 #    bmeBox1.update()
     bmeBox2.update()

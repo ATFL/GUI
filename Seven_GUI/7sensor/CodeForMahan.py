@@ -79,7 +79,7 @@ class start_Button(QPushButton):
     def start_Procedure(self):
         timeCheck = time.time()
         runForever = True 
-        while run_test: 
+        while runForever: 
             if time.time() - timeCheck > 0.1:
                 update_Graph()
                 timeCheck = time.time() 
@@ -106,7 +106,7 @@ class save_Button(QPushButton):
         combinedVector = []
         
         
-mos = MOS(adc, 3)
+mos = MOS(adc, 2)
 app = QApplication([])
 app.setStyle('Fusion')
 
